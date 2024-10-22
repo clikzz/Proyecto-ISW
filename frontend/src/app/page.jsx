@@ -35,7 +35,61 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-        // Aquí se puede agregar más contenido
+        <section
+          id="features"
+          className="rounded-3xl w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800"
+        >
+          <div className="items-centercontainer px-4 md:px-6">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">
+              CaracterÃ­sticas principales
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <Card>
+                <CardHeader>
+                  <Wrench className="w-8 h-8 mb-2" />
+                  <CardTitle>Test</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>
+                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                    Accusamus quod reiciendis in dolorum facere repudiandae
+                    adipisci, recusandae dicta inventore magni assumenda omnis?
+                    Architecto quae consequatur vero dolorem quibusdam,
+                    repellendus nam!
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <Calendar className="w-8 h-8 mb-2" />
+                  <CardTitle>Test</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>
+                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                    Ducimus, pariatur quisquam. Praesentium blanditiis qui culpa
+                    est laboriosam doloremque totam enim! Fuga sapiente ratione
+                    assumenda repellendus sed in dignissimos aut quibusdam?
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <BarChart className="w-8 h-8 mb-2" />
+                  <CardTitle>Test</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>
+                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                    Amet voluptatem, magnam velit recusandae, minima quis dolore
+                    assumenda cupiditate dolor facere, vero ipsam consequatur
+                    eaque sit? Odit dolorem amet obcaecati dolores!
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
         <p className="text-xs text-gray-500 dark:text-gray-400">test </p>
