@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '../../components/ui/button';
 import '../globals.css';
 
 export default function Login() {
@@ -21,17 +23,20 @@ export default function Login() {
           </h2>
           <p className="text-sm text-center text-muted-foreground mb-6">
             ¿No tienes una cuenta?{' '}
-            <a
-              href="#"
+            <Link
+              href="/register"
               className="font-medium text-primary hover:text-accent-foreground transition duration-300"
             >
               Regístrate
-            </a>
+            </Link>
           </p>
 
           <form className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-foreground">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-foreground"
+              >
                 Correo electrónico
               </label>
               <input
@@ -45,7 +50,10 @@ export default function Login() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-foreground">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-foreground"
+              >
                 Contraseña
               </label>
               <div className="mt-1 relative">
@@ -79,17 +87,20 @@ export default function Login() {
                   type="checkbox"
                   className="h-4 w-4 text-primary focus:ring-primary border-input rounded bg-background"
                 />
-                <label htmlFor="remember-me" className="ml-2 text-sm text-muted-foreground">
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 text-sm text-muted-foreground"
+                >
                   Recordarme
                 </label>
               </div>
               <div className="text-sm">
-                <a
-                  href="#"
+                <Link
+                  href="/forgot-password"
                   className="font-medium text-primary hover:text-accent-foreground transition duration-300"
                 >
                   ¿Olvidaste tu contraseña?
-                </a>
+                </Link>
               </div>
             </div>
 

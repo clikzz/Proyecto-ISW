@@ -1,5 +1,7 @@
 import { Montserrat } from 'next/font/google';
 import './globals.css';
+import Link from 'next/link';
+import { Bike } from 'lucide-react';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -15,7 +17,16 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${montserrat.variable} font-sans`}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <header className="absolute px-4 lg:px-6 h-14 flex items-center">
+          <Link className="flex items-center justify-center" href="/">
+            <Bike className="h-6 w-6" />
+            <span className="ml-2 text-lg font-bold">Nombre</span>
+          </Link>
+          <nav className="ml-auto flex gap-4 sm:gap-6"></nav>
+        </header>
+        {children}
+      </body>
     </html>
   );
 }
