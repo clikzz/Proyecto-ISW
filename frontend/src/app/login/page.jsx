@@ -97,11 +97,12 @@ export default function Login() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center">
+                {/* Aplicamos la animación pulse al checkbox */}
                 <input
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-primary focus:ring-primary border-input rounded bg-background"
+                  className="h-4 w-4 text-primary focus:ring-primary border-input rounded bg-background animate-pulse"
                 />
                 <label
                   htmlFor="remember-me"
@@ -121,7 +122,6 @@ export default function Login() {
             </div>
 
             <div>
-              {/* Botón sin animación */}
               <button
                 type="submit"
                 className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-300"
