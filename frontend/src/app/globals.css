@@ -1,3 +1,7 @@
+/* Importar estilos de Animate.css y AOS */
+@import 'animate.css/animate.min.css';
+@import 'aos/dist/aos.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -39,4 +43,20 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Animación personalizada del ojo que se abre y cierra rápidamente */
+@keyframes eye-open-close {
+  0%, 100% {
+    transform: scaleY(0.1); /* Ojo cerrado */
+  }
+  50% {
+    transform: scaleY(1); /* Ojo completamente abierto */
+  }
+}
+
+/* Clase para aplicar la animación */
+.eye-animation {
+  animation: eye-open-close 0.3s ease-in-out; /* Animación más rápida */
+  transform-origin: center; /* Mantiene la animación centrada */
 }

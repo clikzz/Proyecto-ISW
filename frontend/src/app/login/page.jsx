@@ -1,11 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import '../globals.css';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [eyeAnimation, setEyeAnimation] = useState(false);
+
+  // Inicializar AOS
+  useEffect(() => {
+    AOS.init({ duration: 500 });
+  }, []);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+    setEyeAnimation(true); // Activar animación
+    setTimeout(() => setEyeAnimation(false), 500); // Resetear animación después de 500ms
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
@@ -60,12 +74,16 @@ export default function Login() {
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={togglePasswordVisibility}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-muted-foreground" />
+                    <EyeOff
+                      className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''}`}
+                    />
                   ) : (
-                    <Eye className="h-5 w-5 text-muted-foreground" />
+                    <Eye
+                      className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''}`}
+                    />
                   )}
                 </button>
               </div>
