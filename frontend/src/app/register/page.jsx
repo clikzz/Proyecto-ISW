@@ -11,7 +11,8 @@ export default function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md px-6">
-        <div className="bg-card p-8 rounded-lg shadow-lg">
+        {/* Añadimos la clase fade-in al contenedor del formulario */}
+        <div className="bg-card p-8 rounded-lg shadow-lg fade-in">
           <div className="flex justify-center mb-6">
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
               <UserPlus className="h-6 w-6 text-primary-foreground" />
@@ -87,9 +88,9 @@ export default function Register() {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-muted-foreground eye-animation" />
+                    <EyeOff className="h-5 w-5 text-muted-foreground" />
                   ) : (
-                    <Eye className="h-5 w-5 text-muted-foreground eye-animation" />
+                    <Eye className="h-5 w-5 text-muted-foreground" />
                   )}
                 </button>
               </div>
@@ -117,18 +118,19 @@ export default function Register() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5 text-muted-foreground eye-animation" />
+                    <EyeOff className="h-5 w-5 text-muted-foreground" />
                   ) : (
-                    <Eye className="h-5 w-5 text-muted-foreground eye-animation" />
+                    <Eye className="h-5 w-5 text-muted-foreground" />
                   )}
                 </button>
               </div>
             </div>
 
             <div>
+              {/* Añadimos la clase button-pulse al botón de registro */}
               <button
                 type="submit"
-                className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-300"
+                className="w-full py-2 px-4 border rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary button-pulse"
               >
                 Regístrate
               </button>

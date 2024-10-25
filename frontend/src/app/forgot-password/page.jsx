@@ -15,7 +15,8 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md px-6">
-        <div className="bg-card p-8 rounded-lg shadow-lg">
+        {/* Aplicamos fade-in al contenedor del formulario */}
+        <div className="bg-card p-8 rounded-lg shadow-lg fade-in">
           <div className="flex justify-center mb-6">
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
               <Mail className="h-6 w-6 text-primary-foreground" />
@@ -29,7 +30,7 @@ export default function ForgotPassword() {
           </p>
 
           {!emailSent ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6 fade-in">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-foreground">
                   Correo electrónico
@@ -45,16 +46,17 @@ export default function ForgotPassword() {
               </div>
 
               <div>
+                {/* Aplicamos pulse al botón de "Enviar enlace" */}
                 <button
                   type="submit"
-                  className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-300"
+                  className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary animate-pulse"
                 >
                   Enviar enlace
                 </button>
               </div>
             </form>
           ) : (
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-4 fade-in">
               <p className="text-sm text-muted-foreground">
                 Si el correo ingresado está asociado a una cuenta, recibirás un enlace para restablecer tu contraseña.
               </p>

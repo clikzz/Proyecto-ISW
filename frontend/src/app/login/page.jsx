@@ -25,7 +25,8 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md px-6">
-        <div className="bg-card p-8 rounded-lg shadow-lg">
+        {/* Aplicamos fade-in al contenedor del formulario */}
+        <div className="bg-card p-8 rounded-lg shadow-lg fade-in">
           <div className="flex justify-center mb-6">
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
               <LogIn className="h-6 w-6 text-primary-foreground" />
@@ -98,6 +99,7 @@ export default function Login() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center">
+                {/* Animación pulse aplicada al checkbox */}
                 <input
                   id="remember-me"
                   name="remember-me"
