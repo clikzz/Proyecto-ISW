@@ -5,19 +5,13 @@ import {
   CardHeader,
   CardTitle,
 } from '../components/ui/card';
-import { Bike, Wrench, Calendar, BarChart } from 'lucide-react';
+import {Wrench, Calendar, BarChart } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="px-4 lg:px-6 h-14 flex items-center">
-        <Link className="flex items-center justify-center" href="#">
-          <Bike className="h-6 w-6" />
-          <span className="ml-2 text-lg font-bold">Nombre</span>
-        </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6"></nav>
-      </header>
+
       <main className="flex-1">
         <section className="w-full h-[calc(100vh-3.5rem)] flex items-center justify-center">
           <div className="container px-4 md:px-6">
@@ -34,22 +28,23 @@ export default function LandingPage() {
                 </p>
               </div>
               <div className="space-x-4">
-                <Button>Regístrate</Button>
-                <Button variant="outline">Inicia Sesión</Button>
+                <Link href="/register">
+                  <Button>Regístrate</Button>
+                </Link>
+                <Link href="/login">
+                  <Button variant="outline">Inicia Sesión</Button>
+                </Link>
               </div>
             </div>
           </div>
         </section>
-        <section
-          id="features"
-          className="rounded-3xl w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800"
-        >
+        <section id="features" className="w-full py-12 md:py-24 lg:py-32">
           <div className="items-centercontainer px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">
               Caracteristicas principales
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <Card>
+              <Card className="border-none">
                 <CardHeader>
                   <Wrench className="w-8 h-8 mb-2" />
                   <CardTitle>Test</CardTitle>
@@ -64,7 +59,7 @@ export default function LandingPage() {
                   </p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="border-none">
                 <CardHeader>
                   <Calendar className="w-8 h-8 mb-2" />
                   <CardTitle>Test</CardTitle>
@@ -78,7 +73,7 @@ export default function LandingPage() {
                   </p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="border-none">
                 <CardHeader>
                   <BarChart className="w-8 h-8 mb-2" />
                   <CardTitle>Test</CardTitle>

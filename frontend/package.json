@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.25.9",
+    "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "lucide-react": "^0.453.0",

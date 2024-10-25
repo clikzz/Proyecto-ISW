@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '../../components/ui/button';
+import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import '../globals.css';
 
-export default function Login() {
+export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
@@ -15,23 +14,40 @@ export default function Login() {
         <div className="bg-card p-8 rounded-lg shadow-lg">
           <div className="flex justify-center mb-6">
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-              <LogIn className="h-6 w-6 text-primary-foreground" />
+              <UserPlus className="h-6 w-6 text-primary-foreground" />
             </div>
           </div>
           <h2 className="text-3xl font-extrabold text-center text-foreground mb-4">
-            Iniciar sesión
+            Regístrate
           </h2>
           <p className="text-sm text-center text-muted-foreground mb-6">
-            ¿No tienes una cuenta?{' '}
-            <Link
-              href="/register"
+            ¿Ya tienes una cuenta?{' '}
+            <a
+              href="/login"
               className="font-medium text-primary hover:text-accent-foreground transition duration-300"
             >
-              Regístrate
-            </Link>
+              Inicia sesión
+            </a>
           </p>
 
           <form className="space-y-6">
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-foreground"
+              >
+                Nombre completo
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
+                placeholder="Ingresa tu nombre completo"
+              />
+            </div>
+
             <div>
               <label
                 htmlFor="email"
@@ -79,28 +95,33 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
+            <div>
+              <label
+                htmlFor="confirm-password"
+                className="block text-sm font-medium text-foreground"
+              >
+                Confirmar Contraseña
+              </label>
+              <div className="mt-1 relative">
                 <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-primary focus:ring-primary border-input rounded bg-background"
+                  id="confirm-password"
+                  name="confirm-password"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  required
+                  className="appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
+                  placeholder="••••••••"
                 />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 text-sm text-muted-foreground"
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  Recordarme
-                </label>
-              </div>
-              <div className="text-sm">
-                <Link
-                  href="/forgot-password"
-                  className="font-medium text-primary hover:text-accent-foreground transition duration-300"
-                >
-                  ¿Olvidaste tu contraseña?
-                </Link>
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-5 w-5 text-muted-foreground" />
+                  ) : (
+                    <Eye className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </button>
               </div>
             </div>
 
@@ -109,7 +130,7 @@ export default function Login() {
                 type="submit"
                 className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-300"
               >
-                Iniciar sesión
+                Regístrate
               </button>
             </div>
           </form>
