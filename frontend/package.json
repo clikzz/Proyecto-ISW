@@ -5,12 +5,15 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "lint": "next lint"
   },
   "dependencies": {
     "@babel/preset-react": "^7.25.9",
+    "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "animate.css": "^4.1.1",
+    "aos": "^2.3.4",
     "class-variance-authority": "^0.7.0",
     "lucide-react": "^0.453.0",
     "next": "^15.0.0",
@@ -21,6 +24,8 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@types/node": "22.7.9",
+    "@types/react": "18.3.12",
     "eslint": "^8",
     "eslint-config-next": "15.0.0",
     "postcss": "^8",
