@@ -45,7 +45,7 @@ body {
   }
 }
 
-/* Animación personalizada del ojo que se abre y cierra rápidamente */
+/* Animación personalizada del ojo */
 @keyframes eye-open-close {
   0%, 100% {
     transform: scaleY(0.1); /* Ojo cerrado */
@@ -55,8 +55,21 @@ body {
   }
 }
 
-/* Clase para aplicar la animación */
 .eye-animation {
-  animation: eye-open-close 0.3s ease-in-out; /* Animación más rápida */
-  transform-origin: center; /* Mantiene la animación centrada */
+  animation: eye-open-close 0.3s ease-in-out;
+  transform-origin: center;
+}
+
+/* Animación de pulsación para el botón "recordarme" */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 1.5s infinite ease-in-out;
 }

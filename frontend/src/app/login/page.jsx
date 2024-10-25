@@ -12,15 +12,14 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [eyeAnimation, setEyeAnimation] = useState(false);
 
-  // Inicializar AOS
   useEffect(() => {
     AOS.init({ duration: 500 });
   }, []);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
-    setEyeAnimation(true); // Activar animación
-    setTimeout(() => setEyeAnimation(false), 500); // Resetear animación después de 500ms
+    setEyeAnimation(true);
+    setTimeout(() => setEyeAnimation(false), 500);
   };
 
   return (
@@ -103,7 +102,7 @@ export default function Login() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-primary focus:ring-primary border-input rounded bg-background"
+                  className="h-4 w-4 text-primary focus:ring-primary border-input rounded bg-background animate-pulse"
                 />
                 <label
                   htmlFor="remember-me"
