@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.25.9",
+    "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "animate.css": "^4.1.1",
     "aos": "^2.3.4",
