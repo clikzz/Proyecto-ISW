@@ -7,11 +7,18 @@ import '../globals.css';
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [eyeAnimation, setEyeAnimation] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+    setEyeAnimation(true);
+    setTimeout(() => setEyeAnimation(false), 300); // Detenemos la animación tras 300ms
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md px-6">
-        {/* Añadimos la clase fade-in al contenedor del formulario */}
+        {/* Contenedor con animación fade-in */}
         <div className="bg-card p-8 rounded-lg shadow-lg fade-in">
           <div className="flex justify-center mb-6">
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
@@ -85,12 +92,16 @@ export default function Register() {
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={togglePasswordVisibility}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-muted-foreground" />
+                    <EyeOff
+                      className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''}`}
+                    />
                   ) : (
-                    <Eye className="h-5 w-5 text-muted-foreground" />
+                    <Eye
+                      className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''}`}
+                    />
                   )}
                 </button>
               </div>
@@ -127,7 +138,7 @@ export default function Register() {
             </div>
 
             <div>
-              {/* Añadimos la clase button-pulse al botón de registro */}
+              {/* Botón con animación de pulso */}
               <button
                 type="submit"
                 className="w-full py-2 px-4 border rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary button-pulse"

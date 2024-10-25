@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '../../components/ui/button';
 import '../globals.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -19,13 +18,12 @@ export default function Login() {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
     setEyeAnimation(true);
-    setTimeout(() => setEyeAnimation(false), 500);
+    setTimeout(() => setEyeAnimation(false), 300); // Detenemos la animación tras 300ms
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md px-6">
-        {/* Aplicamos fade-in al contenedor del formulario */}
         <div className="bg-card p-8 rounded-lg shadow-lg fade-in">
           <div className="flex justify-center mb-6">
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
@@ -99,12 +97,11 @@ export default function Login() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                {/* Animación pulse aplicada al checkbox */}
                 <input
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-primary focus:ring-primary border-input rounded bg-background animate-pulse"
+                  className="h-4 w-4 text-primary focus:ring-primary border-input rounded bg-background"
                 />
                 <label
                   htmlFor="remember-me"
@@ -124,6 +121,7 @@ export default function Login() {
             </div>
 
             <div>
+              {/* Botón sin animación */}
               <button
                 type="submit"
                 className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-300"
