@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
-import '../globals.css';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -96,11 +95,15 @@ export default function Register() {
                 >
                   {showPassword ? (
                     <EyeOff
-                      className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''}`}
+                      className={`h-5 w-5 text-muted-foreground ${
+                        eyeAnimation ? 'eye-animation' : ''
+                      }`}
                     />
                   ) : (
                     <Eye
-                      className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''}`}
+                      className={`h-5 w-5 text-muted-foreground ${
+                        eyeAnimation ? 'eye-animation' : ''
+                      }`}
                     />
                   )}
                 </button>

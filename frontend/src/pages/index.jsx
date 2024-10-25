@@ -1,17 +1,11 @@
-import { Button } from '../components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '../components/ui/card';
-import {Wrench, Calendar, BarChart } from 'lucide-react';
+import { Button } from '@components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
+import { Wrench, Calendar, BarChart } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen">
-
       <main className="flex-1">
         <section className="w-full h-[calc(100vh-3.5rem)] flex items-center justify-center">
           <div className="container px-4 md:px-6">
