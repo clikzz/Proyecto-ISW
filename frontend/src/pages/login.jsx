@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import Link from 'next/link';
-import '../globals.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -84,11 +83,15 @@ export default function Login() {
                 >
                   {showPassword ? (
                     <EyeOff
-                      className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''}`}
+                      className={`h-5 w-5 text-muted-foreground ${
+                        eyeAnimation ? 'eye-animation' : ''
+                      }`}
                     />
                   ) : (
                     <Eye
-                      className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''}`}
+                      className={`h-5 w-5 text-muted-foreground ${
+                        eyeAnimation ? 'eye-animation' : ''
+                      }`}
                     />
                   )}
                 </button>

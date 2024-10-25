@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Mail, ArrowLeft } from 'lucide-react';
-import '../globals.css';
 
 export default function ForgotPassword() {
   const [emailSent, setEmailSent] = useState(false);
@@ -26,13 +25,17 @@ export default function ForgotPassword() {
             ¿Olvidaste tu contraseña?
           </h2>
           <p className="text-sm text-center text-muted-foreground mb-6">
-            No te preocupes, te enviaremos un enlace para restablecer tu contraseña.
+            No te preocupes, te enviaremos un enlace para restablecer tu
+            contraseña.
           </p>
 
           {!emailSent ? (
             <form onSubmit={handleSubmit} className="space-y-6 fade-in">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-foreground">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-foreground"
+                >
                   Correo electrónico
                 </label>
                 <input
@@ -58,7 +61,8 @@ export default function ForgotPassword() {
           ) : (
             <div className="text-center space-y-4 fade-in">
               <p className="text-sm text-muted-foreground">
-                Si el correo ingresado está asociado a una cuenta, recibirás un enlace para restablecer tu contraseña.
+                Si el correo ingresado está asociado a una cuenta, recibirás un
+                enlace para restablecer tu contraseña.
               </p>
               <button
                 onClick={() => setEmailSent(false)}
