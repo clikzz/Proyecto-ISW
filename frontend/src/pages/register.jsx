@@ -10,7 +10,8 @@ import { useAuth } from '../context/authContext';
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [eyeAnimation, setEyeAnimation] = useState(false);
+  const [eyeAnimation, setEyeAnimation] = useState(false); // Animación del ojo
+  const [eyeConfirmAnimation, setEyeConfirmAnimation] = useState(false); // Animación del ojo para confirmar contraseña
   const [rut, setRut] = useState('');
   const [name_user, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -26,18 +27,18 @@ export default function Register() {
     setTimeout(() => setEyeAnimation(false), 300);
   };
 
-  const formatRut = (value) => {
-    const cleanValue = value
-      .replace(/\./g, '')
-      .replace(/-/g, '')
-      .replace(/\s+/g, '');
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+    setEyeConfirmAnimation(true);
+    setTimeout(() => setEyeConfirmAnimation(false), 300);
+  };
 
-    // Limitar el RUT a 11 caracteres (sin puntos ni guion)
+  const formatRut = (value) => {
+    const cleanValue = value.replace(/\./g, '').replace(/-/g, '').replace(/\s+/g, '');
     if (cleanValue.length > 11) return rut;
 
     const cuerpo = cleanValue.slice(0, -1);
     const verificador = cleanValue.slice(-1);
-
     const formattedCuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
     return `${formattedCuerpo}-${verificador}`;
@@ -45,8 +46,6 @@ export default function Register() {
 
   const handleRutChange = (event) => {
     const formattedRut = formatRut(event.target.value);
-
-    // Limitar a 12 caracteres con puntos y guion
     if (formattedRut.length <= 12) {
       setRut(formattedRut);
     }
@@ -220,12 +219,20 @@ export default function Register() {
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  onClick={toggleConfirmPasswordVisibility}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5 text-muted-foreground" />
+                    <EyeOff
+                      className={`h-5 w-5 text-muted-foreground ${
+                        eyeConfirmAnimation ? 'eye-animation' : ''
+                      }`}
+                    />
                   ) : (
-                    <Eye className="h-5 w-5 text-muted-foreground" />
+                    <Eye
+                      className={`h-5 w-5 text-muted-foreground ${
+                        eyeConfirmAnimation ? 'eye-animation' : ''
+                      }`}
+                    />
                   )}
                 </button>
               </div>
