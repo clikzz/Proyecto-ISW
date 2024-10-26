@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:80/api/auth',
+  baseURL: 'http://localhost:80/api/auth', // SERVER: http://146.83.198.35:1284/api/auth
 });
 
 export const registerUser = async (userData) => {
