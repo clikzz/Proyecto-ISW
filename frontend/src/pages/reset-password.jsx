@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Key, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { resetPassword } from '@/hooks/useAuth';
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('');
@@ -22,21 +23,12 @@ export default function ResetPassword() {
       return;
     }
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/reset-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, newPassword: password })
-      });
-      if (response.ok) {
-        setResetSuccess(true);
-      } else {
-        const data = await response.json();
-        setError(data.message || 'Ocurrió un error al restablecer la contraseña');
-      }
+      await resetPassword(token, password);
+      setResetSuccess(true);
     } catch (error) {
-      setError('Error de conexión. Por favor, intenta de nuevo.');
+      setError('Error al restablecer la contraseña');
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">

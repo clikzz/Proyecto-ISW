@@ -2,14 +2,22 @@
 
 import React, { useState } from 'react';
 import { Mail, ArrowLeft } from 'lucide-react';
+import { forgotPassword } from '@/hooks/useAuth';
 
 export default function ForgotPassword() {
   const [emailSent, setEmailSent] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setEmailSent(true);
+    try {
+      const email = e.target.email.value;
+      forgotPassword(email);
+      setEmailSent(true);
+    } catch (error) {
+      console.error('Error al solicitar restablecimiento de contraseña:', error);
+    }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">

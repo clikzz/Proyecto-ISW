@@ -48,12 +48,10 @@ class User {
     return result.rows[0];
   }
 
-  static async updatePassword(rut, newPassword) {
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+  static async updatePassword(rut, hashedPassword) {
     const query = 'UPDATE "users" SET password_user = $1 WHERE rut = $2';
     await db.query(query, [hashedPassword, rut]);
   }
-
   static async setResetToken(rut, resetToken, resetTokenExpiry) {
     const query = 'UPDATE "users" SET reset_token = $1, reset_token_expiry = $2 WHERE rut = $3';
     await db.query(query, [resetToken, resetTokenExpiry, rut]);
@@ -64,5 +62,6 @@ class User {
     await db.query(query, [rut]);
   }
 }
+
 
 module.exports = User;
