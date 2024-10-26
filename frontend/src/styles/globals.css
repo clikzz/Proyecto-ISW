@@ -7,6 +7,9 @@
 
 body {
   font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Evitar scroll horizontal innecesario */
 }
 
 /* Definición de colores y variables globales */
@@ -43,10 +46,24 @@ body {
 @layer base {
   * {
     @apply border-border;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    background-color: hsl(var(--background));
+    transition: background-color 0.5s ease, color 0.5s ease; /* Animación suave */
+  }
+  
   body {
     @apply bg-background text-foreground;
-    transition: background-color 0.5s ease, color 0.5s ease; /* Animación suave */
+  }
+
+  #__next {
+    height: 100%;
   }
 }
 
@@ -111,4 +128,9 @@ body {
 
 .fade-in {
   animation: fadeIn 0.4s ease-out;
+}
+
+/* Prevenir parpadeos al cargar tema */
+html:not(.dark) {
+  background-color: hsl(var(--background)); /* Fondo predeterminado */
 }

@@ -1,4 +1,3 @@
-// pages/register.jsx
 'use client';
 
 import React, { useState } from 'react';
@@ -10,8 +9,8 @@ import { useAuth } from '../context/authContext';
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [eyeAnimation, setEyeAnimation] = useState(false); // Animación del ojo
-  const [eyeConfirmAnimation, setEyeConfirmAnimation] = useState(false); // Animación del ojo para confirmar contraseña
+  const [eyeAnimation, setEyeAnimation] = useState(false);
+  const [eyeConfirmAnimation, setEyeConfirmAnimation] = useState(false);
   const [rut, setRut] = useState('');
   const [name_user, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -68,7 +67,7 @@ export default function Register() {
         password_user,
       });
       login(response.token);
-      router.push('/home'); // Redirigir a la página protegida
+      router.push('/home');
     } catch (err) {
       setError('Error al registrar. Por favor, inténtalo de nuevo.');
     }
@@ -77,7 +76,7 @@ export default function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md px-6">
-        <div className="bg-card p-8 rounded-lg shadow-lg fade-in">
+        <div className="bg-card p-8 rounded-lg shadow-lg">
           <div className="flex justify-center mb-6">
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
               <UserPlus className="h-6 w-6 text-primary-foreground" />
@@ -96,9 +95,7 @@ export default function Register() {
             </a>
           </p>
 
-          {error && (
-            <p className="text-sm text-center text-red-500 mb-4">{error}</p>
-          )}
+          {error && <p className="text-sm text-center text-red-500 mb-4">{error}</p>}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
@@ -115,7 +112,7 @@ export default function Register() {
                 value={name_user}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
+                className="mt-1 block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                 placeholder="Ingresa tu nombre completo"
               />
             </div>
@@ -134,7 +131,7 @@ export default function Register() {
                 value={rut}
                 onChange={handleRutChange}
                 required
-                className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
+                className="mt-1 block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                 placeholder="12.345.678-9"
               />
             </div>
@@ -153,7 +150,7 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
+                className="mt-1 block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                 placeholder="tu@ejemplo.com"
               />
             </div>
@@ -173,7 +170,7 @@ export default function Register() {
                   value={password_user}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
+                  className="block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                   placeholder="••••••••"
                 />
                 <button
@@ -213,7 +210,7 @@ export default function Register() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
+                  className="block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                   placeholder="••••••••"
                 />
                 <button
@@ -241,7 +238,7 @@ export default function Register() {
             <div>
               <button
                 type="submit"
-                className="w-full py-2 px-4 border rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary button-pulse"
+                className="w-full py-2 px-4 border rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:ring-primary transition"
               >
                 Regístrate
               </button>
