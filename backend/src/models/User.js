@@ -2,9 +2,8 @@ const db = require('../config/db');
 const bcrypt = require('bcrypt');
 
 class User {
-  static async create(rut, name_user, email, password_user, role_user = 'user') {
+  static async create(rut, name_user, email, password_user, role_user = 'default') {
     const hashedPassword = await bcrypt.hash(password_user, 10);
-    const role_user = 'default';
     const query = `
       INSERT INTO "users" (rut, name_user, email, password_user, role_user) 
       VALUES ($1, $2, $3, $4, $5) 
