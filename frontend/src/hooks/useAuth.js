@@ -1,12 +1,9 @@
-// src/services/apiService.js
 import axios from 'axios';
 
-// Configura la URL base de tu API
 const api = axios.create({
-  baseURL: 'http://tu-api.com/api/users', // Cambia esto a la URL real de tu API
+  baseURL: 'http://localhost:80/api/auth',
 });
 
-// Función para registrar un usuario
 export const registerUser = async (userData) => {
   try {
     const response = await api.post('/register', userData);
@@ -20,7 +17,6 @@ export const registerUser = async (userData) => {
   }
 };
 
-// Función para iniciar sesión
 export const loginUser = async (email, password) => {
   try {
     const response = await api.post('/login', { email, password });

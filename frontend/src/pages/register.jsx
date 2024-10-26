@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { registerUser } from '@hooks/useAuth';
 
@@ -9,6 +10,12 @@ export default function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [eyeAnimation, setEyeAnimation] = useState(false);
   const [rut, setRut] = useState('');
+  const [name_user, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password_user, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState(null);
+  const router = useRouter();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -17,7 +24,10 @@ export default function Register() {
   };
 
   const formatRut = (value) => {
-    const cleanValue = value.replace(/\./g, '').replace(/-/g, '').replace(/\s+/g, '');
+    const cleanValue = value
+      .replace(/\./g, '')
+      .replace(/-/g, '')
+      .replace(/\s+/g, '');
 
     // Limitar el RUT a 11 caracteres (sin puntos ni guion)
     if (cleanValue.length > 11) return rut;
@@ -36,6 +46,29 @@ export default function Register() {
     // Limitar a 12 caracteres con puntos y guion
     if (formattedRut.length <= 12) {
       setRut(formattedRut);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    if (password_user !== confirmPassword) {
+      setError('Las contraseñas no coinciden.');
+      return;
+    }
+
+    try {
+      const response = await registerUser({
+        rut,
+        name_user,
+        email,
+        password_user,
+      });
+      localStorage.setItem('token', response.token);
+      router.push('/home'); // Redirigir a la página protegida
+    } catch (err) {
+      setError('Error al registrar. Por favor, inténtalo de nuevo.');
     }
   };
 
@@ -61,7 +94,7 @@ export default function Register() {
             </a>
           </p>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
                 htmlFor="name"
@@ -73,6 +106,8 @@ export default function Register() {
                 id="name"
                 name="name"
                 type="text"
+                value={name_user}
+                onChange={(e) => setName(e.target.value)}
                 required
                 className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
                 placeholder="Ingresa tu nombre completo"
@@ -109,6 +144,8 @@ export default function Register() {
                 id="email"
                 name="email"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
                 placeholder="tu@ejemplo.com"
@@ -127,6 +164,8 @@ export default function Register() {
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
+                  value={password_user}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   className="appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
                   placeholder="••••••••"
@@ -165,6 +204,8 @@ export default function Register() {
                   id="confirm-password"
                   name="confirm-password"
                   type={showConfirmPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   className="appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
                   placeholder="••••••••"

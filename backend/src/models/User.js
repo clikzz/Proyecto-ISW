@@ -2,12 +2,17 @@ const db = require('../config/db');
 const bcrypt = require('bcrypt');
 
 class User {
-  static async create(rut, name_user, email, password_user, role_user = 'user') {
+  static async create(
+    rut,
+    name_user,
+    email,
+    password_user,
+    role_user = 'default'
+  ) {
     const hashedPassword = await bcrypt.hash(password_user, 10);
-    const role_user = 'default';
     const query = `
-      INSERT INTO "users" (rut, name_user, email, password_user, role_user) 
-      VALUES ($1, $2, $3, $4, $5) 
+      INSERT INTO "users" (rut, name_user, email, password_user, role_user)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING rut, name_user, email, role_user, created_at;
     `;
     const values = [rut, name_user, email, hashedPassword, role_user];
@@ -18,6 +23,12 @@ class User {
   static async findByEmail(email) {
     const query = 'SELECT * FROM "users" WHERE email = $1';
     const result = await db.query(query, [email]);
+    return result.rows[0];
+  }
+
+  static async findByRut(rut) {
+    const query = 'SELECT * FROM "users" WHERE rut = $1';
+    const result = await db.query(query, [rut]);
     return result.rows[0];
   }
 
