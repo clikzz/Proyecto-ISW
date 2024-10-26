@@ -1,9 +1,11 @@
+// pages/register.jsx
 'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { registerUser } from '@hooks/useAuth';
+import { useAuth } from '../context/authContext';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,6 +18,7 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState(null);
   const router = useRouter();
+  const { login } = useAuth();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -65,7 +68,7 @@ export default function Register() {
         email,
         password_user,
       });
-      localStorage.setItem('token', response.token);
+      login(response.token);
       router.push('/home'); // Redirigir a la página protegida
     } catch (err) {
       setError('Error al registrar. Por favor, inténtalo de nuevo.');
@@ -93,6 +96,10 @@ export default function Register() {
               Inicia sesión
             </a>
           </p>
+
+          {error && (
+            <p className="text-sm text-center text-red-500 mb-4">{error}</p>
+          )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>

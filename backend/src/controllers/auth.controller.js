@@ -33,7 +33,7 @@ exports.register = async (req, res) => {
     const token = jwt.sign(
       { id: user.rut, role: user.role_user },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '12h' }
     );
 
     res
@@ -72,7 +72,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { id: user.rut, role: user.role_user },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '12h' }
     );
 
     res.json({ message: 'Login exitoso', token });

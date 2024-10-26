@@ -21,14 +21,6 @@ export default function LandingPage() {
                   qui fugit quibusdam libero ea consectetur.
                 </p>
               </div>
-              <div className="space-x-4">
-                <Link href="/register">
-                  <Button>Regístrate</Button>
-                </Link>
-                <Link href="/login">
-                  <Button variant="outline">Inicia Sesión</Button>
-                </Link>
-              </div>
             </div>
           </div>
         </section>
