@@ -6,14 +6,46 @@ exports.register = async (req, res) => {
   try {
     const { rut, name_user, email, password_user } = req.body;
 
+    console.log(req.body);
+
     if (!rut || !name_user || !email || !password_user) {
-      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+      console.log('error1');
+
+      return res
+        .status(400)
+        .json({ message: 'Todos los campos son obligatorios' });
+    }
+
+    // Verificar si el usuario ya existe
+    const existingEmail = await User.findByEmail(email);
+    const existingRut = await User.findByRut(rut);
+    if (existingEmail) {
+      return res
+        .status(400)
+        .json({ message: 'El correo electrónico ya está en uso' });
+    }
+    if (existingRut) {
+      return res.status(400).json({ message: 'El rut ya está en uso' });
     }
 
     const user = await User.create(rut, name_user, email, password_user);
-    res.status(201).json({ message: 'Usuario registrado exitosamente', user });
+
+    const token = jwt.sign(
+      { id: user.rut, role: user.role_user },
+      process.env.JWT_SECRET,
+      { expiresIn: '12h' }
+    );
+
+    res
+      .status(201)
+      .json({ message: 'Usuario registrado exitosamente', user, token });
+    console.log('se crea');
   } catch (error) {
-    res.status(500).json({ message: 'Error al registrar usuario', error: error.message });
+    console.log('error2');
+
+    res
+      .status(500)
+      .json({ message: 'Error al registrar usuario', error: error.message });
   }
 };
 
@@ -22,7 +54,9 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email y contraseña son obligatorios' });
+      return res
+        .status(400)
+        .json({ message: 'Email y contraseña son obligatorios' });
     }
 
     const user = await User.findByEmail(email);
@@ -38,11 +72,13 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { id: user.rut, role: user.role_user },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '12h' }
     );
 
     res.json({ message: 'Login exitoso', token });
   } catch (error) {
-    res.status(500).json({ message: 'Error en el login', error: error.message });
+    res
+      .status(500)
+      .json({ message: 'Error en el login', error: error.message });
   }
 };
