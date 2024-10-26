@@ -1,15 +1,22 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { loginUser } from '@hooks/useAuth';
+import { useAuth } from '../context/authContext';
 
 export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [eyeAnimation, setEyeAnimation] = useState(false);
-  const [rut, setRut] = useState('');
+  const [error, setError] = useState(null);
+  const router = useRouter();
+  const { login } = useAuth();
 
   useEffect(() => {
     AOS.init({ duration: 500 });
@@ -18,29 +25,24 @@ export default function Login() {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
     setEyeAnimation(true);
-    setTimeout(() => setEyeAnimation(false), 300);
+    setTimeout(() => setEyeAnimation(false), 300); // Detenemos la animación tras 300ms
   };
 
-  const formatRut = (value) => {
-    const cleanValue = value.replace(/\./g, '').replace(/-/g, '').replace(/\s+/g, '');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
 
-    // Limitar el RUT a 11 caracteres (sin puntos ni guion)
-    if (cleanValue.length > 11) return rut;
-
-    const cuerpo = cleanValue.slice(0, -1);
-    const verificador = cleanValue.slice(-1);
-
-    const formattedCuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-    return `${formattedCuerpo}-${verificador}`;
-  };
-
-  const handleRutChange = (event) => {
-    const formattedRut = formatRut(event.target.value);
-
-    // Limitar a 12 caracteres con puntos y guion
-    if (formattedRut.length <= 12) {
-      setRut(formattedRut);
+    try {
+      const response = await loginUser(email, password);
+      login(response.token);
+      router.push('/home'); // Redirigir a la página protegida
+      console.log('Usuario logueado:', response);
+    } catch (error) {
+      setError('Error en el inicio de sesión. Por favor, inténtalo de nuevo.');
+      console.error(
+        'Error en el inicio de sesión:',
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -66,24 +68,27 @@ export default function Login() {
             </Link>
           </p>
 
-          <form className="space-y-6">
+          {error && (
+            <p className="text-sm text-center text-red-500 mb-4">{error}</p>
+          )}
+
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
-                htmlFor="rut"
+                htmlFor="email"
                 className="block text-sm font-medium text-foreground"
               >
-                RUT
+                Correo electrónico
               </label>
               <input
-                id="rut"
-                name="rut"
-                type="text"
-                value={rut}
-                onChange={handleRutChange}
+                id="email"
+                name="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
-                placeholder="12.345.678-9"
-                maxLength={12} // Limitar el input a 12 caracteres
+                placeholder="tu@ejemplo.com"
               />
             </div>
 
@@ -99,6 +104,8 @@ export default function Login() {
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   className="appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
                   placeholder="••••••••"
@@ -127,6 +134,7 @@ export default function Login() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center">
+                {/* Aplicamos la animación pulse al checkbox */}
                 <input
                   id="remember-me"
                   name="remember-me"
