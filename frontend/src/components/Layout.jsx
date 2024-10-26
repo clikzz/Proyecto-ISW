@@ -1,3 +1,4 @@
+// components/Layout.jsx
 import { Bike } from 'lucide-react';
 import { FiSun, FiMoon } from 'react-icons/fi'; // Íconos de sol y luna
 import Link from 'next/link';
@@ -5,6 +6,7 @@ import { useState, useEffect } from 'react';
 
 export default function Layout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false); // Estado del tema
+  const [animateIcon, setAnimateIcon] = useState(false); // Controla la animación del icono
 
   // Sincronizar el tema con localStorage
   useEffect(() => {
@@ -17,8 +19,9 @@ export default function Layout({ children }) {
     }
   }, []);
 
-  // Cambiar entre modo claro y oscuro
+  // Cambiar entre modo claro y oscuro con animación
   const toggleDarkMode = () => {
+    setAnimateIcon(true); // Activa la animación del icono
     if (isDarkMode) {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
@@ -27,10 +30,13 @@ export default function Layout({ children }) {
       localStorage.setItem('theme', 'dark');
     }
     setIsDarkMode(!isDarkMode);
+
+    // Desactiva la animación después de 500ms
+    setTimeout(() => setAnimateIcon(false), 500);
   };
 
   return (
-    <div>
+    <div className="theme-transition min-h-screen">
       <header className="absolute px-4 lg:px-6 h-14 flex items-center w-full">
         <Link className="flex items-center justify-center" href="/">
           <Bike className="h-6 w-6" />
@@ -40,7 +46,9 @@ export default function Layout({ children }) {
           {/* Botón de cambio de tema alineado a la derecha */}
           <button
             onClick={toggleDarkMode}
-            className="p-2 rounded-full ml-4 focus:outline-none transition-transform duration-300 hover:scale-110"
+            className={`p-2 rounded-full ml-4 focus:outline-none transition-transform duration-300 hover:scale-110 ${
+              animateIcon ? 'rotate-animation' : ''
+            }`}
           >
             {isDarkMode ? (
               <FiSun className="text-foreground" size={24} />

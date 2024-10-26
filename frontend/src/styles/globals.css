@@ -51,14 +51,14 @@ body {
 }
 
 /* Animación del cambio de tema */
-@keyframes theme-transition {
+@keyframes scale-fade {
   0% {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.9);
   }
   50% {
     opacity: 0.5;
-    transform: scale(1);
+    transform: scale(1.05);
   }
   100% {
     opacity: 1;
@@ -66,8 +66,8 @@ body {
   }
 }
 
-.theme-transition {
-  animation: theme-transition 0.5s ease-in-out;
+.scale-fade-animation {
+  animation: scale-fade 0.3s ease-in-out;
 }
 
 /* Animaciones adicionales */
