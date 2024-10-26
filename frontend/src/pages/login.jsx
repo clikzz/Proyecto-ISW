@@ -10,6 +10,7 @@ import { loginUser } from '@hooks/useAuth';
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [eyeAnimation, setEyeAnimation] = useState(false);
+  const [rut, setRut] = useState('');
 
   useEffect(() => {
     AOS.init({ duration: 500 });
@@ -18,7 +19,30 @@ export default function Login() {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
     setEyeAnimation(true);
-    setTimeout(() => setEyeAnimation(false), 300); // Detenemos la animación tras 300ms
+    setTimeout(() => setEyeAnimation(false), 300);
+  };
+
+  const formatRut = (value) => {
+    const cleanValue = value.replace(/\./g, '').replace(/-/g, '').replace(/\s+/g, '');
+
+    // Limitar el RUT a 11 caracteres (sin puntos ni guion)
+    if (cleanValue.length > 11) return rut;
+
+    const cuerpo = cleanValue.slice(0, -1);
+    const verificador = cleanValue.slice(-1);
+
+    const formattedCuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    return `${formattedCuerpo}-${verificador}`;
+  };
+
+  const handleRutChange = (event) => {
+    const formattedRut = formatRut(event.target.value);
+
+    // Limitar a 12 caracteres con puntos y guion
+    if (formattedRut.length <= 12) {
+      setRut(formattedRut);
+    }
   };
 
   return (
@@ -46,18 +70,21 @@ export default function Login() {
           <form className="space-y-6">
             <div>
               <label
-                htmlFor="email"
+                htmlFor="rut"
                 className="block text-sm font-medium text-foreground"
               >
-                Correo electrónico
+                RUT
               </label>
               <input
-                id="email"
-                name="email"
-                type="email"
+                id="rut"
+                name="rut"
+                type="text"
+                value={rut}
+                onChange={handleRutChange}
                 required
                 className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
-                placeholder="tu@ejemplo.com"
+                placeholder="12.345.678-9"
+                maxLength={12} // Limitar el input a 12 caracteres
               />
             </div>
 
@@ -101,7 +128,6 @@ export default function Login() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                {/* Aplicamos la animación pulse al checkbox */}
                 <input
                   id="remember-me"
                   name="remember-me"
