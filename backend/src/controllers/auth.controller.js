@@ -4,13 +4,13 @@ const bcrypt = require('bcrypt');
 
 exports.register = async (req, res) => {
   try {
-    const { rut, name_user, email, password_user, role_user } = req.body;
+    const { rut, name_user, email, password_user } = req.body;
 
     if (!rut || !name_user || !email || !password_user) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
 
-    const user = await User.create(rut, name_user, email, password_user, role_user);
+    const user = await User.create(rut, name_user, email, password_user);
     res.status(201).json({ message: 'Usuario registrado exitosamente', user });
   } catch (error) {
     res.status(500).json({ message: 'Error al registrar usuario', error: error.message });
