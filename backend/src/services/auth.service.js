@@ -14,4 +14,6 @@ const loginUser = async (email, password) => {
   throw new Error('Credenciales incorrectas');
 };
 
+
+
 module.exports = { registerUser, loginUser };

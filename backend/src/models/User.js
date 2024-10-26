@@ -35,6 +35,33 @@ class User {
   static async validatePassword(user, password) {
     return bcrypt.compare(password, user.password_user);
   }
+
+  static async findByRut(rut) {
+    const query = 'SELECT * FROM "users" WHERE rut = $1';
+    const result = await db.query(query, [rut]);
+    return result.rows[0];
+  }
+
+  static async findByResetToken(resetToken) {
+    const query = 'SELECT * FROM "users" WHERE reset_token = $1';
+    const result = await db.query(query, [resetToken]);
+    return result.rows[0];
+  }
+
+  static async updatePassword(rut, hashedPassword) {
+    const query = 'UPDATE "users" SET password_user = $1 WHERE rut = $2';
+    await db.query(query, [hashedPassword, rut]);
+  }
+  static async setResetToken(rut, resetToken, resetTokenExpiry) {
+    const query = 'UPDATE "users" SET reset_token = $1, reset_token_expiry = $2 WHERE rut = $3';
+    await db.query(query, [resetToken, resetTokenExpiry, rut]);
+  }
+
+  static async clearResetToken(rut) {
+    const query = 'UPDATE "users" SET reset_token = NULL, reset_token_expiry = NULL WHERE rut = $1';
+    await db.query(query, [rut]);
+  }
 }
+
 
 module.exports = User;

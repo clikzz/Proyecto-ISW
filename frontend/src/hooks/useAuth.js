@@ -29,3 +29,29 @@ export const loginUser = async (email, password) => {
     throw error; // Lanza el error para manejarlo en el componente
   }
 };
+
+export const forgotPassword = async (email) => {
+  try {
+    const response = await api.post('/forgot-password', { email });
+    return response.data; // Aquí puedes manejar la respuesta del servidor
+  } catch (error) {
+    console.error(
+      'Error al solicitar restablecimiento de contraseña:',
+      error.response?.data || error.message
+    );
+    throw error; // Lanza el error para manejarlo en el componente
+  }
+};
+
+export const resetPassword = async (token, newPassword) => {
+  try {
+    const response = await api.post('/reset-password', { token, newPassword });
+    return response.data; // Aquí puedes manejar la respuesta del servidor
+  } catch (error) {
+    console.error(
+      'Error al restablecer la contraseña:',
+      error.response?.data || error.message
+    );
+    throw error; // Lanza el error para manejarlo en el componente
+  }
+};
