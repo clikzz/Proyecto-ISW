@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
+import { registerUser } from '@hooks/useAuth';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);

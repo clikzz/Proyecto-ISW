@@ -5,6 +5,7 @@ import { Eye, EyeOff, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { loginUser } from '@hooks/useAuth';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
