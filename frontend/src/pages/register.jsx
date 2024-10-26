@@ -7,17 +7,40 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [eyeAnimation, setEyeAnimation] = useState(false);
+  const [rut, setRut] = useState('');
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
     setEyeAnimation(true);
-    setTimeout(() => setEyeAnimation(false), 300); // Detenemos la animación tras 300ms
+    setTimeout(() => setEyeAnimation(false), 300);
+  };
+
+  const formatRut = (value) => {
+    const cleanValue = value.replace(/\./g, '').replace(/-/g, '').replace(/\s+/g, '');
+
+    // Limitar el RUT a 11 caracteres (sin puntos ni guion)
+    if (cleanValue.length > 11) return rut;
+
+    const cuerpo = cleanValue.slice(0, -1);
+    const verificador = cleanValue.slice(-1);
+
+    const formattedCuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    return `${formattedCuerpo}-${verificador}`;
+  };
+
+  const handleRutChange = (event) => {
+    const formattedRut = formatRut(event.target.value);
+
+    // Limitar a 12 caracteres con puntos y guion
+    if (formattedRut.length <= 12) {
+      setRut(formattedRut);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md px-6">
-        {/* Contenedor con animación fade-in */}
         <div className="bg-card p-8 rounded-lg shadow-lg fade-in">
           <div className="flex justify-center mb-6">
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
@@ -52,6 +75,25 @@ export default function Register() {
                 required
                 className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
                 placeholder="Ingresa tu nombre completo"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="rut"
+                className="block text-sm font-medium text-foreground"
+              >
+                RUT
+              </label>
+              <input
+                id="rut"
+                name="rut"
+                type="text"
+                value={rut}
+                onChange={handleRutChange}
+                required
+                className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
+                placeholder="12.345.678-9"
               />
             </div>
 
@@ -141,7 +183,6 @@ export default function Register() {
             </div>
 
             <div>
-              {/* Botón con animación de pulso */}
               <button
                 type="submit"
                 className="w-full py-2 px-4 border rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary button-pulse"
