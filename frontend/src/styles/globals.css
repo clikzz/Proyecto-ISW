@@ -1,4 +1,3 @@
-/* Importar estilos de Animate.css y AOS */
 @import 'animate.css/animate.min.css';
 @import 'aos/dist/aos.css';
 
@@ -10,48 +9,74 @@ body {
   font-family: var(--font-sans);
 }
 
+/* Definición de colores y variables globales */
 @layer base {
   :root {
-    --background: 211 44% 8%; /* Color: #0D1B2A */
-    --foreground: 220 8% 88%; /* Color: #E0E1DD */
-    --card: 213 30% 15%; /* Color: #1B263B */
-    --card-foreground: 220 8% 88%; /* Color: #E0E1DD */
-    --popover: 210 20% 40%; /* Color: #415A77 */
-    --popover-foreground: 220 8% 88%; /* Color: #E0E1DD */
-    --primary: 210 25% 55%; /* Color: #778DA9 */
-    --primary-foreground: 211 44% 8%; /* Color: #0D1B2A */
-    --secondary: 220 8% 88%; /* Color: #E0E1DD */
-    --secondary-foreground: 213 30% 15%; /* Color: #1B263B */
-    --muted: 213 30% 15%; /* Color: #1B263B */
-    --muted-foreground: 210 25% 55%; /* Color: #778DA9 */
-    --accent: 210 20% 40%; /* Color: #415A77 */
-    --accent-foreground: 220 8% 88%; /* Color: #E0E1DD */
-    --destructive: 0 84.2% 60.2%; /* Rojo */
-    --destructive-foreground: 220 8% 88%; /* Color: #E0E1DD */
-    --border: 210 25% 55%; /* Color: #778DA9 */
-    --input: 213 30% 15%; /* Color: #1B263B */
-    --ring: 210 20% 40%; /* Color: #415A77 */
+    /* Modo claro */
+    --background: 220 10% 90%; /* #E0E1DD */
+    --foreground: 213 15% 15%; /* #1B263B */
+    --card: 220 10% 88%; /* Fondo claro de tarjetas */
+    --card-foreground: 213 30% 15%; /* Texto oscuro para tarjetas */
+    --primary: 215 20% 45%; /* #778DA9 */
+    --muted-foreground: 213 20% 25%; /* Color de textos secundarios */
+    --accent: 215 25% 40%; /* #415A77 */
+    --border: 210 15% 55%; /* Borde */
+    --input: 213 30% 15%; /* Fondo de inputs */
+    --ring: 215 25% 45%; /* Anillos de foco */
     --radius: 0.5rem;
-    --font-sans: var(--font-montserrat);
+    --font-sans: 'Montserrat', sans-serif;
+  }
+
+  .dark {
+    /* Modo oscuro */
+    --background: 211 44% 8%; /* #0D1B2A */
+    --foreground: 220 8% 88%; /* #E0E1DD */
+    --card: 213 30% 15%; /* #1B263B */
+    --card-foreground: 220 8% 88%; /* Texto claro */
+    --primary: 210 25% 55%; /* #778DA9 */
+    --muted-foreground: 220 8% 70%; /* Texto secundario claro */
+    --accent: 210 20% 40%; /* #415A77 */
   }
 }
 
+/* Estilos base */
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+    transition: background-color 0.5s ease, color 0.5s ease; /* Animación suave */
   }
 }
 
-/* Animación personalizada del ojo */
-@keyframes eye-open-close {
-  0%, 100% {
-    transform: scaleY(0.1); /* Ojo cerrado */
+/* Animación del cambio de tema */
+@keyframes theme-transition {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
   }
   50% {
-    transform: scaleY(1); /* Ojo completamente abierto */
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.theme-transition {
+  animation: theme-transition 0.5s ease-in-out;
+}
+
+/* Animaciones adicionales */
+@keyframes eye-open-close {
+  0%, 100% {
+    transform: scaleY(0.1);
+  }
+  50% {
+    transform: scaleY(1);
   }
 }
 
@@ -60,7 +85,6 @@ body {
   transform-origin: center;
 }
 
-/* Animación de pulsación para el botón */
 @keyframes pulse {
   0%, 100% {
     transform: scale(1);
@@ -74,7 +98,6 @@ body {
   animation: pulse 2s infinite;
 }
 
-/* Animación de desvanecimiento (fade-in) rápida */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -87,5 +110,5 @@ body {
 }
 
 .fade-in {
-  animation: fadeIn 0.4s ease-out; /* Duración ajustada a 0.4s */
+  animation: fadeIn 0.4s ease-out;
 }
