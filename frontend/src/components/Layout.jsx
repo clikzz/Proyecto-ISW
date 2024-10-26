@@ -2,14 +2,14 @@
 import { Bike, Sun, Moon } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@components/ui/button';
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../context/authContext';
-import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Layout({ children }) {
-  const [isDarkMode, setIsDarkMode] = useState(false); // Estado del tema
-  const [animateIcon, setAnimateIcon] = useState(false); // Controla la animación del icono
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [animateIcon, setAnimateIcon] = useState(false);
   const router = useRouter();
   const { isAuthenticated, logout } = useAuth();
 
@@ -18,76 +18,81 @@ export default function Layout({ children }) {
     router.push('/');
   };
 
-  // Sincronizar el tema con localStorage
-  useEffect(() => {
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-      setIsDarkMode(true);
-    } else {
-      document.documentElement.classList.remove('dark');
+  const pageVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 20, 
+      scale: 0.98 // Añade un efecto de escala sutil
+    },
+    enter: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1, 
+      transition: { 
+        duration: 0.6, // Ajusta la duración
+        ease: [0.25, 0.46, 0.45, 0.94] // Curva de animación más suave
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      y: -20, 
+      scale: 0.98, 
+      transition: { 
+        duration: 0.4, 
+        ease: [0.42, 0, 0.58, 1] 
+      }
     }
-  }, []);
-
-  // Cambiar entre modo claro y oscuro con animación
-  const toggleDarkMode = () => {
-    setAnimateIcon(true); // Activa la animación del icono
-    if (isDarkMode) {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    } else {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    }
-    setIsDarkMode(!isDarkMode);
-
-    // Desactiva la animación después de 500ms
-    setTimeout(() => setAnimateIcon(false), 500);
   };
 
   return (
-    <div className="theme-transition min-h-screen">
-      <header className="absolute px-4 lg:px-6 h-14 flex items-center w-full">
+    <div className="theme-transition min-h-screen overflow-hidden">
+      <header className="absolute px-4 lg:px-6 h-14 flex items-center w-full z-10">
         <Link className="flex items-center justify-center" href="/">
           <Bike className="h-6 w-6" />
           <span className="ml-2 text-lg font-bold">Nombre</span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <div className="space-x-4">
-            {/* Botón de cambio de tema alineado a la derecha */}
-            <button
-              onClick={toggleDarkMode}
-              className={`p-2 rounded-full ml-4 focus:outline-none transition-transform duration-300 hover:scale-110 ${
-                animateIcon ? 'rotate-animation' : ''
-              }`}
-            >
-              {isDarkMode ? (
-                <Sun className="text-foreground" size={24} />
-              ) : (
-                <Moon className="text-foreground" size={24} />
-              )}
-            </button>
-            {isAuthenticated ? (
-              <>
-                <Link href="/home">
-                  <Button variant="outline">Home</Button>
-                </Link>
-                <Button onClick={handleLogout}>Cerrar Sesión</Button>
-              </>
-            ) : (
-              <>
-                <Link href="/register">
-                  <Button variant="outline">Regístrate</Button>
-                </Link>
-                <Link href="/login">
-                  <Button>Inicia Sesión</Button>
-                </Link>
-              </>
-            )}
-          </div>
+        <nav className="ml-auto flex gap-4">
+          <button
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className={`p-2 rounded-full transition-transform duration-300 hover:scale-110 ${
+              animateIcon ? 'rotate-animation' : ''
+            }`}
+          >
+            {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+          </button>
+          {isAuthenticated ? (
+            <>
+              <Link href="/home">
+                <Button>Home</Button>
+              </Link>
+              <Button onClick={handleLogout}>Cerrar Sesión</Button>
+            </>
+          ) : (
+            <>
+              <Link href="/register">
+                <Button>Regístrate</Button>
+              </Link>
+              <Link href="/login">
+                <Button>Inicia Sesión</Button>
+              </Link>
+            </>
+          )}
         </nav>
       </header>
-      <main>{children}</main>
+
+      <AnimatePresence mode="wait">
+        <motion.main
+          key={router.asPath}
+          variants={pageVariants}
+          initial="hidden"
+          animate="enter"
+          exit="exit"
+          transition={{ type: 'spring', stiffness: 100 }}
+          className="z-0" // Asegura que no se superponga al header o botones
+        >
+          {children}
+        </motion.main>
+      </AnimatePresence>
     </div>
   );
 }
