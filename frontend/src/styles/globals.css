@@ -1,0 +1,136 @@
+@import 'animate.css/animate.min.css';
+@import 'aos/dist/aos.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Evitar scroll horizontal innecesario */
+}
+
+/* Definición de colores y variables globales */
+@layer base {
+  :root {
+    /* Modo claro */
+    --background: 220 10% 90%; /* #E0E1DD */
+    --foreground: 213 15% 15%; /* #1B263B */
+    --card: 220 10% 88%; /* Fondo claro de tarjetas */
+    --card-foreground: 213 30% 15%; /* Texto oscuro para tarjetas */
+    --primary: 215 20% 45%; /* #778DA9 */
+    --muted-foreground: 213 20% 25%; /* Color de textos secundarios */
+    --accent: 215 25% 40%; /* #415A77 */
+    --border: 210 15% 55%; /* Borde */
+    --input: 213 30% 15%; /* Fondo de inputs */
+    --ring: 215 25% 45%; /* Anillos de foco */
+    --radius: 0.5rem;
+    --font-sans: 'Montserrat', sans-serif;
+  }
+
+  .dark {
+    /* Modo oscuro */
+    --background: 211 44% 8%; /* #0D1B2A */
+    --foreground: 220 8% 88%; /* #E0E1DD */
+    --card: 213 30% 15%; /* #1B263B */
+    --card-foreground: 220 8% 88%; /* Texto claro */
+    --primary: 210 25% 55%; /* #778DA9 */
+    --muted-foreground: 220 8% 70%; /* Texto secundario claro */
+    --accent: 210 20% 40%; /* #415A77 */
+  }
+}
+
+/* Estilos base */
+@layer base {
+  * {
+    @apply border-border;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    background-color: hsl(var(--background));
+    transition: background-color 0.5s ease, color 0.5s ease; /* Animación suave */
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  #__next {
+    height: 100%;
+  }
+}
+
+/* Animación del cambio de tema */
+@keyframes scale-fade {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.scale-fade-animation {
+  animation: scale-fade 0.3s ease-in-out;
+}
+
+/* Animaciones adicionales */
+@keyframes eye-open-close {
+  0%, 100% {
+    transform: scaleY(0.1);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.eye-animation {
+  animation: eye-open-close 0.3s ease-in-out;
+  transform-origin: center;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.button-pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Prevenir parpadeos al cargar tema */
+html:not(.dark) {
+  background-color: hsl(var(--background)); /* Fondo predeterminado */
+}
