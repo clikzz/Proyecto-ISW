@@ -5,7 +5,8 @@ import { useRouter } from 'next/router';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import { loginUser } from '@hooks/useAuth';
-import { useAuth } from '../context/authContext';
+import { useAuth } from '@context/authContext';
+import { useRole } from '@context/roleContext';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -15,6 +16,7 @@ export default function Login() {
   const [error, setError] = useState(null);
   const router = useRouter();
   const { login } = useAuth();
+  const { changeRole } = useRole();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -29,6 +31,7 @@ export default function Login() {
     try {
       const response = await loginUser(email, password);
       login(response.token);
+      changeRole(response.role);
       router.push('/home'); // Redirigir a la página protegida
       console.log('Usuario logueado:', response);
     } catch (error) {

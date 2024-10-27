@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Key, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { resetPassword } from '@/hooks/useAuth';
+import { resetPassword } from '@hooks/useAuth';
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('');
@@ -28,7 +28,7 @@ export default function ResetPassword() {
     } catch (error) {
       setError('Error al restablecer la contraseña');
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
@@ -59,7 +59,7 @@ export default function ResetPassword() {
                   <input
                     id="password"
                     name="password"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -97,9 +97,7 @@ export default function ResetPassword() {
                   placeholder="••••••••"
                 />
               </div>
-              {error && (
-                <p className="text-sm text-red-600">{error}</p>
-              )}
+              {error && <p className="text-sm text-red-600">{error}</p>}
               <div>
                 <button
                   type="submit"
