@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { registerUser } from '@hooks/useAuth';
-import { useAuth } from '../context/authContext';
+import { useAuth } from '@context/authContext';
+import { useRole } from '@context/roleContext';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,6 +20,7 @@ export default function Register() {
   const [error, setError] = useState(null);
   const router = useRouter();
   const { login } = useAuth();
+  const { changeRole } = useRole();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -33,7 +35,10 @@ export default function Register() {
   };
 
   const formatRut = (value) => {
-    const cleanValue = value.replace(/\./g, '').replace(/-/g, '').replace(/\s+/g, '');
+    const cleanValue = value
+      .replace(/\./g, '')
+      .replace(/-/g, '')
+      .replace(/\s+/g, '');
     if (cleanValue.length > 11) return rut;
 
     const cuerpo = cleanValue.slice(0, -1);
@@ -67,6 +72,7 @@ export default function Register() {
         password_user,
       });
       login(response.token);
+      changeRole(response.role);
       router.push('/home');
     } catch (err) {
       setError('Error al registrar. Por favor, inténtalo de nuevo.');
@@ -95,7 +101,9 @@ export default function Register() {
             </a>
           </p>
 
-          {error && <p className="text-sm text-center text-red-500 mb-4">{error}</p>}
+          {error && (
+            <p className="text-sm text-center text-red-500 mb-4">{error}</p>
+          )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>

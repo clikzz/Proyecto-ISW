@@ -9,19 +9,19 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    pass: process.env.EMAIL_PASS,
   },
   tls: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 // Verificar la conexión
-transporter.verify(function(error, success) {
+transporter.verify(function (error, success) {
   if (error) {
     console.log(error);
   } else {
-    console.log("Servidor listo para enviar correos");
+    console.log('Servidor listo para enviar correos');
   }
 });
 
@@ -59,13 +59,13 @@ exports.register = async (req, res) => {
       { expiresIn: '12h' }
     );
 
-    res
-      .status(201)
-      .json({ message: 'Usuario registrado exitosamente', user, token });
-    console.log('se crea');
+    res.status(201).json({
+      message: 'Usuario registrado exitosamente',
+      user,
+      token,
+      role: user.role_user,
+    });
   } catch (error) {
-    console.log('error2');
-
     res
       .status(500)
       .json({ message: 'Error al registrar usuario', error: error.message });
@@ -97,8 +97,9 @@ exports.login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '12h' }
     );
+    console.log(user.role_user);
 
-    res.json({ message: 'Login exitoso', token });
+    res.json({ message: 'Login exitoso', token, role: user.role_user });
   } catch (error) {
     res
       .status(500)
@@ -111,14 +112,18 @@ exports.forgotPassword = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-      return res.status(400).json({ message: 'El correo electrónico es obligatorio' });
+      return res
+        .status(400)
+        .json({ message: 'El correo electrónico es obligatorio' });
     }
 
     console.log('Buscando usuario con email:', email);
     const user = await User.findByEmail(email);
     if (!user) {
       console.log('Usuario no encontrado');
-      return res.status(404).json({ message: 'No existe un usuario con este correo electrónico' });
+      return res
+        .status(404)
+        .json({ message: 'No existe un usuario con este correo electrónico' });
     }
     console.log('Usuario encontrado:', user);
 
@@ -146,13 +151,23 @@ exports.forgotPassword = async (req, res) => {
     await transporter.sendMail(mailOptions);
     console.log('Correo enviado');
 
-    res.status(200).json({ message: 'Se ha enviado un correo con instrucciones para restablecer tu contraseña' });
+    res.status(200).json({
+      message:
+        'Se ha enviado un correo con instrucciones para restablecer tu contraseña',
+    });
   } catch (error) {
     console.error('Error en forgotPassword:', error);
     if (error.code === 'EAUTH') {
-      return res.status(500).json({ message: 'Error de autenticación al enviar el correo', error: error.message });
+      return res.status(500).json({
+        message: 'Error de autenticación al enviar el correo',
+        error: error.message,
+      });
     }
-    res.status(500).json({ message: 'Error al procesar la solicitud de restablecimiento de contraseña', error: error.message });
+    res.status(500).json({
+      message:
+        'Error al procesar la solicitud de restablecimiento de contraseña',
+      error: error.message,
+    });
   }
 };
 
@@ -161,7 +176,9 @@ exports.resetPassword = async (req, res) => {
     const { token, newPassword } = req.body;
 
     if (!token || !newPassword) {
-      return res.status(400).json({ message: 'Token y nueva contraseña son obligatorios' });
+      return res
+        .status(400)
+        .json({ message: 'Token y nueva contraseña son obligatorios' });
     }
 
     console.log('Buscando usuario con token:', token);
@@ -174,7 +191,12 @@ exports.resetPassword = async (req, res) => {
 
     const now = new Date();
     const tokenExpiry = new Date(user.reset_token_expiry);
-    console.log('Fecha actual:', now, 'Fecha de expiración del token:', tokenExpiry);
+    console.log(
+      'Fecha actual:',
+      now,
+      'Fecha de expiración del token:',
+      tokenExpiry
+    );
 
     if (now > tokenExpiry) {
       console.log('El token ha expirado');
@@ -194,6 +216,9 @@ exports.resetPassword = async (req, res) => {
     res.status(200).json({ message: 'Contraseña actualizada exitosamente' });
   } catch (error) {
     console.error('Error en resetPassword:', error);
-    res.status(500).json({ message: 'Error al restablecer la contraseña', error: error.message });
+    res.status(500).json({
+      message: 'Error al restablecer la contraseña',
+      error: error.message,
+    });
   }
 };

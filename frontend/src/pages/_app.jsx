@@ -3,7 +3,8 @@ import { Montserrat } from 'next/font/google';
 import Layout from '@components/Layout';
 import '@styles/globals.css'; // Asegúrate de que la ruta es correcta
 import { AuthProvider } from '../context/authContext';
-import { useRouter } from 'next/router'
+import { RoleProvider } from '../context/roleContext'; // Importa RoleProvider
+import { useRouter } from 'next/router';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -15,9 +16,11 @@ export default function MyApp({ Component, pageProps }) {
 
   return (
     <AuthProvider>
-      <Layout key={router.asPath}>
-        <Component {...pageProps} />
-      </Layout>
+      <RoleProvider>
+        <Layout key={router.asPath}>
+          <Component {...pageProps} />
+        </Layout>
+      </RoleProvider>
     </AuthProvider>
   );
 }
