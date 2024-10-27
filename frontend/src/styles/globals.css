@@ -1,6 +1,7 @@
 @import 'animate.css/animate.min.css';
 @import 'aos/dist/aos.css';
 
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -52,6 +53,7 @@ body {
   }
 
   html, body {
+    font-family: 'Montserrat', sans-serif;
     height: 100%;
     width: 100%;
     background-color: hsl(var(--background));
@@ -59,7 +61,11 @@ body {
   }
   
   body {
+    font-family: var(--font-sans);
     @apply bg-background text-foreground;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
   }
 
   #__next {
