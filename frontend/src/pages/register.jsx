@@ -120,7 +120,7 @@ export default function Register() {
                 value={name_user}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="mt-1 block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
+                className="mt-1 block w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                 placeholder="Ingresa tu nombre completo"
               />
             </div>
@@ -139,7 +139,7 @@ export default function Register() {
                 value={rut}
                 onChange={handleRutChange}
                 required
-                className="mt-1 block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
+                className="mt-1 block w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                 placeholder="12.345.678-9"
               />
             </div>
@@ -158,7 +158,7 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-1 block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
+                className="mt-1 block w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                 placeholder="tu@ejemplo.com"
               />
             </div>
@@ -178,7 +178,7 @@ export default function Register() {
                   value={password_user}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
+                  className="block w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                   placeholder="••••••••"
                 />
                 <button
@@ -218,7 +218,7 @@ export default function Register() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
+                  className="block w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                   placeholder="••••••••"
                 />
                 <button
