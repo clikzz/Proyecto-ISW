@@ -35,7 +35,10 @@ export default function Register() {
   };
 
   const formatRut = (value) => {
-    const cleanValue = value.replace(/\./g, '').replace(/-/g, '').replace(/\s+/g, '');
+    const cleanValue = value
+      .replace(/\./g, '')
+      .replace(/-/g, '')
+      .replace(/\s+/g, '');
     if (cleanValue.length > 11) return rut;
 
     const cuerpo = cleanValue.slice(0, -1);
@@ -98,7 +101,9 @@ export default function Register() {
             </a>
           </p>
 
-          {error && <p className="text-sm text-center text-red-500 mb-4">{error}</p>}
+          {error && (
+            <p className="text-sm text-center text-red-500 mb-4">{error}</p>
+          )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
@@ -182,9 +187,17 @@ export default function Register() {
                   onClick={togglePasswordVisibility}
                 >
                   {showPassword ? (
-                    <EyeOff className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''}`} />
+                    <EyeOff
+                      className={`h-5 w-5 text-muted-foreground ${
+                        eyeAnimation ? 'eye-animation' : ''
+                      }`}
+                    />
                   ) : (
-                    <Eye className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''}`} />
+                    <Eye
+                      className={`h-5 w-5 text-muted-foreground ${
+                        eyeAnimation ? 'eye-animation' : ''
+                      }`}
+                    />
                   )}
                 </button>
               </div>
@@ -214,20 +227,30 @@ export default function Register() {
                   onClick={toggleConfirmPasswordVisibility}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className={`h-5 w-5 text-muted-foreground ${eyeConfirmAnimation ? 'eye-animation' : ''}`} />
+                    <EyeOff
+                      className={`h-5 w-5 text-muted-foreground ${
+                        eyeConfirmAnimation ? 'eye-animation' : ''
+                      }`}
+                    />
                   ) : (
-                    <Eye className={`h-5 w-5 text-muted-foreground ${eyeConfirmAnimation ? 'eye-animation' : ''}`} />
+                    <Eye
+                      className={`h-5 w-5 text-muted-foreground ${
+                        eyeConfirmAnimation ? 'eye-animation' : ''
+                      }`}
+                    />
                   )}
                 </button>
               </div>
             </div>
 
-            <button
-              type="submit"
-              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:ring-primary transition"
-            >
-              Regístrate
-            </button>
+            <div>
+              <button
+                type="submit"
+                className="w-full py-2 px-4 border rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:ring-primary transition"
+              >
+                Regístrate
+              </button>
+            </div>
           </form>
         </div>
       </div>
