@@ -65,7 +65,7 @@ export default function Layout({ children }) {
         }}
       />
 
-      <div className="theme-transition min-h-screen overflow-hidden">
+      <div className="theme-transition min-h-screen overflow-hidden ${className}">
         <header className="absolute px-4 lg:px-6 h-14 flex items-center w-full z-10">
           <Link className="flex items-center justify-center" href="/">
             <Bike className="h-6 w-6" />

@@ -1,5 +1,7 @@
 @import 'animate.css/animate.min.css';
 @import 'aos/dist/aos.css';
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
 
 @tailwind base;
 @tailwind components;
@@ -9,7 +11,7 @@ body {
   font-family: var(--font-sans);
   margin: 0;
   padding: 0;
-  overflow-x: hidden; /* Evitar scroll horizontal innecesario */
+  overflow-x: hidden; 
 }
 
 /* Definición de colores y variables globales */
@@ -52,14 +54,19 @@ body {
   }
 
   html, body {
+    font-family: 'Montserrat', sans-serif;
     height: 100%;
     width: 100%;
     background-color: hsl(var(--background));
-    transition: background-color 0.5s ease, color 0.5s ease; /* Animación suave */
+    transition: background-color 0.5s ease, color 0.5s ease;
   }
   
   body {
+    font-family: var(--font-sans);
     @apply bg-background text-foreground;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
   }
 
   #__next {
@@ -134,3 +141,27 @@ body {
 html:not(.dark) {
   background-color: hsl(var(--background)); /* Fondo predeterminado */
 }
+
+/* Estilo global para inputs */
+input {
+  background-color: hsl(var(--background)); /* Fondo claro */
+  color: hsl(var(--foreground)); /* Texto */
+  border: 1px solid hsl(var(--border)); /* Borde */
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Placeholder más claro */
+input::placeholder {
+  color: hsl(var(--muted-foreground)); /* Color del placeholder */
+  opacity: 0.7; /* Más claro */
+}
+
+/* Efecto al enfocarse */
+input:focus {
+  border-color: hsl(var(--primary)); /* Color del borde al enfocarse */
+  box-shadow: 0 0 0 2px hsl(var(--ring)); /* Anillo al enfocarse */
+  outline: none; /* Quitar outline predeterminado */
+}
+
