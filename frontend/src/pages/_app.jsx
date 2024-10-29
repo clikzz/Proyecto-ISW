@@ -3,7 +3,7 @@ import { Montserrat } from 'next/font/google';
 import Layout from '@components/Layout';
 import '@styles/globals.css'; 
 import { AuthProvider } from '../context/authContext';
-import { RoleProvider } from '../context/roleContext'; // Importa RoleProvider
+import { RoleProvider } from '../context/roleContext'; 
 import { useRouter } from 'next/router';
 
 const montserrat = Montserrat({
@@ -19,7 +19,7 @@ export default function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider>
       <RoleProvider>
-        <Layout key={router.asPath}>
+        <Layout key={router.asPath} className={montserrat.variable}>
           <Component {...pageProps} />
         </Layout>
       </RoleProvider>
