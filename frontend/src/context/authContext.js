@@ -1,5 +1,6 @@
 // context/authContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { changeRole } from '@context/roleContext';
 
 const AuthContext = createContext();
 
@@ -18,6 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    changeRole('default');
     setIsAuthenticated(false);
   };
 
