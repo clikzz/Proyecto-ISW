@@ -35,10 +35,7 @@ export default function Register() {
   };
 
   const formatRut = (value) => {
-    const cleanValue = value
-      .replace(/\./g, '')
-      .replace(/-/g, '')
-      .replace(/\s+/g, '');
+    const cleanValue = value.replace(/\./g, '').replace(/-/g, '').replace(/\s+/g, '');
     if (cleanValue.length > 11) return rut;
 
     const cuerpo = cleanValue.slice(0, -1);
@@ -101,9 +98,7 @@ export default function Register() {
             </a>
           </p>
 
-          {error && (
-            <p className="text-sm text-center text-red-500 mb-4">{error}</p>
-          )}
+          {error && <p className="text-sm text-center text-red-500 mb-4">{error}</p>}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
@@ -120,7 +115,7 @@ export default function Register() {
                 value={name_user}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="mt-1 block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
+                className="mt-1 block w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                 placeholder="Ingresa tu nombre completo"
               />
             </div>
@@ -139,7 +134,7 @@ export default function Register() {
                 value={rut}
                 onChange={handleRutChange}
                 required
-                className="mt-1 block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
+                className="mt-1 block w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                 placeholder="12.345.678-9"
               />
             </div>
@@ -158,7 +153,7 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-1 block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
+                className="mt-1 block w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                 placeholder="tu@ejemplo.com"
               />
             </div>
@@ -178,7 +173,7 @@ export default function Register() {
                   value={password_user}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
+                  className="block w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                   placeholder="••••••••"
                 />
                 <button
@@ -187,17 +182,9 @@ export default function Register() {
                   onClick={togglePasswordVisibility}
                 >
                   {showPassword ? (
-                    <EyeOff
-                      className={`h-5 w-5 text-muted-foreground ${
-                        eyeAnimation ? 'eye-animation' : ''
-                      }`}
-                    />
+                    <EyeOff className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''}`} />
                   ) : (
-                    <Eye
-                      className={`h-5 w-5 text-muted-foreground ${
-                        eyeAnimation ? 'eye-animation' : ''
-                      }`}
-                    />
+                    <Eye className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''}`} />
                   )}
                 </button>
               </div>
@@ -218,7 +205,7 @@ export default function Register() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="block w-full px-3 py-2 border rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
+                  className="block w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-primary focus:border-primary transition"
                   placeholder="••••••••"
                 />
                 <button
@@ -227,30 +214,20 @@ export default function Register() {
                   onClick={toggleConfirmPasswordVisibility}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff
-                      className={`h-5 w-5 text-muted-foreground ${
-                        eyeConfirmAnimation ? 'eye-animation' : ''
-                      }`}
-                    />
+                    <EyeOff className={`h-5 w-5 text-muted-foreground ${eyeConfirmAnimation ? 'eye-animation' : ''}`} />
                   ) : (
-                    <Eye
-                      className={`h-5 w-5 text-muted-foreground ${
-                        eyeConfirmAnimation ? 'eye-animation' : ''
-                      }`}
-                    />
+                    <Eye className={`h-5 w-5 text-muted-foreground ${eyeConfirmAnimation ? 'eye-animation' : ''}`} />
                   )}
                 </button>
               </div>
             </div>
 
-            <div>
-              <button
-                type="submit"
-                className="w-full py-2 px-4 border rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:ring-primary transition"
-              >
-                Regístrate
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:ring-primary transition"
+            >
+              Regístrate
+            </button>
           </form>
         </div>
       </div>
