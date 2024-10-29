@@ -9,6 +9,7 @@ export default function ResetPassword() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
   const [error, setError] = useState('');
 
@@ -48,6 +49,7 @@ export default function ResetPassword() {
 
           {!resetSuccess ? (
             <form onSubmit={handleSubmit} className="space-y-6 fade-in">
+              {/* Nueva contraseña */}
               <div>
                 <label
                   htmlFor="password"
@@ -72,13 +74,15 @@ export default function ResetPassword() {
                     className="absolute inset-y-0 right-0 flex items-center pr-3"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-muted-foreground" />
+                      <EyeOff className="h-5 w-5 text-muted-foreground eye-animation" />
                     ) : (
-                      <Eye className="h-5 w-5 text-muted-foreground" />
+                      <Eye className="h-5 w-5 text-muted-foreground eye-animation" />
                     )}
                   </button>
                 </div>
               </div>
+
+              {/* Confirmar nueva contraseña */}
               <div>
                 <label
                   htmlFor="confirmPassword"
@@ -86,22 +90,36 @@ export default function ResetPassword() {
                 >
                   Confirmar nueva contraseña
                 </label>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
-                  placeholder="••••••••"
-                />
+                <div className="relative mt-1">
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-5 w-5 text-muted-foreground eye-animation" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-muted-foreground eye-animation" />
+                    )}
+                  </button>
+                </div>
               </div>
+
               {error && <p className="text-sm text-red-600">{error}</p>}
               <div>
                 <button
                   type="submit"
-                  className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary animate-pulse"
+                  className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                 >
                   Restablecer contraseña
                 </button>
@@ -114,7 +132,7 @@ export default function ResetPassword() {
               </p>
               <button
                 onClick={() => router.push('/login')}
-                className="font-medium text-primary hover:text-accent-foreground transition duration-300"
+                className="font-medium text-primary hover:text-accent-foreground"
               >
                 Ir a iniciar sesión
               </button>
@@ -124,7 +142,7 @@ export default function ResetPassword() {
           <div className="mt-6 text-sm text-center">
             <button
               onClick={() => router.push('/login')}
-              className="flex items-center justify-center font-medium text-primary hover:text-accent-foreground transition duration-300"
+              className="flex items-center justify-center font-medium text-primary hover:text-accent-foreground"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Volver a iniciar sesión
