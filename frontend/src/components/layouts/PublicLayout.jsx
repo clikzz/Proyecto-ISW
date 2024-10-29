@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Button } from '@components/ui/button';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useAuth } from '../context/authContext';
+import { useAuth } from '@context/authContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Script from 'next/script';
 

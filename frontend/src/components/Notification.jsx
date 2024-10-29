@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,7 +10,10 @@ export default function Notificaciones({ children }) {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target)
+      ) {
         setIsOpen(false);
       }
     };
@@ -33,9 +36,7 @@ export default function Notificaciones({ children }) {
 
   return (
     <div className="relative">
-      <div onClick={toggleNotifications}>
-        {children}
-      </div>
+      <div onClick={toggleNotifications}>{children}</div>
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -56,8 +57,12 @@ export default function Notificaciones({ children }) {
                 <X size={20} />
               </button>
             </div>
-            <div className="p-4 min-h-[200px]"> {/* Agregado min-h-[200px] para más espacio */}
-              <p className="text-center text-muted-foreground">No hay notificaciones nuevas</p>
+            <div className="p-4 min-h-[200px]">
+              {' '}
+              {/* Agregado min-h-[200px] para más espacio */}
+              <p className="text-center text-muted-foreground">
+                No hay notificaciones nuevas
+              </p>
             </div>
           </motion.div>
         )}

@@ -1,13 +1,22 @@
-'use client'
+'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Bike, Sun, Moon, Bell, Home, Package, User, LogOut } from 'lucide-react';
+import {
+  Bike,
+  Sun,
+  Moon,
+  Bell,
+  Home,
+  Package,
+  User,
+  LogOut,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useAuth } from '../context/authContext';
+import { useAuth } from '@context/authContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Script from 'next/script';
-import Notificaciones from './Notification';
+import Notificaciones from '@components/Notification';
 
 export default function Layout2({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -68,19 +77,31 @@ export default function Layout2({ children }) {
           </Link>
 
           <nav className="space-y-4 w-full">
-            <Link href="/home" className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all">
+            <Link
+              href="/home"
+              className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all"
+            >
               <Home className="h-6 w-6" />
               <span>Home</span>
             </Link>
-            <Link href="/inventarios" className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all">
-              <Package className="h-6 w-6" />
-              <span>Inventarios</span>
-            </Link>
-            <Link href="/profile" className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all">
+            <Link
+              href="/profile"
+              className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all"
+            >
               <User className="h-6 w-6" />
               <span>Perfil</span>
             </Link>
-            <button onClick={handleLogout} className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all w-full">
+            <Link
+              href="/inventarios"
+              className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all"
+            >
+              <Package className="h-6 w-6" />
+              <span>Inventarios</span>
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all w-full"
+            >
               <LogOut className="h-6 w-6" />
               <span>Cerrar Sesión</span>
             </button>
@@ -90,7 +111,10 @@ export default function Layout2({ children }) {
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           <header className="h-14 flex items-center justify-end px-6">
-            <button onClick={toggleDarkMode} className="p-2 rounded-full hover:bg-accent">
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-full hover:bg-accent"
+            >
               {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
             </button>
             <Notificaciones>

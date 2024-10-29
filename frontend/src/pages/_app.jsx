@@ -1,8 +1,8 @@
 // pages/_app.js
-import { Montserrat } from 'next/font/google';
-import Layout from '@components/Layout';
-import Layout2 from '@components/Layout2';
 import '@styles/globals.css';
+import { Montserrat } from 'next/font/google';
+import PublicLayout from '@layouts/PublicLayout';
+import PrivateLayout from '@layouts/PrivateLayout';
 import { AuthProvider } from '../context/authContext';
 import { RoleProvider } from '../context/roleContext';
 import { useRouter } from 'next/router';
@@ -18,7 +18,16 @@ export default function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   // Determine which layout to use based on the current route
-  const LayoutComponent = router.pathname === '/home' ? Layout2 : Layout;
+  const publicRoutes = [
+    '/',
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password',
+  ];
+  const LayoutComponent = publicRoutes.includes(router.pathname)
+    ? PublicLayout
+    : PrivateLayout;
 
   return (
     <AuthProvider>
