@@ -74,15 +74,15 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { rut, password } = req.body;
 
-    if (!email || !password) {
+    if (!rut || !password) {
       return res
         .status(400)
-        .json({ message: 'Email y contraseña son obligatorios' });
+        .json({ message: 'RUT y contraseña son obligatorios' });
     }
 
-    const user = await User.findByEmail(email);
+    const user = await User.findByRut(rut);
     if (!user) {
       return res.status(401).json({ message: 'Credenciales incorrectas' });
     }

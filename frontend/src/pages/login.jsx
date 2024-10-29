@@ -9,7 +9,7 @@ import { useAuth } from '@context/authContext';
 import { useRole } from '@context/roleContext';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
+  const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [eyeAnimation, setEyeAnimation] = useState(false);
@@ -24,12 +24,26 @@ export default function Login() {
     setTimeout(() => setEyeAnimation(false), 300); // Detenemos la animación tras 300ms
   };
 
+  const formatRut = (rut) => {
+    let cleanRut = rut.replace(/[^0-9Kk]/g, ''); // Solo permite números y "K"
+    if (cleanRut.length > 1) {
+      cleanRut = cleanRut.replace(/^(\d{1,2})(\d{3})(\d{3})([0-9Kk])$/, '$1.$2.$3-$4');
+    }
+    return cleanRut.slice(0, 12); // Limita el RUT a 12 caracteres
+  };
+
+  const handleRutChange = (e) => {
+    const rawRut = e.target.value;
+    const formatted = formatRut(rawRut);
+    setRut(formatted);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
     try {
-      const response = await loginUser(email, password);
+      const response = await loginUser(rut, password);
       login(response.token);
       changeRole(response.role);
       router.push('/home'); // Redirigir a la página protegida
@@ -72,20 +86,21 @@ export default function Login() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
-                htmlFor="email"
+                htmlFor="rut"
                 className="block text-sm font-medium text-foreground"
               >
-                Correo electrónico
+                RUT
               </label>
               <input
-                id="email"
-                name="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="rut"
+                name="rut"
+                type="text"
+                value={rut}
+                onChange={handleRutChange}
                 required
+                maxLength={12}
                 className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
-                placeholder="tu@ejemplo.com"
+                placeholder="12.345.678-9"
               />
             </div>
 
