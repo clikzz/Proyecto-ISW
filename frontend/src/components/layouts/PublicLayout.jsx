@@ -72,12 +72,6 @@ export default function Layout({ children }) {
             <span className="ml-2 text-lg font-bold">bikefy</span>
           </Link>
           <nav className="ml-auto flex gap-4">
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-full transition-transform duration-300 hover:scale-110"
-            >
-              {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
-            </button>
             {isAuthenticated ? (
               <>
                 <Link href="/home">
@@ -87,14 +81,20 @@ export default function Layout({ children }) {
               </>
             ) : (
               <>
-                <Link href="/register">
-                  <Button>Regístrate</Button>
-                </Link>
                 <Link href="/login">
                   <Button>Inicia Sesión</Button>
                 </Link>
+                <Link href="/register">
+                  <Button>Regístrate</Button>
+                </Link>
               </>
             )}
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-full transition-transform duration-300 hover:scale-110"
+            >
+              {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+            </button>
           </nav>
         </header>
 
