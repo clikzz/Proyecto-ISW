@@ -141,3 +141,27 @@ body {
 html:not(.dark) {
   background-color: hsl(var(--background)); /* Fondo predeterminado */
 }
+
+/* Estilo global para inputs */
+input {
+  background-color: hsl(var(--background)); /* Fondo claro */
+  color: hsl(var(--foreground)); /* Texto */
+  border: 1px solid hsl(var(--border)); /* Borde */
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Placeholder más claro */
+input::placeholder {
+  color: hsl(var(--muted-foreground)); /* Color del placeholder */
+  opacity: 0.7; /* Más claro */
+}
+
+/* Efecto al enfocarse */
+input:focus {
+  border-color: hsl(var(--primary)); /* Color del borde al enfocarse */
+  box-shadow: 0 0 0 2px hsl(var(--ring)); /* Anillo al enfocarse */
+  outline: none; /* Quitar outline predeterminado */
+}
+
