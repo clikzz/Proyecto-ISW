@@ -1,9 +1,10 @@
 // pages/_app.js
-import { Montserrat } from 'next/font/google';
-import Layout from '@layouts/general';
 import '@styles/globals.css';
-import { AuthProvider } from '@context/authContext';
-import { RoleProvider } from '@context/roleContext';
+import { Montserrat } from 'next/font/google';
+import PublicLayout from '@layouts/PublicLayout';
+import PrivateLayout from '@layouts/PrivateLayout';
+import { AuthProvider } from '../context/authContext';
+import { RoleProvider } from '../context/roleContext';
 import { useRouter } from 'next/router';
 
 const montserrat = Montserrat({
@@ -16,12 +17,24 @@ const montserrat = Montserrat({
 export default function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
+  // Determine which layout to use based on the current route
+  const publicRoutes = [
+    '/',
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password',
+  ];
+  const LayoutComponent = publicRoutes.includes(router.pathname)
+    ? PublicLayout
+    : PrivateLayout;
+
   return (
     <AuthProvider>
       <RoleProvider>
-        <Layout key={router.asPath} className={montserrat.variable}>
+        <LayoutComponent key={router.asPath} className={montserrat.variable}>
           <Component {...pageProps} />
-        </Layout>
+        </LayoutComponent>
       </RoleProvider>
     </AuthProvider>
   );
