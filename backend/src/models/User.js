@@ -2,9 +2,6 @@ const db = require('../config/db');
 const bcrypt = require('bcrypt');
 
 class User {
-<<<<<<< HEAD
-  static async create(rut, name_user, email, password_user, role_user = 'default') {
-=======
   static async create(
     rut,
     name_user,
@@ -12,7 +9,6 @@ class User {
     password_user,
     role_user = 'default'
   ) {
->>>>>>> origin/main
     const hashedPassword = await bcrypt.hash(password_user, 10);
     const query = `
       INSERT INTO "users" (rut, name_user, email, password_user, role_user)
