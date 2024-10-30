@@ -1,20 +1,32 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Camera, Pencil, Eye, EyeOff } from 'lucide-react';
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Camera, Eye, EyeOff } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function ProfilePage() {
-  const [name, setName] = useState('John Doe');
-  const [phone, setPhone] = useState('+1234567890');
-  const [profilePicture, setProfilePicture] = useState('/placeholder.svg?height=400&width=400');
-  const [editingName, setEditingName] = useState(false);
-  const [editingPhone, setEditingPhone] = useState(false);
-  const [editingPassword, setEditingPassword] = useState(false);
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [name, setName] = useState("John Doe");
+  const [phone, setPhone] = useState("+1234567890");
+  const [rut, setRut] = useState(""); // Estado para el RUT
+  const [profilePicture, setProfilePicture] = useState(
+    "/placeholder.svg?height=400&width=400"
+  );
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  useEffect(() => {
+    // Simulación de obtener el RUT desde el backend
+    setTimeout(() => {
+      setRut("12.345.678-9"); // Ejemplo de un RUT dinámico
+    }, 1000);
+  }, []);
 
   const handleProfilePictureChange = (event) => {
     const file = event.target.files[0];
@@ -29,153 +41,171 @@ export default function ProfilePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Profile updated:', { name, phone, oldPassword, newPassword });
-    setEditingName(false);
-    setEditingPhone(false);
-    setEditingPassword(false);
+    console.log("Profile updated:", {
+      name,
+      phone,
+      rut,
+      oldPassword,
+      newPassword,
+      confirmNewPassword,
+    });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background transition-colors duration-300 fade-in">
-      <div className="bg-card p-8 rounded-lg shadow-lg max-w-4xl w-full">
-        <div className="flex flex-col md:flex-row gap-12">
-          <aside className="md:w-1/3 flex flex-col items-center">
-            <figure className="relative w-64 h-64 mb-6">
-              <img
-                src={profilePicture}
-                alt="Foto de perfil"
-                className="w-full h-full rounded-full object-cover shadow-lg"
-              />
+    <main className="min-h-screen flex items-center justify-center bg-background p-8">
+      <Card className="w-full max-w-4xl px-12 py-12 bg-card rounded-2xl shadow-xl border border-transparent">
+        <CardContent className="space-y-12">
+          <section className="flex flex-col items-center space-y-8">
+            <div className="relative">
+              <figure className="w-40 h-40 rounded-full overflow-hidden border-4 border-card shadow-md">
+                <img
+                  src={profilePicture}
+                  alt="Foto de perfil"
+                  className="w-full h-full object-cover"
+                />
+              </figure>
               <label
                 htmlFor="profile-picture"
-                className="absolute bottom-2 right-2 bg-primary text-white p-3 rounded-full cursor-pointer hover:bg-primary/90 transition-colors shadow-md"
+                className="absolute bottom-2 right-2 p-2 bg-primary rounded-full cursor-pointer hover:bg-accent transition-colors"
               >
-                <Camera className="h-6 w-6" />
+                <Camera className="h-6 w-6 text-primary-foreground" />
                 <input
                   id="profile-picture"
-                  name="profile-picture"
                   type="file"
                   accept="image/*"
                   onChange={handleProfilePictureChange}
                   className="hidden"
                 />
               </label>
-            </figure>
-            <figcaption>
-              <h1 className="text-2xl font-bold text-center text-foreground">{name}</h1>
-            </figcaption>
-          </aside>
+            </div>
+            <header className="text-center">
+              <h1 className="text-4xl font-extrabold text-foreground">{name}</h1>
+              <p className="text-base text-muted-foreground">RUT: {rut}</p>
+            </header>
+          </section>
 
-          <section className="md:w-2/3">
-            <h2 className="text-xl font-semibold mb-6 text-foreground">Editar Perfil</h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="relative">
-                <Label htmlFor="name" className="text-sm font-medium text-foreground">Nombre</Label>
-                <div className="flex items-center mt-1">
+          <div className="grid md:grid-cols-2 gap-12">
+            <section className="space-y-6">
+              <h2 className="text-2xl font-semibold text-foreground">
+                Datos personales
+              </h2>
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                <div>
+                  <Label htmlFor="name" className="block text-sm text-foreground">
+                    Nombre
+                  </Label>
                   <Input
                     id="name"
-                    type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Tu nombre"
-                    className="pr-10"
-                    disabled={!editingName}
+                    className="mt-2 w-full px-4 py-3 border border-input rounded-lg shadow-sm bg-white dark:bg-gray-800 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-2"
-                    onClick={() => setEditingName(!editingName)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
                 </div>
-              </div>
-
-              <div className="relative">
-                <Label htmlFor="phone" className="text-sm font-medium text-foreground">Teléfono</Label>
-                <div className="flex items-center mt-1">
+                <div>
+                  <Label htmlFor="phone" className="block text-sm text-foreground">
+                    Teléfono
+                  </Label>
                   <Input
                     id="phone"
-                    type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="Tu número de teléfono"
-                    className="pr-10"
-                    disabled={!editingPhone}
+                    className="mt-2 w-full px-4 py-3 border border-input rounded-lg shadow-sm bg-white dark:bg-gray-800 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-2"
-                    onClick={() => setEditingPhone(!editingPhone)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
                 </div>
-              </div>
+                <Button
+                  type="submit"
+                  className="w-full py-3 bg-primary text-primary-foreground rounded-lg hover:bg-accent transition"
+                >
+                  Guardar Cambios
+                </Button>
+              </form>
+            </section>
 
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-sm font-medium text-foreground">Contraseña</Label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setEditingPassword(!editingPassword)}
-                  >
-                    {editingPassword ? 'Cancelar' : 'Cambiar contraseña'}
-                  </Button>
+            <section className="space-y-6">
+              <h2 className="text-2xl font-semibold text-foreground">
+                Cambiar clave
+              </h2>
+              <form className="space-y-6">
+                <div>
+                  <Label htmlFor="oldPassword" className="block text-sm text-foreground">
+                    Actual
+                  </Label>
+                  <div className="relative mt-2">
+                    <Input
+                      id="oldPassword"
+                      type={showOldPassword ? "text" : "password"}
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      className="w-full px-4 py-3 border border-input rounded-lg shadow-sm bg-white dark:bg-gray-800 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowOldPassword(!showOldPassword)}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showOldPassword ? <EyeOff /> : <Eye />}
+                    </button>
+                  </div>
                 </div>
-                {editingPassword && (
-                  <>
-                    <div className="relative">
-                      <Input
-                        id="oldPassword"
-                        type={showOldPassword ? 'text' : 'password'}
-                        value={oldPassword}
-                        onChange={(e) => setOldPassword(e.target.value)}
-                        placeholder="Contraseña actual"
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                        onClick={() => setShowOldPassword((prev) => !prev)}
-                      >
-                        {showOldPassword ? <EyeOff className="h-5 w-5 text-muted-foreground" /> : <Eye className="h-5 w-5 text-muted-foreground" />}
-                      </button>
-                    </div>
-                    <div className="relative">
-                      <Input
-                        id="newPassword"
-                        type={showNewPassword ? 'text' : 'password'}
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="Nueva contraseña"
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                        onClick={() => setShowNewPassword((prev) => !prev)}
-                      >
-                        {showNewPassword ? <EyeOff className="h-5 w-5 text-muted-foreground" /> : <Eye className="h-5 w-5 text-muted-foreground" />}
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
 
-              <Button type="submit" className="w-full">
-                Guardar Cambios
-              </Button>
-            </form>
-          </section>
-        </div>
-      </div>
-    </div>
+                <div>
+                  <Label htmlFor="newPassword" className="block text-sm text-foreground">
+                    Nueva
+                  </Label>
+                  <div className="relative mt-2">
+                    <Input
+                      id="newPassword"
+                      type={showNewPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full px-4 py-3 border border-input rounded-lg shadow-sm bg-white dark:bg-gray-800 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showNewPassword ? <EyeOff /> : <Eye />}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <Label
+                    htmlFor="confirmNewPassword"
+                    className="block text-sm text-foreground"
+                  >
+                    Confirmar nueva contraseña
+                  </Label>
+                  <div className="relative mt-2">
+                    <Input
+                      id="confirmNewPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmNewPassword}
+                      onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      className="w-full px-4 py-3 border border-input rounded-lg shadow-sm bg-white dark:bg-gray-800 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showConfirmPassword ? <EyeOff /> : <Eye />}
+                    </button>
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full py-3 bg-primary text-primary-foreground rounded-lg hover:bg-accent transition"
+                >
+                  Cambiar Contraseña
+                </Button>
+              </form>
+            </section>
+          </div>
+        </CardContent>
+      </Card>
+    </main>
   );
 }
