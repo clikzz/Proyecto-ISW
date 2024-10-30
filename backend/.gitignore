@@ -1,8 +1,4 @@
 /node_modules
 .env
 .vscode/
-<<<<<<< HEAD
-.package-lock.json
-=======
 package-lock.json
->>>>>>> origin/main
