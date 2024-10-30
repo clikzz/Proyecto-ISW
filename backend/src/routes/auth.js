@@ -10,9 +10,4 @@ router.post('/login', validateLogin, authController.login);
 router.post('/forgot-password', authController.forgotPassword);
 router.post('/reset-password', authController.resetPassword);
 
-// Ruta protegida
-router.get('/protected', authMiddleware, (req, res) => {
-  res.json({ message: 'Acceso permitido', user: req.user });
-});
-
 module.exports = router;
