@@ -68,9 +68,9 @@ export default function Layout2({ children }) {
         }}
       />
 
-      <div className="theme-transition min-h-screen flex bg-background text-foreground">
+      <div className="theme-transition min-h-screen flex bg-background text-foreground ml-[calc(16rem+4rem)]">
         {/* Sidebar */}
-        <aside className="w-64 bg-card p-6 flex flex-col items-center rounded-3xl shadow-lg">
+        <aside className="fixed top-8 left-8 h-[calc(100vh-4rem)] w-64 bg-card p-6 flex flex-col items-center rounded-3xl shadow-lg">
           <Link href="/" className="flex items-center space-x-2 mb-8">
             <Bike className="h-8 w-8 text-primary" />
             <span className="text-xl font-semibold">bikefy</span>
