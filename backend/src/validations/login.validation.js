@@ -1,12 +1,16 @@
 const Joi = require('joi');
 
 const loginSchema = Joi.object({
-  email: Joi.string()
+  rut: Joi.string()
+    .pattern(/^\d{1,2}\.\d{3}\.\d{3}-[\dKk]$/)
     .trim()
     .required()
+    .max(12)
     .messages({
-      'string.empty': 'El correo electrónico no puede estar vacío.',
-      'any.required': 'El correo electrónico es obligatorio.',
+      'string.empty': 'El RUT no puede estar vacío.',
+      'string.pattern.base': 'El RUT debe tener el formato 12.345.678-9 o 12.345.678-K.',
+      'string.max': 'El RUT no puede exceder los 12 caracteres.',
+      'any.required': 'El RUT es obligatorio.',
     }),
   password: Joi.string()
     .min(1)

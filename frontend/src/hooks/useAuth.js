@@ -18,9 +18,9 @@ export const registerUser = async (userData) => {
   }
 };
 
-export const loginUser = async (email, password) => {
+export const loginUser = async (rut, password) => {
   try {
-    const response = await api.post('/login', { email, password });
+    const response = await api.post('/login', { rut, password });
     return response.data; // Aquí puedes manejar el usuario que inició sesión
   } catch (error) {
     console.error(
