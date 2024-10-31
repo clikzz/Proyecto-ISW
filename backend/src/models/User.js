@@ -32,14 +32,20 @@ class User {
     return result.rows[0];
   }
 
-  static async validatePassword(user, password) {
-    return bcrypt.compare(password, user.password_user);
+  static async findByRutAndUpdate(rut, userData) {
+    const query = `
+      UPDATE "users"
+      SET name_user = $1, email = $2
+      WHERE rut = $3
+      RETURNING rut, name_user, email, role_user, created_at;
+    `;
+    const values = [userData.name_user, userData.email, rut];
+    const result = await db.query(query, values);
+    return result.rows[0];
   }
 
-  static async findByRut(rut) {
-    const query = 'SELECT * FROM "users" WHERE rut = $1';
-    const result = await db.query(query, [rut]);
-    return result.rows[0];
+  static async validatePassword(user, password) {
+    return bcrypt.compare(password, user.password_user);
   }
 
   static async findByResetToken(resetToken) {
@@ -53,15 +59,23 @@ class User {
     await db.query(query, [hashedPassword, rut]);
   }
   static async setResetToken(rut, resetToken, resetTokenExpiry) {
-    const query = 'UPDATE "users" SET reset_token = $1, reset_token_expiry = $2 WHERE rut = $3';
+    const query =
+      'UPDATE "users" SET reset_token = $1, reset_token_expiry = $2 WHERE rut = $3';
     await db.query(query, [resetToken, resetTokenExpiry, rut]);
   }
 
   static async clearResetToken(rut) {
-    const query = 'UPDATE "users" SET reset_token = NULL, reset_token_expiry = NULL WHERE rut = $1';
+    const query =
+      'UPDATE "users" SET reset_token = NULL, reset_token_expiry = NULL WHERE rut = $1';
     await db.query(query, [rut]);
   }
-}
 
+  static async getEmployees() {
+    const query =
+      'SELECT rut, name_user, email FROM "users" WHERE role_user = $1';
+    const result = await db.query(query, ['employee']);
+    return result.rows;
+  }
+}
 
 module.exports = User;

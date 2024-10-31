@@ -10,6 +10,7 @@ import {
   Package,
   User,
   LogOut,
+  Users,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -90,6 +91,13 @@ export default function Layout2({ children }) {
             >
               <User className="h-6 w-6" />
               <span>Perfil</span>
+            </Link>
+            <Link
+              href="/employees"
+              className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all"
+            >
+              <Users className="h-6 w-6" />
+              <span>Empleados</span>
             </Link>
             <Link
               href="/inventarios"
