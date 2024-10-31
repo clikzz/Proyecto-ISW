@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
-import { registerUser } from '@hooks/useAuth';
+import { registerUser } from '@api/auth';
 import { useAuth } from '@context/authContext';
 import { useRole } from '@context/roleContext';
 

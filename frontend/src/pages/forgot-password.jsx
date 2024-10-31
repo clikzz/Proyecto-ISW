@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Mail, ArrowLeft } from 'lucide-react';
-import { forgotPassword } from '@/hooks/useAuth';
+import { forgotPassword } from '@api/auth';
 
 export default function ForgotPassword() {
   const [emailSent, setEmailSent] = useState(false);
@@ -14,7 +14,10 @@ export default function ForgotPassword() {
       forgotPassword(email);
       setEmailSent(true);
     } catch (error) {
-      console.error('Error al solicitar restablecimiento de contraseña:', error);
+      console.error(
+        'Error al solicitar restablecimiento de contraseña:',
+        error
+      );
     }
   };
 

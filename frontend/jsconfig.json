@@ -7,7 +7,8 @@
       "@components/*": ["src/components/*"],
       "@hooks/*": ["src/hooks/*"],
       "@context/*": ["src/context/*"],
-      "@layouts/*": ["src/components/layouts/*"]
+      "@layouts/*": ["src/components/layouts/*"],
+      "@api/*": ["src/api/*"]
     }
   }
 }

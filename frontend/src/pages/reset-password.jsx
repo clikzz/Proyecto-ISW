@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Key, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { resetPassword } from '@hooks/useAuth';
+import { resetPassword } from '@api/auth';
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('');

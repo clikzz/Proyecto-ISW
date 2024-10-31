@@ -69,6 +69,13 @@ class User {
       'UPDATE "users" SET reset_token = NULL, reset_token_expiry = NULL WHERE rut = $1';
     await db.query(query, [rut]);
   }
+
+  static async getEmployees() {
+    const query =
+      'SELECT rut, name_user, email FROM "users" WHERE role_user = $1';
+    const result = await db.query(query, ['employee']);
+    return result.rows;
+  }
 }
 
 module.exports = User;

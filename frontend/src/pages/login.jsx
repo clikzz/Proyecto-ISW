@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import Link from 'next/link';
-import { loginUser } from '@hooks/useAuth';
+import { loginUser } from '@api/auth';
 import { useAuth } from '@context/authContext';
 import { useRole } from '@context/roleContext';
 
@@ -27,7 +27,10 @@ export default function Login() {
   const formatRut = (rut) => {
     let cleanRut = rut.replace(/[^0-9Kk]/g, ''); // Solo permite números y "K"
     if (cleanRut.length > 1) {
-      cleanRut = cleanRut.replace(/^(\d{1,2})(\d{3})(\d{3})([0-9Kk])$/, '$1.$2.$3-$4');
+      cleanRut = cleanRut.replace(
+        /^(\d{1,2})(\d{3})(\d{3})([0-9Kk])$/,
+        '$1.$2.$3-$4'
+      );
     }
     return cleanRut.slice(0, 12); // Limita el RUT a 12 caracteres
   };
