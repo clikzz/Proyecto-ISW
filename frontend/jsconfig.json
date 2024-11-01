@@ -8,7 +8,8 @@
       "@hooks/*": ["src/hooks/*"],
       "@context/*": ["src/context/*"],
       "@layouts/*": ["src/components/layouts/*"],
-      "@api/*": ["src/api/*"]
+      "@api/*": ["src/api/*"],
+      "@helpers/*": ["src/helpers/*"]
     }
   }
 }
