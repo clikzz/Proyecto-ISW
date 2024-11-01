@@ -165,3 +165,11 @@ input:focus {
   outline: none; /* Quitar outline predeterminado */
 }
 
+/* Estilo de texto para inputs según el modo */
+.input-text {
+  color: hsl(var(--muted-foreground)); /* Texto tenue al inicio */
+}
+
+.input-text:focus {
+  color: hsl(var(--foreground)); /* Texto más oscuro o claro al enfocarse */
+}
