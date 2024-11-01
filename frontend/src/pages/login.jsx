@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { loginUser } from '@api/auth';
 import { useAuth } from '@context/authContext';
 
+
 export default function Login() {
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
@@ -127,15 +128,13 @@ export default function Login() {
                 >
                   {showPassword ? (
                     <EyeOff
-                      className={`h-5 w-5 text-muted-foreground ${
-                        eyeAnimation ? 'eye-animation' : ''
-                      }`}
+                      className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''
+                        }`}
                     />
                   ) : (
                     <Eye
-                      className={`h-5 w-5 text-muted-foreground ${
-                        eyeAnimation ? 'eye-animation' : ''
-                      }`}
+                      className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''
+                        }`}
                     />
                   )}
                 </button>
@@ -148,7 +147,7 @@ export default function Login() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-primary focus:ring-primary border-input rounded bg-background"
+                  className="h-4 w-4 text-primary focus:ring-primary border-input rounded bg-background checkbox-hover-animation"
                 />
                 <label
                   htmlFor="remember-me"
