@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { registerUser } from '@api/auth';
 import { useAuth } from '@context/authContext';
-import { useRole } from '@context/roleContext';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,7 +19,6 @@ export default function Register() {
   const [error, setError] = useState(null);
   const router = useRouter();
   const { login } = useAuth();
-  const { changeRole } = useRole();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -71,8 +69,7 @@ export default function Register() {
         email,
         password_user,
       });
-      login(response.token);
-      changeRole(response.role);
+      login(response.token, response.role);
       router.push('/home');
     } catch (err) {
       setError('Error al registrar. Por favor, inténtalo de nuevo.');

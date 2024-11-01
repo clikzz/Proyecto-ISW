@@ -13,7 +13,9 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, UserCheck } from 'lucide-react';
+import { AlertCircle, RefreshCw } from 'lucide-react';
+import { formatDateTime } from '@helpers/dates';
+import { Button } from '@/components/ui/button';
 
 export default function EmployeeList() {
   const [employees, setEmployees] = useState([]);
@@ -21,25 +23,28 @@ export default function EmployeeList() {
   const [error, setError] = useState(null);
   const { isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      if (!isAuthenticated) {
-        setIsLoading(false);
-        return;
-      }
-      try {
-        setIsLoading(true);
-        const response = await getEmployees();
-        setEmployees(response);
-        setError(null);
-      } catch (error) {
-        console.error('Error fetching employees:', error);
-        setError('Failed to fetch employees. Please try again later.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchEmployees = async () => {
+    if (!isAuthenticated) {
+      setIsLoading(false);
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const response = await getEmployees();
+      response.forEach((employee) => {
+        employee.created_at = formatDateTime(employee.created_at);
+      });
+      setEmployees(response);
+      setError(null);
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+      setError('Failed to fetch employees. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchEmployees();
   }, [isAuthenticated]);
 
@@ -57,10 +62,11 @@ export default function EmployeeList() {
 
   return (
     <Card className="w-full border-none">
-      <CardHeader>
+      <CardHeader className="flex items-center gap-4">
         <CardTitle className="flex items-center gap-2">
-          <UserCheck className="h-6 w-6" />
-          Employee List
+          <Button onClick={fetchEmployees} className="flex items-center">
+            <RefreshCw />
+          </Button>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -84,9 +90,11 @@ export default function EmployeeList() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[100px]">RUT</TableHead>
+                  <TableHead className="w-[120px]">RUT</TableHead>
                   <TableHead>Nombre</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Creado</TableHead>
+                  <TableHead>Última Modificación</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -97,6 +105,7 @@ export default function EmployeeList() {
                     </TableCell>
                     <TableCell>{employee.name_user}</TableCell>
                     <TableCell>{employee.email}</TableCell>
+                    <TableCell>{employee.created_at}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

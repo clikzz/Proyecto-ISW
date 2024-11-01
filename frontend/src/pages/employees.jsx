@@ -1,29 +1,22 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/authContext';
-import { useRole } from '@/context/roleContext';
+import useAuthRedirect from '@hooks/useAuthRedirect';
 import EmployeeList from '@components/EmployeeList';
+import { Users } from 'lucide-react';
 
 export default function EmployeesPage() {
-  const { isAuthenticated } = useAuth();
-  const { role } = useRole();
-  const router = useRouter();
+  const isAuthorized = useAuthRedirect(['admin']);
 
-  useEffect(() => {
-    if (!isAuthenticated || role !== 'admin') {
-      router.push('/');
-    }
-  }, [isAuthenticated, role, router]);
-
-  if (!isAuthenticated || role !== 'admin') {
+  if (!isAuthorized) {
     return null;
   }
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Empleados</h1>
+      <div className="flex gap-2 ">
+        <Users />
+        <h1 className="text-2xl font-bold mb-4">Empleados</h1>
+      </div>
       <EmployeeList />
     </div>
   );

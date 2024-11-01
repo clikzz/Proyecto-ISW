@@ -72,7 +72,7 @@ class User {
 
   static async getEmployees() {
     const query =
-      'SELECT rut, name_user, email FROM "users" WHERE role_user = $1';
+      'SELECT rut, name_user, email, created_at FROM "users" WHERE role_user = $1';
     const result = await db.query(query, ['employee']);
     return result.rows;
   }

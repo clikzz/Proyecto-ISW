@@ -4,7 +4,6 @@ import { Montserrat } from 'next/font/google';
 import PublicLayout from '@layouts/PublicLayout';
 import PrivateLayout from '@layouts/PrivateLayout';
 import { AuthProvider } from '../context/authContext';
-import { RoleProvider } from '../context/roleContext';
 import { useRouter } from 'next/router';
 
 const montserrat = Montserrat({
@@ -31,11 +30,9 @@ export default function MyApp({ Component, pageProps }) {
 
   return (
     <AuthProvider>
-      <RoleProvider>
-        <LayoutComponent key={router.asPath} className={montserrat.variable}>
-          <Component {...pageProps} />
-        </LayoutComponent>
-      </RoleProvider>
+      <LayoutComponent key={router.asPath} className={montserrat.variable}>
+        <Component {...pageProps} />
+      </LayoutComponent>
     </AuthProvider>
   );
 }
