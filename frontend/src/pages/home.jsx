@@ -1,14 +1,28 @@
-'use client'
+'use client';
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Search, Upload, Package, Clock, Star, ShoppingCart } from "lucide-react"
-import { motion } from "framer-motion"
-import { useAuth } from '../context/authContext'
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+  Search,
+  Upload,
+  Package,
+  Clock,
+  Star,
+  ShoppingCart,
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useAuth } from '../context/authContext';
+import useAuthRedirect from '@/hooks/useAuthRedirect';
 
 export default function HomePage() {
-  const { user } = useAuth()
+  const { user } = useAuth();
+
+  const isAuthorized = useAuthRedirect(['default', 'admin', 'employee']);
+
+  if (!isAuthorized) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -38,7 +52,9 @@ export default function HomePage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-background border-none">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Productos</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total de Productos
+            </CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -48,7 +64,9 @@ export default function HomePage() {
         </Card>
         <Card className="bg-background border-none">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ventas Recientes</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Ventas Recientes
+            </CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -58,7 +76,9 @@ export default function HomePage() {
         </Card>
         <Card className="bg-background border-none">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Calificación Promedio</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Calificación Promedio
+            </CardTitle>
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -68,12 +88,16 @@ export default function HomePage() {
         </Card>
         <Card className="bg-background border-none">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Actividad del Taller</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Actividad del Taller
+            </CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">5 meses</div>
-            <p className="text-xs text-muted-foreground">Activo desde ago 2023</p>
+            <p className="text-xs text-muted-foreground">
+              Activo desde ago 2023
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -88,30 +112,34 @@ export default function HomePage() {
           <CardContent className="space-y-4">
             {[
               {
-                action: "Reparó",
-                item: "Sistema de Cambios MTB",
-                time: "hace 2 horas",
+                action: 'Reparó',
+                item: 'Sistema de Cambios MTB',
+                time: 'hace 2 horas',
               },
               {
-                action: "Vendió",
-                item: "Candado Premium para Bicicleta",
-                time: "hace 3 horas",
+                action: 'Vendió',
+                item: 'Candado Premium para Bicicleta',
+                time: 'hace 3 horas',
               },
               {
-                action: "Mantuvo",
-                item: "Batería para Bicicleta Eléctrica",
-                time: "hace 5 horas",
+                action: 'Mantuvo',
+                item: 'Batería para Bicicleta Eléctrica',
+                time: 'hace 5 horas',
               },
             ].map((activity, index) => (
               <motion.div
                 key={index}
                 className="flex items-center justify-between rounded-lg border-none p-3 bg-background"
                 whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                transition={{ type: 'spring', stiffness: 300 }}
               >
                 <div>
-                  <p className="font-medium">{activity.action} {activity.item}</p>
-                  <p className="text-sm text-muted-foreground">{activity.time}</p>
+                  <p className="font-medium">
+                    {activity.action} {activity.item}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {activity.time}
+                  </p>
                 </div>
               </motion.div>
             ))}
@@ -126,29 +154,29 @@ export default function HomePage() {
           <CardContent className="space-y-4">
             {[
               {
-                name: "Candado Premium para Bicicleta",
-                category: "Accesorios",
-                sales: "125 ventas",
-                image: "/placeholder.svg?height=40&width=40",
+                name: 'Candado Premium para Bicicleta',
+                category: 'Accesorios',
+                sales: '125 ventas',
+                image: '/placeholder.svg?height=40&width=40',
               },
               {
-                name: "Llantas Todo Terreno",
-                category: "Repuestos",
-                sales: "98 ventas",
-                image: "/placeholder.svg?height=40&width=40",
+                name: 'Llantas Todo Terreno',
+                category: 'Repuestos',
+                sales: '98 ventas',
+                image: '/placeholder.svg?height=40&width=40',
               },
               {
-                name: "Batería para Bicicleta Eléctrica",
-                category: "Componentes",
-                sales: "72 ventas",
-                image: "/placeholder.svg?height=40&width=40",
+                name: 'Batería para Bicicleta Eléctrica',
+                category: 'Componentes',
+                sales: '72 ventas',
+                image: '/placeholder.svg?height=40&width=40',
               },
             ].map((product) => (
               <motion.div
                 key={product.name}
                 className="flex items-center gap-4 rounded-lg border-none p-4 bg-background"
                 whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                transition={{ type: 'spring', stiffness: 300 }}
               >
                 <img
                   alt={product.name}
@@ -157,7 +185,9 @@ export default function HomePage() {
                 />
                 <div className="flex-1">
                   <h3 className="font-semibold">{product.name}</h3>
-                  <p className="text-sm text-muted-foreground">{product.category}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {product.category}
+                  </p>
                 </div>
                 <div className="text-sm text-muted-foreground">
                   {product.sales}
@@ -168,5 +198,5 @@ export default function HomePage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

@@ -1,31 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@context/authContext';
+import useAuthRedirect from '@hooks/useAuthRedirect';
 import EmployeeList from '@components/EmployeeList';
 import { Users } from 'lucide-react';
 
 export default function EmployeesPage() {
-  const { isAuthenticated, role, loading } = useAuth();
-  const router = useRouter();
+  const isAuthorized = useAuthRedirect(['admin']);
 
-  useEffect(() => {
-    if (!loading && (!isAuthenticated || role !== 'admin')) {
-      router.push('/home');
-      console.log(loading, isAuthenticated, role);
-    }
-  }, [isAuthenticated, role, loading, router]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg font-semibold">Cargando...</div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated || role !== 'admin') {
+  if (!isAuthorized) {
     return null;
   }
 

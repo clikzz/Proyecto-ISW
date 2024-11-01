@@ -6,7 +6,6 @@ import { Eye, EyeOff, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import { loginUser } from '@api/auth';
 import { useAuth } from '@context/authContext';
-import { useRole } from '@context/roleContext';
 
 export default function Login() {
   const [rut, setRut] = useState('');
@@ -14,9 +13,8 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [eyeAnimation, setEyeAnimation] = useState(false);
   const [error, setError] = useState(null);
-  const router = useRouter();
   const { login } = useAuth();
-  const { changeRole } = useRole();
+  const router = useRouter();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -47,10 +45,8 @@ export default function Login() {
 
     try {
       const response = await loginUser(rut, password);
-      login(response.token);
-      changeRole(response.role);
-      router.push('/home'); // Redirigir a la página protegida
-      console.log('Usuario logueado:', response);
+      login(response.token, response.role);
+      router.push('/home');
     } catch (error) {
       setError('Error en el inicio de sesión. Por favor, inténtalo de nuevo.');
       console.error(
@@ -63,7 +59,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md px-6">
-        <div className="bg-card p-8 rounded-lg shadow-lg">
+        <div className="bg-card p-8 rounded-lg shadow-lg fade-in">
           <div className="flex justify-center mb-6">
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
               <LogIn className="h-6 w-6 text-primary-foreground" />
@@ -101,7 +97,6 @@ export default function Login() {
                 value={rut}
                 onChange={handleRutChange}
                 required
-                maxLength={12}
                 className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
                 placeholder="12.345.678-9"
               />
@@ -153,7 +148,7 @@ export default function Login() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-primary focus:ring-primary border-input rounded bg-background animate-pulse"
+                  className="h-4 w-4 text-primary focus:ring-primary border-input rounded bg-background"
                 />
                 <label
                   htmlFor="remember-me"

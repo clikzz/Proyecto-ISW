@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@components/ui/button';
+import { Input } from '@components/ui/input';
+import { Label } from '@components/ui/label';
 import { Camera, Pencil, Eye, EyeOff } from 'lucide-react';
+import useAuthRedirect from '@hooks/useAuthRedirect';
 
 export default function ProfilePage() {
   const [name, setName] = useState('John Doe');
   const [phone, setPhone] = useState('+1234567890');
-  const [profilePicture, setProfilePicture] = useState('/placeholder.svg?height=400&width=400');
+  const [profilePicture, setProfilePicture] = useState(
+    '/placeholder.svg?height=400&width=400'
+  );
   const [editingName, setEditingName] = useState(false);
   const [editingPhone, setEditingPhone] = useState(false);
   const [editingPassword, setEditingPassword] = useState(false);
@@ -15,6 +18,12 @@ export default function ProfilePage() {
   const [newPassword, setNewPassword] = useState('');
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+
+  const isAuthorized = useAuthRedirect(['default']);
+
+  if (!isAuthorized) {
+    return null;
+  }
 
   const handleProfilePictureChange = (event) => {
     const file = event.target.files[0];
@@ -62,15 +71,24 @@ export default function ProfilePage() {
               </label>
             </figure>
             <figcaption>
-              <h1 className="text-2xl font-bold text-center text-foreground">{name}</h1>
+              <h1 className="text-2xl font-bold text-center text-foreground">
+                {name}
+              </h1>
             </figcaption>
           </aside>
 
           <section className="md:w-2/3">
-            <h2 className="text-xl font-semibold mb-6 text-foreground">Editar Perfil</h2>
+            <h2 className="text-xl font-semibold mb-6 text-foreground">
+              Editar Perfil
+            </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="relative">
-                <Label htmlFor="name" className="text-sm font-medium text-foreground">Nombre</Label>
+                <Label
+                  htmlFor="name"
+                  className="text-sm font-medium text-foreground"
+                >
+                  Nombre
+                </Label>
                 <div className="flex items-center mt-1">
                   <Input
                     id="name"
@@ -94,7 +112,12 @@ export default function ProfilePage() {
               </div>
 
               <div className="relative">
-                <Label htmlFor="phone" className="text-sm font-medium text-foreground">Teléfono</Label>
+                <Label
+                  htmlFor="phone"
+                  className="text-sm font-medium text-foreground"
+                >
+                  Teléfono
+                </Label>
                 <div className="flex items-center mt-1">
                   <Input
                     id="phone"
@@ -119,7 +142,12 @@ export default function ProfilePage() {
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-sm font-medium text-foreground">Contraseña</Label>
+                  <Label
+                    htmlFor="password"
+                    className="text-sm font-medium text-foreground"
+                  >
+                    Contraseña
+                  </Label>
                   <Button
                     type="button"
                     variant="outline"
@@ -145,7 +173,11 @@ export default function ProfilePage() {
                         className="absolute inset-y-0 right-0 pr-3 flex items-center"
                         onClick={() => setShowOldPassword((prev) => !prev)}
                       >
-                        {showOldPassword ? <EyeOff className="h-5 w-5 text-muted-foreground" /> : <Eye className="h-5 w-5 text-muted-foreground" />}
+                        {showOldPassword ? (
+                          <EyeOff className="h-5 w-5 text-muted-foreground" />
+                        ) : (
+                          <Eye className="h-5 w-5 text-muted-foreground" />
+                        )}
                       </button>
                     </div>
                     <div className="relative">
@@ -162,7 +194,11 @@ export default function ProfilePage() {
                         className="absolute inset-y-0 right-0 pr-3 flex items-center"
                         onClick={() => setShowNewPassword((prev) => !prev)}
                       >
-                        {showNewPassword ? <EyeOff className="h-5 w-5 text-muted-foreground" /> : <Eye className="h-5 w-5 text-muted-foreground" />}
+                        {showNewPassword ? (
+                          <EyeOff className="h-5 w-5 text-muted-foreground" />
+                        ) : (
+                          <Eye className="h-5 w-5 text-muted-foreground" />
+                        )}
                       </button>
                     </div>
                   </>
