@@ -1,22 +1,23 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Camera, Eye, EyeOff } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Camera, Eye, EyeOff } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import useAuthRedirect from '@hooks/useAuthRedirect';
 
 export default function ProfilePage() {
-  const [name, setName] = useState("John Doe");
-  const [phone, setPhone] = useState("+1234567890");
-  const [rut, setRut] = useState(""); // Estado para el RUT
+  const [name, setName] = useState('John Doe');
+  const [phone, setPhone] = useState('+1234567890');
+  const [rut, setRut] = useState(''); // Estado para el RUT
   const [profilePicture, setProfilePicture] = useState(
-    "/placeholder.svg?height=400&width=400"
+    '/placeholder.svg?height=400&width=400'
   );
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -24,11 +25,11 @@ export default function ProfilePage() {
   useEffect(() => {
     // Simulación de obtener el RUT desde el backend
     setTimeout(() => {
-      setRut("12.345.678-9"); // Ejemplo de un RUT dinámico
+      setRut('12.345.678-9'); // Ejemplo de un RUT dinámico
     }, 1000);
   }, []);
 
-  const isAuthorized = useAuthRedirect(['default']);
+  const isAuthorized = useAuthRedirect(['default', 'admin', 'employee']);
 
   if (!isAuthorized) {
     return null;
@@ -47,7 +48,7 @@ export default function ProfilePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Profile updated:", {
+    console.log('Profile updated:', {
       name,
       phone,
       rut,
@@ -85,7 +86,9 @@ export default function ProfilePage() {
               </label>
             </div>
             <header className="text-center">
-              <h1 className="text-4xl font-extrabold text-foreground">{name}</h1>
+              <h1 className="text-4xl font-extrabold text-foreground">
+                {name}
+              </h1>
               <p className="text-base text-muted-foreground">RUT: {rut}</p>
             </header>
           </section>
@@ -97,7 +100,10 @@ export default function ProfilePage() {
               </h2>
               <form className="space-y-6" onSubmit={handleSubmit}>
                 <div>
-                  <Label htmlFor="name" className="block text-sm text-foreground">
+                  <Label
+                    htmlFor="name"
+                    className="block text-sm text-foreground"
+                  >
                     Nombre
                   </Label>
                   <Input
@@ -108,7 +114,10 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="phone" className="block text-sm text-foreground">
+                  <Label
+                    htmlFor="phone"
+                    className="block text-sm text-foreground"
+                  >
                     Teléfono
                   </Label>
                   <Input
@@ -133,13 +142,16 @@ export default function ProfilePage() {
               </h2>
               <form className="space-y-6">
                 <div>
-                  <Label htmlFor="oldPassword" className="block text-sm text-foreground">
+                  <Label
+                    htmlFor="oldPassword"
+                    className="block text-sm text-foreground"
+                  >
                     Actual
                   </Label>
                   <div className="relative mt-2">
                     <Input
                       id="oldPassword"
-                      type={showOldPassword ? "text" : "password"}
+                      type={showOldPassword ? 'text' : 'password'}
                       value={oldPassword}
                       onChange={(e) => setOldPassword(e.target.value)}
                       className="w-full px-4 py-3 border border-input rounded-lg shadow-sm bg-white dark:bg-gray-800 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
@@ -155,13 +167,16 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="newPassword" className="block text-sm text-foreground">
+                  <Label
+                    htmlFor="newPassword"
+                    className="block text-sm text-foreground"
+                  >
                     Nueva
                   </Label>
                   <div className="relative mt-2">
                     <Input
                       id="newPassword"
-                      type={showNewPassword ? "text" : "password"}
+                      type={showNewPassword ? 'text' : 'password'}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       className="w-full px-4 py-3 border border-input rounded-lg shadow-sm bg-white dark:bg-gray-800 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
@@ -186,14 +201,16 @@ export default function ProfilePage() {
                   <div className="relative mt-2">
                     <Input
                       id="confirmNewPassword"
-                      type={showConfirmPassword ? "text" : "password"}
+                      type={showConfirmPassword ? 'text' : 'password'}
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
                       className="w-full px-4 py-3 border border-input rounded-lg shadow-sm bg-white dark:bg-gray-800 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       {showConfirmPassword ? <EyeOff /> : <Eye />}
