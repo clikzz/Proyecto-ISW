@@ -14,11 +14,22 @@ import {
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/authContext';
 import useAuthRedirect from '@/hooks/useAuthRedirect';
+import { getProfile } from '@/api/profile';
+import { useState } from 'react';
 
 export default function HomePage() {
   const { user } = useAuth();
-
   const isAuthorized = useAuthRedirect(['default', 'admin', 'employee']);
+  const [name, setName] = useState('');
+  const fetchProfileData = async () => {
+    try{
+      const profileData = await getProfile();
+      setName(profileData.name_user);
+    } catch (error) {
+      console.error('Error fetching profile data:', error.response?.data || error.message);
+    }
+  };
+  fetchProfileData();
 
   if (!isAuthorized) {
     return null;
@@ -29,8 +40,8 @@ export default function HomePage() {
       {/* Sección de bienvenida */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Bienvenido de nuevo </h1>
-          <p className="text-3xl font-bold text-primary">{user?.name_user}</p>
+          <h1 className="text-2xl font-semibold">Bienvenido/a de nuevo </h1>
+          <p className="text-3xl font-bold text-primary">{name}</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="relative">
