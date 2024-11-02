@@ -12,4 +12,7 @@ router.get('/getEmployees', employeeController.getEmployees);
 // Ruta para agregar un nuevo empleado
 router.post('/addEmployee', employeeController.addEmployee);
 
+// Ruta para eliminar un empleado
+router.delete('/deleteEmployee/:rut', employeeController.deleteEmployee);
+
 module.exports = router;

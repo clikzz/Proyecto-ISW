@@ -27,6 +27,17 @@ const employeeController = {
       res.status(500).json({ message: 'Error interno del servidor' });
     }
   },
+
+  deleteEmployee: async (req, res) => {
+    try {
+      const { rut } = req.params;
+      await employeeService.deleteEmployee(rut);
+      res.status(200).json({ message: 'Employee deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+      res.status(500).json({ message: 'Error interno del servidor' });
+    }
+  },
 };
 
 module.exports = employeeController;
