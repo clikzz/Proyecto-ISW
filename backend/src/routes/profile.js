@@ -9,4 +9,3 @@ router.put('/update', authMiddleware, validateProfileUpdate, profileController.u
 router.put('/change-password', authMiddleware, validatePasswordChange, profileController.changePassword);
 
 module.exports = router;
-

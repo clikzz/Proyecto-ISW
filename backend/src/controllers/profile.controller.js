@@ -1,36 +1,57 @@
 const User = require('../models/User');
+const { updateUserProfile, changeUserPassword } = require('../services/profile.service');
 const bcrypt = require('bcrypt');
 
 // Actualizar perfil
 exports.updateProfile = async (req, res) => {
-  const { name_user, phone_user } = req.body;
-  const rut = req.user.rut;
-
   try {
-    const updatedUser = await User.updateProfile(rut, { name_user, phone_user });
-    res.status(200).json({ message: 'Perfil actualizado correctamente', user: updatedUser });
+    const { name_user, phone_user } = req.body;
+    const rut = req.user.rut; // El rut del usuario autenticado
+
+    // Construir el objeto de actualización solo con los campos proporcionados
+    const updates = {};
+    if (name_user) updates.name_user = name_user;
+    if (phone_user) updates.phone_user = phone_user;
+
+    // Verificar que al menos un campo esté presente
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: 'No se proporcionaron datos para actualizar' });
+    }
+
+    // Llamar al servicio para actualizar el perfil del usuario
+    const updatedUser = await updateUserProfile(rut, updates);
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    res.json({ message: 'Perfil actualizado correctamente', user: updatedUser });
   } catch (error) {
-    res.status(500).json({ message: 'Error al actualizar el perfil', error });
+    console.error(error);
+    res.status(500).json({ message: 'Error al actualizar el perfil' });
   }
 };
 
 // Cambiar contraseña
 exports.changePassword = async (req, res) => {
-  const { currentPassword, newPassword, confirmPassword } = req.body;
-  const rut = req.user.rut;
-
   try {
-    const user = await User.findByRut(rut);
-    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+    const rut = req.user.rut; // El rut del usuario autenticado
+    const { currentPassword, newPassword } = req.body;
 
-    const isMatch = await bcrypt.compare(currentPassword, user.password_user);
-    if (!isMatch) return res.status(400).json({ message: 'Contraseña actual incorrecta' });
+    // Validación: Verificar que las contraseñas estén presentes
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'La contraseña actual y la nueva contraseña son obligatorias' });
+    }
 
-    if (newPassword !== confirmPassword) return res.status(400).json({ message: 'Las contraseñas nuevas no coinciden' });
+    // Llamar al servicio para cambiar la contraseña del usuario
+    await changeUserPassword(rut, currentPassword, newPassword);
 
-    await User.updatePassword(rut, newPassword);
-    res.status(200).json({ message: 'Contraseña actualizada correctamente' });
+    res.json({ message: 'Contraseña actualizada correctamente' });
   } catch (error) {
-    res.status(500).json({ message: 'Error al cambiar la contraseña', error });
+    if (error.message === 'Usuario no encontrado' || error.message === 'La contraseña actual es incorrecta') {
+      return res.status(400).json({ message: error.message });
+    }
+    console.error(error);
+    res.status(500).json({ message: 'Error al cambiar la contraseña' });
   }
 };

@@ -44,7 +44,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-8">
+    <main className="flex items-center justify-center">
       <Card className="w-full max-w-2xl px-12 py-12 bg-card rounded-2xl shadow-xl border-none">
         <CardContent className="space-y-8">
           <section className="flex flex-col items-center space-y-4">
