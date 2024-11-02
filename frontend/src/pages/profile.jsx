@@ -6,12 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Camera, Eye, EyeOff } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { updateProfile, changePassword, getProfile } from '@api/profile';
 import useAuthRedirect from '@hooks/useAuthRedirect';
 
 export default function ProfilePage() {
-  const [name, setName] = useState('John Doe');
-  const [phone, setPhone] = useState('+1234567890');
-  const [rut, setRut] = useState('12.345.678-9'); // Para vista previa inmediata
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [rut, setRut] = useState('');
   const [profilePicture, setProfilePicture] = useState('/placeholder.svg');
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -22,6 +23,23 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('Datos Personales');
 
   const isAuthorized = useAuthRedirect(['default', 'admin', 'employee']);
+
+  const fetchProfileData = async () => {
+    try {
+      const profileData = await getProfile();
+      setName(profileData.name_user); // Asigna los datos obtenidos
+      setPhone(profileData.phone_user);
+      setRut(profileData.rut);
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthorized) {
+      fetchProfileData(); // Carga los datos del perfil cuando el componente se monta
+    }
+  }, [isAuthorized]);
 
   if (!isAuthorized) {
     return null;
@@ -38,9 +56,45 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Profile updated:', { name, phone, rut, oldPassword, newPassword, confirmNewPassword });
+    try {
+      const profileData = {
+        name_user: name,
+        phone_user: phone,
+      };
+      const response = await updateProfile(profileData);
+      console.log('Profile updated:', response);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    if (newPassword !== confirmNewPassword) {
+      alert('Las contraseñas no coinciden');
+      return;
+    }
+    try {
+      const passwordData = {
+        currentPassword: oldPassword,
+        newPassword,
+      };
+      const response = await changePassword(passwordData);
+      alert('Contraseña cambiada con éxito');
+      console.log('Password changed:', response);
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        // Mostrar mensajes de validación específicos del backend
+        const errorMessage = error.response.data.message;
+        const errorDetails = error.response.data.errors || [];
+        alert(`Error al cambiar la contraseña:\n${errorMessage}\n${errorDetails.join('\n')}`);
+      } else {
+        console.error('Error al cambiar la contraseña:', error);
+        alert('Ocurrió un error inesperado al cambiar la contraseña.');
+      }
+    }
   };
 
   return (
@@ -134,7 +188,7 @@ export default function ProfilePage() {
           {activeTab === 'Seguridad' && (
             <section className="space-y-4">
               <h2 className="text-xl font-semibold text-card-foreground">Cambiar clave</h2>
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handlePasswordChange}>
                 <div>
                   <Label htmlFor="oldPassword" className="block text-sm text-muted-foreground">Actual</Label>
                   <div className="relative mt-1">

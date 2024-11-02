@@ -55,3 +55,21 @@ exports.changePassword = async (req, res) => {
     res.status(500).json({ message: 'Error al cambiar la contraseña' });
   }
 };
+
+exports.getProfile = async (req, res) => {
+  try {
+    const rut = req.user.rut; // Aquí asumo que 'rut' se obtiene del token JWT
+    const user = await User.findByRut(rut);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Envía solo los datos necesarios del usuario, sin la contraseña
+    const { name_user, phone_user, created_at } = user; // Desestructuramos sin 'rut' ya que lo tenemos en 'req.user'
+    res.json({ name_user, phone_user, rut, created_at });
+  } catch (error) {
+    console.error('Error al obtener el perfil:', error);
+    res.status(500).json({ message: 'Error al obtener el perfil' });
+  }
+};

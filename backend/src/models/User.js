@@ -94,8 +94,7 @@ class User {
     return result.rows[0];
   }
 
-  static async updatePassword(rut, newPassword) {
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+  static async updatePassword(rut, hashedPassword) {
     const query = 'UPDATE "users" SET password_user = $1 WHERE rut = $2';
     await db.query(query, [hashedPassword, rut]);
   }
