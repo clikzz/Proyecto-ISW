@@ -76,6 +76,24 @@ class User {
     const result = await db.query(query, ['employee']);
     return result.rows;
   }
+
+  static async updateProfile(rut, { name_user, phone_user }) {
+    const query = `
+      UPDATE "users"
+      SET name_user = $1, phone_user = $2
+      WHERE rut = $3
+      RETURNING rut, name_user, phone_user, email, role_user, created_at;
+    `;
+    const values = [name_user, phone_user, rut];
+    const result = await db.query(query, values);
+    return result.rows[0];
+  }
+  
+  static async updatePassword(rut, newPassword) {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const query = 'UPDATE "users" SET password_user = $1 WHERE rut = $2';
+    await db.query(query, [hashedPassword, rut]);
+  }
 }
 
 module.exports = User;
