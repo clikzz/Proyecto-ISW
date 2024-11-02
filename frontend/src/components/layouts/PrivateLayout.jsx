@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Bike,
   Sun,
@@ -11,34 +11,42 @@ import {
   User,
   LogOut,
   Users,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useAuth } from '@context/authContext';
-import { motion, AnimatePresence } from 'framer-motion';
-import Script from 'next/script';
-import Notificaciones from '@components/Notification';
+  TrendingUp,
+  DollarSign,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useAuth } from "@/context/authContext";
+import { motion, AnimatePresence } from "framer-motion";
+import Script from "next/script";
+import Notificaciones from "@/components/Notification";
 
-export default function Layout2({ children }) {
+export default function PrivateLayout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const router = useRouter();
-  const { logout } = useAuth();
+  const { logout, isAuthenticated, role, loading } = useAuth();
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme === 'dark') {
-      document.documentElement.classList.add('dark');
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark") {
+      document.documentElement.classList.add("dark");
       setIsDarkMode(true);
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
   }, []);
 
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.push("/login");
+    }
+  }, [loading, isAuthenticated, router]);
+
   const toggleDarkMode = () => {
-    const newTheme = isDarkMode ? 'light' : 'dark';
+    const newTheme = isDarkMode ? "light" : "dark";
     setIsDarkMode(!isDarkMode);
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
   };
 
   const handleLogout = () => {
@@ -50,6 +58,28 @@ export default function Layout2({ children }) {
     enter: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.3 } },
     exit: { opacity: 0.5, y: -10, scale: 0.98, transition: { duration: 0.2 } },
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  const NavLink = ({ href, icon, children }) => (
+    <Link
+      href={href}
+      className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all"
+    >
+      {icon}
+      <span>{children}</span>
+    </Link>
+  );
 
   return (
     <>
@@ -77,34 +107,31 @@ export default function Layout2({ children }) {
           </Link>
 
           <nav className="space-y-4 w-full">
-            <Link
-              href="/home"
-              className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all"
-            >
-              <Home className="h-6 w-6" />
-              <span>Home</span>
-            </Link>
-            <Link
-              href="/profile"
-              className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all"
-            >
-              <User className="h-6 w-6" />
-              <span>Perfil</span>
-            </Link>
-            <Link
-              href="/employees"
-              className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all"
-            >
-              <Users className="h-6 w-6" />
-              <span>Empleados</span>
-            </Link>
-            <Link
-              href="/inventarios"
-              className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all"
-            >
-              <Package className="h-6 w-6" />
-              <span>Inventarios</span>
-            </Link>
+            <NavLink href="/home" icon={<Home className="h-6 w-6" />}>
+              Home
+            </NavLink>
+            <NavLink href="/overview" icon={<TrendingUp className="h-6 w-6" />}>
+              Overview
+            </NavLink>
+            <NavLink href="/inventario" icon={<Package className="h-6 w-6" />}>
+              Inventario
+            </NavLink>
+            {role === "admin" && (
+              <>
+                <NavLink href="/employees" icon={<Users className="h-6 w-6" />}>
+                  Empleados
+                </NavLink>
+                <NavLink
+                  href="/balance-financiero"
+                  icon={<DollarSign className="h-6 w-6" />}
+                >
+                  Balance
+                </NavLink>
+              </>
+            )}
+            <NavLink href="/profile" icon={<User className="h-6 w-6" />}>
+              Perfil
+            </NavLink>
             <button
               onClick={handleLogout}
               className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all w-full"
@@ -116,19 +143,27 @@ export default function Layout2({ children }) {
         </aside>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
-          <header className="h-14 flex items-center justify-end px-6">
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-full hover:bg-accent"
-            >
-              {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
-            </button>
-            <Notificaciones>
-              <button className="p-2 rounded-full hover:bg-accent">
-                <Bell size={24} />
+        <div className="flex-1 flex flex-col bg-background">
+          <header className="h-14 flex items-center justify-between px-6">
+            <div className="ml-auto flex items-center space-x-4">
+              <button
+                onClick={toggleDarkMode}
+                className="p-2 rounded-full hover:bg-accent"
+                aria-label={
+                  isDarkMode ? "Activar modo claro" : "Activar modo oscuro"
+                }
+              >
+                {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
               </button>
-            </Notificaciones>
+              <Notificaciones>
+                <button
+                  className="p-2 rounded-full hover:bg-accent"
+                  aria-label="Notificaciones"
+                >
+                  <Bell size={24} />
+                </button>
+              </Notificaciones>
+            </div>
           </header>
 
           <AnimatePresence mode="wait">
@@ -138,9 +173,13 @@ export default function Layout2({ children }) {
               initial="hidden"
               animate="enter"
               exit="exit"
-              className="flex-1 overflow-y-auto p-6 relative"
+              className="flex-1 overflow-y-auto p-6 relative bg-background"
             >
-              {children}
+              {children || (
+                <div className="flex items-center justify-center h-full">
+                  Página no implementada
+                </div>
+              )}
             </motion.main>
           </AnimatePresence>
         </div>
