@@ -7,7 +7,7 @@ class User {
     name_user,
     email,
     password_user,
-    role_user = 'default'
+    role_user = 'employee'
   ) {
     const hashedPassword = await bcrypt.hash(password_user, 10);
     const query = `
@@ -17,6 +17,8 @@ class User {
     `;
     const values = [rut, name_user, email, hashedPassword, role_user];
     const result = await db.query(query, values);
+    console.log(result.rows[0]);
+
     return result.rows[0];
   }
 

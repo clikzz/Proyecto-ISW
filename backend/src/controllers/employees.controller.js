@@ -21,6 +21,8 @@ const employeeController = {
       );
       res.status(201).json(newEmployee);
     } catch (error) {
+      console.log('Error');
+
       console.error('Error adding employee:', error);
       res.status(500).json({ message: 'Error interno del servidor' });
     }

@@ -10,6 +10,6 @@ router.use(authMiddleware);
 router.get('/getEmployees', employeeController.getEmployees);
 
 // Ruta para agregar un nuevo empleado
-router.post('/add', employeeController.addEmployee);
+router.post('/addEmployee', employeeController.addEmployee);
 
 module.exports = router;

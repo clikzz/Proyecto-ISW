@@ -21,3 +21,20 @@ export const getEmployees = async () => {
     throw error;
   }
 };
+
+export const addEmployee = async (newEmployee) => {
+  try {
+    const response = await api.post('/addEmployee', newEmployee, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      'Error al añadir empleado:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
