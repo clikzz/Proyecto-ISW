@@ -2,7 +2,6 @@
 @import 'aos/dist/aos.css';
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -16,31 +15,35 @@ body {
 
 /* Definición de colores y variables globales */
 @layer base {
-  :root {
-    /* Modo claro */
-    --background: 220 10% 90%; /* #E0E1DD */
-    --foreground: 213 15% 15%; /* #1B263B */
-    --card: 220 10% 88%; /* Fondo claro de tarjetas */
-    --card-foreground: 213 30% 15%; /* Texto oscuro para tarjetas */
-    --primary: 215 20% 45%; /* #778DA9 */
-    --muted-foreground: 213 20% 25%; /* Color de textos secundarios */
-    --accent: 215 25% 40%; /* #415A77 */
-    --border: 210 15% 55%; /* Borde */
-    --input: 213 30% 15%; /* Fondo de inputs */
+  /* Modo claro (predeterminado) */
+:root {
+    /* Modo claro (predeterminado) */
+    --background: 220 10% 93%; /* #E0E1DD para el fondo general */
+    --foreground: 213 15% 15%; /* Color oscuro para texto */
+    --card: 220 10% 90%; /* Fondo claro para tarjetas */
+    --card-foreground: 213 20% 20%; /* Texto oscuro en tarjetas */
+    --primary: 217 20% 60%; /* #778DA9 para botones y elementos destacados */
+    --muted-foreground: 213 15% 30%; /* Color de texto secundario */
+    --accent: 215 30% 40%; /* #415A77 para acentos o íconos */
+    --border: 210 15% 70%; /* Borde claro */
+    --input: 220 10% 85%; /* Ajuste a un tono más oscuro para inputs */
     --ring: 215 25% 45%; /* Anillos de foco */
     --radius: 0.5rem;
     --font-sans: 'Montserrat', sans-serif;
-  }
+}
 
+  /* Modo oscuro */
   .dark {
-    /* Modo oscuro */
     --background: 211 44% 8%; /* #0D1B2A */
     --foreground: 220 8% 88%; /* #E0E1DD */
-    --card: 213 30% 15%; /* #1B263B */
-    --card-foreground: 220 8% 88%; /* Texto claro */
+    --card: 213 30% 15%; /* Fondo oscuro de tarjetas */
+    --card-foreground: 220 8% 88%; /* Texto claro en tarjetas */
     --primary: 210 25% 55%; /* #778DA9 */
     --muted-foreground: 220 8% 70%; /* Texto secundario claro */
-    --accent: 210 20% 40%; /* #415A77 */
+    --accent: 210 20% 40%; /* Color de acento */
+    --border: 210 15% 55%; /* Borde oscuro */
+    --input: 213 30% 15%; /* Fondo de inputs oscuros */
+    --ring: 220 8% 88%; /* Anillos de foco claros */
   }
 }
 
@@ -74,7 +77,7 @@ body {
   }
 }
 
-/* Animación del cambio de tema */
+/* Animaciones y estilos adicionales */
 @keyframes scale-fade {
   0% {
     opacity: 0;
@@ -90,79 +93,55 @@ body {
   }
 }
 
+
+.eye-animation {
+  animation: eye-bounce 0.3s ease-in-out;
+}
+
+@keyframes eye-bounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.checkbox-hover-animation:hover {
+  animation: animate__pulse 0.5s; /* 0.5s es la duración, puedes ajustarla */
+}
+
 .scale-fade-animation {
   animation: scale-fade 0.3s ease-in-out;
 }
 
-/* Animaciones adicionales */
-@keyframes eye-open-close {
-  0%, 100% {
-    transform: scaleY(0.1);
-  }
-  50% {
-    transform: scaleY(1);
-  }
-}
-
-.eye-animation {
-  animation: eye-open-close 0.3s ease-in-out;
-  transform-origin: center;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-.button-pulse {
-  animation: pulse 2s infinite;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in {
-  animation: fadeIn 0.4s ease-out;
-}
-
 /* Prevenir parpadeos al cargar tema */
 html:not(.dark) {
-  background-color: hsl(var(--background)); /* Fondo predeterminado */
+  background-color: hsl(var(--background)); /* Fondo predeterminado para claro */
 }
 
 /* Estilo global para inputs */
 input {
-  background-color: hsl(var(--background)); /* Fondo claro */
-  color: hsl(var(--foreground)); /* Texto */
-  border: 1px solid hsl(var(--border)); /* Borde */
+  background-color: hsl(var(--input));
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
   padding: 8px 12px;
   border-radius: var(--radius);
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Placeholder más claro */
 input::placeholder {
-  color: hsl(var(--muted-foreground)); /* Color del placeholder */
-  opacity: 0.7; /* Más claro */
+  color: hsl(var(--muted-foreground));
+  opacity: 0.6;
 }
 
-/* Efecto al enfocarse */
 input:focus {
-  border-color: hsl(var(--primary)); /* Color del borde al enfocarse */
-  box-shadow: 0 0 0 2px hsl(var(--ring)); /* Anillo al enfocarse */
-  outline: none; /* Quitar outline predeterminado */
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 2px hsl(var(--ring));
+  outline: none;
 }
 
 /* Estilo de texto para inputs según el modo */

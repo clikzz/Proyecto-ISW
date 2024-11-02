@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "pgsqltrans.face.ubiobio.cl",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "isw",
+            "database": "usuario2_bd",
+            "username": "usuario2",
+            "password": "U@er2"
+        }
+    ]
+}
