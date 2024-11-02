@@ -47,7 +47,11 @@ class User {
       count++;
     }
 
-    query = query.slice(0, -2) + ' WHERE rut = $' + count + ' RETURNING rut, name_user, phone_user, email, role_user, created_at';
+    query =
+      query.slice(0, -2) +
+      ' WHERE rut = $' +
+      count +
+      ' RETURNING rut, name_user, phone_user, email, role_user, created_at';
     values.push(rut);
 
     // Ejecutar la consulta
@@ -79,7 +83,7 @@ class User {
 
   static async getEmployees() {
     const query =
-      'SELECT rut, name_user, email, created_at FROM "users" WHERE role_user = $1';
+      'SELECT rut, name_user, phone_user, email, created_at FROM "users" WHERE role_user = $1';
     const result = await db.query(query, ['employee']);
     return result.rows;
   }

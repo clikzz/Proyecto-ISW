@@ -33,6 +33,9 @@ export default function EmployeeList() {
       setIsLoading(true);
       const response = await getEmployees();
       response.forEach((employee) => {
+        if (!employee.phone_user) {
+          employee.phone_user = 'Sin registrar';
+        }
         employee.created_at = formatDateTime(employee.created_at);
       });
       setEmployees(response);
@@ -95,6 +98,7 @@ export default function EmployeeList() {
                 <TableRow>
                   <TableHead className="w-[120px]">RUT</TableHead>
                   <TableHead>Nombre</TableHead>
+                  <TableHead>Teléfono</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Creado</TableHead>
                 </TableRow>
@@ -106,6 +110,7 @@ export default function EmployeeList() {
                       {employee.rut}
                     </TableCell>
                     <TableCell>{employee.name_user}</TableCell>
+                    <TableCell>{employee.phone_user}</TableCell>
                     <TableCell>{employee.email}</TableCell>
                     <TableCell>{employee.created_at}</TableCell>
                   </TableRow>
