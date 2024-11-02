@@ -1,7 +1,15 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+'use client';
 
-const AuthContext = createContext();
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+const AuthContext = createContext({
+  isAuthenticated: false,
+  role: null,
+  login: () => {},
+  logout: () => {},
+  loading: true,
+});
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -11,10 +19,10 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');
-    if (token && role) {
+    const storedRole = localStorage.getItem('role');
+    if (token && storedRole) {
       setIsAuthenticated(true);
-      setRole(role);
+      setRole(storedRole);
     } else {
       setIsAuthenticated(false);
       setRole(null);

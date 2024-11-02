@@ -32,3 +32,17 @@ exports.sendPasswordResetEmail = async (email, resetUrl) => {
 
   await transporter.sendMail(mailOptions);
 };
+
+exports.sendWelcomeEmail = async (email, name, temporaryPassword) => {
+  const mailOptions = {
+    to: email,
+    from: process.env.EMAIL_USER,
+    subject: 'Bienvenido a nuestra plataforma',
+    text: `Hola ${name},\n\n
+    Bienvenido a nuestra plataforma. Esperamos que disfrutes de nuestros servicios.\n\n
+    Tu contraseña temporal es: ${temporaryPassword}\n\n
+    Si tienes alguna duda o problema, no dudes en contactarnos.\n`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};

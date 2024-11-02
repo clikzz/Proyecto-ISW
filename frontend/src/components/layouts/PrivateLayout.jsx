@@ -43,7 +43,6 @@ export default function Layout2({ children }) {
 
   const handleLogout = () => {
     logout();
-    router.push('/');
   };
 
   const pageVariants = {

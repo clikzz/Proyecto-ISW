@@ -16,6 +16,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { formatDateTime } from '@helpers/dates';
 import { Button } from '@/components/ui/button';
+import AddEmployeeDialog from '@/components/AddEmployeeDialog';
 
 export default function EmployeeList() {
   const [employees, setEmployees] = useState([]);
@@ -32,6 +33,9 @@ export default function EmployeeList() {
       setIsLoading(true);
       const response = await getEmployees();
       response.forEach((employee) => {
+        if (!employee.phone_user) {
+          employee.phone_user = 'Sin registrar';
+        }
         employee.created_at = formatDateTime(employee.created_at);
       });
       setEmployees(response);
@@ -62,12 +66,14 @@ export default function EmployeeList() {
 
   return (
     <Card className="w-full border-none">
-      <CardHeader className="flex items-center gap-4">
-        <CardTitle className="flex items-center gap-2">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div className="flex items-center gap-2">
           <Button onClick={fetchEmployees} className="flex items-center">
-            <RefreshCw />
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Refrescar
           </Button>
-        </CardTitle>
+          <AddEmployeeDialog fetchEmployees={fetchEmployees} />
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -92,9 +98,9 @@ export default function EmployeeList() {
                 <TableRow>
                   <TableHead className="w-[120px]">RUT</TableHead>
                   <TableHead>Nombre</TableHead>
+                  <TableHead>Teléfono</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Creado</TableHead>
-                  <TableHead>Última Modificación</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -104,6 +110,7 @@ export default function EmployeeList() {
                       {employee.rut}
                     </TableCell>
                     <TableCell>{employee.name_user}</TableCell>
+                    <TableCell>{employee.phone_user}</TableCell>
                     <TableCell>{employee.email}</TableCell>
                     <TableCell>{employee.created_at}</TableCell>
                   </TableRow>

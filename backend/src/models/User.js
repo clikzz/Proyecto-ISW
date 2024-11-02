@@ -7,7 +7,7 @@ class User {
     name_user,
     email,
     password_user,
-    role_user = 'default'
+    role_user = 'employee'
   ) {
     const hashedPassword = await bcrypt.hash(password_user, 10);
     const query = `
@@ -17,6 +17,8 @@ class User {
     `;
     const values = [rut, name_user, email, hashedPassword, role_user];
     const result = await db.query(query, values);
+    console.log(result.rows[0]);
+
     return result.rows[0];
   }
 
@@ -45,7 +47,11 @@ class User {
       count++;
     }
 
-    query = query.slice(0, -2) + ' WHERE rut = $' + count + ' RETURNING rut, name_user, phone_user, email, role_user, created_at';
+    query =
+      query.slice(0, -2) +
+      ' WHERE rut = $' +
+      count +
+      ' RETURNING rut, name_user, phone_user, email, role_user, created_at';
     values.push(rut);
 
     // Ejecutar la consulta
@@ -77,7 +83,7 @@ class User {
 
   static async getEmployees() {
     const query =
-      'SELECT rut, name_user, email, created_at FROM "users" WHERE role_user = $1';
+      'SELECT rut, name_user, phone_user, email, created_at FROM "users" WHERE role_user = $1';
     const result = await db.query(query, ['employee']);
     return result.rows;
   }

@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@context/authContext';
@@ -7,12 +9,12 @@ const useAuthRedirect = (requiredRoles) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push('/');
-    }
-    if (!loading && !requiredRoles.includes(role)) {
-      router.push('/home');
-      console.log(loading, isAuthenticated, role);
+    if (!loading) {
+      if (!isAuthenticated) {
+        router.push('/');
+      } else if (!requiredRoles.includes(role)) {
+        router.push('/home');
+      }
     }
   }, [isAuthenticated, role, loading, router, requiredRoles]);
 
