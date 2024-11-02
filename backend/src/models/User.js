@@ -104,6 +104,11 @@ class User {
     const query = 'UPDATE "users" SET password_user = $1 WHERE rut = $2';
     await db.query(query, [hashedPassword, rut]);
   }
+
+  static async delete(rut) {
+    const query = 'DELETE FROM "users" WHERE rut = $1';
+    await db.query(query, [rut]);
+  }
 }
 
 module.exports = User;

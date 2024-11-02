@@ -28,6 +28,10 @@ const employeeService = {
     const { password_user, ...employeeWithoutPassword } = newEmployee;
     return employeeWithoutPassword;
   },
+
+  deleteEmployee: async (rut) => {
+    await User.delete(rut);
+  },
 };
 
 module.exports = employeeService;

@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@context/authContext';
 import { getEmployees } from '@api/employees';
+import { deleteEmployee } from '@api/employees';
+
 import {
   Table,
   TableBody,
@@ -13,7 +15,7 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, RefreshCw, Trash } from 'lucide-react';
 import { formatDateTime } from '@helpers/dates';
 import { Button } from '@/components/ui/button';
 import AddEmployeeDialog from '@/components/AddEmployeeDialog';
@@ -34,7 +36,7 @@ export default function EmployeeList() {
       const response = await getEmployees();
       response.forEach((employee) => {
         if (!employee.phone_user) {
-          employee.phone_user = 'Sin registrar';
+          employee.phone_user = 'SIN REGISTRAR';
         }
         employee.created_at = formatDateTime(employee.created_at);
       });
@@ -63,6 +65,17 @@ export default function EmployeeList() {
       </Card>
     );
   }
+
+  const handleDelete = async (rut) => {
+    try {
+      const response = await deleteEmployee(rut);
+      if (response.message) {
+        fetchEmployees();
+      }
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+    }
+  };
 
   return (
     <Card className="w-full border-none">
@@ -101,6 +114,7 @@ export default function EmployeeList() {
                   <TableHead>Teléfono</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Creado</TableHead>
+                  <TableHead>Modificado</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -113,6 +127,15 @@ export default function EmployeeList() {
                     <TableCell>{employee.phone_user}</TableCell>
                     <TableCell>{employee.email}</TableCell>
                     <TableCell>{employee.created_at}</TableCell>
+                    <TableCell>Te espero Rocío</TableCell>
+                    <TableCell>
+                      <Button
+                        className="bg-red-500 hover:bg-red-600 p-1"
+                        onClick={() => handleDelete(employee.rut)}
+                      >
+                        <Trash />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

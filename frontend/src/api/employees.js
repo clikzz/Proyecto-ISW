@@ -38,3 +38,20 @@ export const addEmployee = async (newEmployee) => {
     throw error;
   }
 };
+
+export const deleteEmployee = async (rut) => {
+  try {
+    const response = await api.delete(`/deleteEmployee/${rut}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      'Error al eliminar empleado:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
