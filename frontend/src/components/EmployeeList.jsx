@@ -39,6 +39,12 @@ export default function EmployeeList() {
           employee.phone_user = 'SIN REGISTRAR';
         }
         employee.created_at = formatDateTime(employee.created_at);
+
+        if (employee.role_user == 'admin') {
+          employee.role_user = 'SIGMA';
+        } else {
+          employee.role_user = 'EMPLEADO';
+        }
       });
       setEmployees(response);
       setError(null);
@@ -113,6 +119,7 @@ export default function EmployeeList() {
                   <TableHead>Nombre</TableHead>
                   <TableHead>Teléfono</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Rol</TableHead>
                   <TableHead>Creado</TableHead>
                   <TableHead>Modificado</TableHead>
                 </TableRow>
@@ -126,6 +133,7 @@ export default function EmployeeList() {
                     <TableCell>{employee.name_user}</TableCell>
                     <TableCell>{employee.phone_user}</TableCell>
                     <TableCell>{employee.email}</TableCell>
+                    <TableCell>{employee.role_user}</TableCell>
                     <TableCell>{employee.created_at}</TableCell>
                     <TableCell>Te espero Rocío</TableCell>
                     <TableCell>

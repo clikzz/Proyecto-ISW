@@ -83,8 +83,8 @@ class User {
 
   static async getEmployees() {
     const query =
-      'SELECT rut, name_user, phone_user, email, created_at FROM "users" WHERE role_user = $1';
-    const result = await db.query(query, ['employee']);
+      'SELECT rut, name_user, phone_user, email, role_user, created_at FROM "users" WHERE role_user = $1 OR role_user = $2';
+    const result = await db.query(query, ['employee', 'admin']);
     return result.rows;
   }
 
