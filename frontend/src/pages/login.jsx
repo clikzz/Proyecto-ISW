@@ -6,32 +6,32 @@ import { Eye, EyeOff, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import { loginUser } from '@api/auth';
 import { useAuth } from '@context/authContext';
-
+import { useAlert } from '@context/alertContext'; // Importar el hook de alerta
 
 export default function Login() {
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [eyeAnimation, setEyeAnimation] = useState(false);
-  const [error, setError] = useState(null);
   const { login } = useAuth();
   const router = useRouter();
+  const { showAlert } = useAlert(); // Acceder a la función showAlert
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
     setEyeAnimation(true);
-    setTimeout(() => setEyeAnimation(false), 300); // Detenemos la animación tras 300ms
+    setTimeout(() => setEyeAnimation(false), 300);
   };
 
   const formatRut = (rut) => {
-    let cleanRut = rut.replace(/[^0-9Kk]/g, ''); // Solo permite números y "K"
+    let cleanRut = rut.replace(/[^0-9Kk]/g, '');
     if (cleanRut.length > 1) {
       cleanRut = cleanRut.replace(
         /^(\d{1,2})(\d{3})(\d{3})([0-9Kk])$/,
         '$1.$2.$3-$4'
       );
     }
-    return cleanRut.slice(0, 12); // Limita el RUT a 12 caracteres
+    return cleanRut.slice(0, 12);
   };
 
   const handleRutChange = (e) => {
@@ -42,14 +42,17 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
 
     try {
       const response = await loginUser(rut, password);
       login(response.token, response.role);
+      showAlert('Inicio de sesión exitoso', 'success'); // Mostrar alerta de éxito
       router.push('/home');
     } catch (error) {
-      setError('Error en el inicio de sesión. Por favor, inténtalo de nuevo.');
+      showAlert(
+        'Error en el inicio de sesión. Por favor, inténtalo de nuevo.',
+        'error'
+      ); // Mostrar alerta de error
       console.error(
         'Error en el inicio de sesión:',
         error.response?.data || error.message
@@ -78,10 +81,6 @@ export default function Login() {
               Regístrate
             </Link>
           </p>
-
-          {error && (
-            <p className="text-sm text-center text-red-500 mb-4">{error}</p>
-          )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
@@ -128,13 +127,15 @@ export default function Login() {
                 >
                   {showPassword ? (
                     <EyeOff
-                      className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''
-                        }`}
+                      className={`h-5 w-5 text-muted-foreground ${
+                        eyeAnimation ? 'eye-animation' : ''
+                      }`}
                     />
                   ) : (
                     <Eye
-                      className={`h-5 w-5 text-muted-foreground ${eyeAnimation ? 'eye-animation' : ''
-                        }`}
+                      className={`h-5 w-5 text-muted-foreground ${
+                        eyeAnimation ? 'eye-animation' : ''
+                      }`}
                     />
                   )}
                 </button>
