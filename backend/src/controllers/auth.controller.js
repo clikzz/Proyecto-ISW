@@ -58,11 +58,8 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Credenciales incorrectas' });
     }
 
-    console.log('Contraseña en base de datos: ', user.password_user);
-    console.log('Contraseña ingresada: ', password);
-
     const isValid = await bcrypt.compare(password, user.password_user);
-    console.log('Comparación contraseña: ', isValid);
+
     if (!isValid) {
       return res.status(401).json({ message: 'Credenciales incorrectas' });
     }
