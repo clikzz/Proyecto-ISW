@@ -1,5 +1,8 @@
 const User = require('../models/User');
-const { updateUserProfile, changeUserPassword } = require('../services/profile.service');
+const {
+  updateUserProfile,
+  changeUserPassword,
+} = require('../services/profile.service');
 const bcrypt = require('bcrypt');
 
 // Actualizar perfil
@@ -15,7 +18,9 @@ exports.updateProfile = async (req, res) => {
 
     // Verificar que al menos un campo esté presente
     if (Object.keys(updates).length === 0) {
-      return res.status(400).json({ message: 'No se proporcionaron datos para actualizar' });
+      return res
+        .status(400)
+        .json({ message: 'No se proporcionaron datos para actualizar' });
     }
 
     // Llamar al servicio para actualizar el perfil del usuario
@@ -25,7 +30,10 @@ exports.updateProfile = async (req, res) => {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    res.json({ message: 'Perfil actualizado correctamente', user: updatedUser });
+    res.json({
+      message: 'Perfil actualizado correctamente',
+      user: updatedUser,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error al actualizar el perfil' });
@@ -40,7 +48,9 @@ exports.changePassword = async (req, res) => {
 
     // Validación: Verificar que las contraseñas estén presentes
     if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: 'La contraseña actual y la nueva contraseña son obligatorias' });
+      return res.status(400).json({
+        message: 'La contraseña actual y la nueva contraseña son obligatorias',
+      });
     }
 
     // Llamar al servicio para cambiar la contraseña del usuario
@@ -48,7 +58,10 @@ exports.changePassword = async (req, res) => {
 
     res.json({ message: 'Contraseña actualizada correctamente' });
   } catch (error) {
-    if (error.message === 'Usuario no encontrado' || error.message === 'La contraseña actual es incorrecta') {
+    if (
+      error.message === 'Usuario no encontrado' ||
+      error.message === 'La contraseña actual es incorrecta'
+    ) {
       return res.status(400).json({ message: error.message });
     }
     console.error(error);
@@ -60,14 +73,14 @@ exports.getProfile = async (req, res) => {
   try {
     const rut = req.user.rut; // Aquí asumo que 'rut' se obtiene del token JWT
     const user = await User.findByRut(rut);
-    
+
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
     // Envía solo los datos necesarios del usuario, sin la contraseña
-    const { name_user, phone_user, created_at } = user; // Desestructuramos sin 'rut' ya que lo tenemos en 'req.user'
-    res.json({ name_user, phone_user, rut, created_at });
+    const { name_user, phone_user, created_at, role_user } = user; // Desestructuramos sin 'rut' ya que lo tenemos en 'req.user'
+    res.json({ name_user, phone_user, rut, created_at, role_user });
   } catch (error) {
     console.error('Error al obtener el perfil:', error);
     res.status(500).json({ message: 'Error al obtener el perfil' });
