@@ -44,9 +44,11 @@ export default function HomePage() {
     <div className="flex flex-col gap-6">
       {/* Sección de bienvenida */}
       <div className="flex items-center justify-between">
-        <div>
-          <p className="text-2xl font-bold text-primary">Bienvenido/a de nuevo </p>
-          <p className="text-3xl font-semibold">{name}</p>
+        <div style={{ minHeight: '3rem' }}>
+          <p className="text-2xl font-bold text-primary">
+            Bienvenido/a de nuevo{' '}
+          </p>
+          <p className="text-3xl font-semibold">{name || 'Cargando...'}</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="relative">

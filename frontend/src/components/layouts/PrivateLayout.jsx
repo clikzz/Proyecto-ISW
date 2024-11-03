@@ -18,13 +18,28 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/authContext';
 import Notificaciones from '@/components/Notification';
-import { Button } from '@/components/ui/button';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function PrivateLayout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const router = useRouter();
   const { logout, isAuthenticated, role, loading } = useAuth();
 
+  const pageVariants = {
+    hidden: { opacity: 0, y: 50, scale: 0.95 },
+    enter: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.5, ease: 'easeOut' },
+    },
+    exit: {
+      opacity: 0,
+      y: -50,
+      scale: 0.95,
+      transition: { duration: 0.5, ease: 'easeIn' },
+    },
+  };
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       router.push('/login');
@@ -142,9 +157,18 @@ export default function PrivateLayout({ children }) {
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto p-6 relative bg-background">
-            {children}
-          </main>
+          <AnimatePresence mode="wait">
+            <motion.main
+              key={router.pathname}
+              variants={pageVariants}
+              initial="hidden"
+              animate="enter"
+              exit="exit"
+              className="flex-1 overflow-y-auto p-6"
+            >
+              {children}
+            </motion.main>
+          </AnimatePresence>
         </div>
       </div>
     </>
