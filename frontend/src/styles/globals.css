@@ -1,3 +1,9 @@
+/* Aplica theme-transition a todos los elementos */
+* {
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+/* Resto del código */
 @import 'animate.css/animate.min.css';
 @import 'aos/dist/aos.css';
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
@@ -27,7 +33,6 @@
     --border: 210 40% 85%;
     --input: 210 40% 96%;
     --ring: 210 70% 40%;
-
     --radius: 0.5rem;
     --font-sans: 'Montserrat', sans-serif;
   }
@@ -56,47 +61,14 @@
 
 /* Estilos base */
 @layer base {
-  * {
-    @apply border-border;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
   html,
   body {
-    font-family: 'Montserrat', sans-serif;
     height: 100%;
     width: 100%;
     background-color: hsl(var(--background));
-    transition: background-color 0.5s ease, color 0.5s ease;
   }
-
-  body {
-    font-family: var(--font-sans);
-    @apply bg-background text-foreground;
-    margin: 0;
-    padding: 0;
-    line-height: 1.5;
-  }
-
   #__next {
     height: 100%;
-  }
-}
-
-/* Estilos específicos para botones, incluyendo el destructivo */
-@layer components {
-  .btn {
-    @apply px-4 py-2 rounded-md font-semibold text-sm transition-colors duration-200;
-  }
-
-  .btn-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90;
-  }
-
-  .btn-destructive {
-    @apply bg-destructive text-destructive-foreground hover:bg-destructive/90;
   }
 }
 
@@ -140,41 +112,3 @@
   animation: scale-fade 0.3s ease-in-out;
 }
 
-/* Prevenir parpadeos al cargar tema */
-html:not(.dark) {
-  background-color: hsl(var(--background));
-}
-
-/* Estilo global para inputs */
-input {
-  background-color: hsl(var(--input));
-  color: hsl(var(--foreground));
-  border: 1px solid hsl(var(--border));
-  padding: 8px 12px;
-  border-radius: var(--radius);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-input::placeholder {
-  color: hsl(var(--muted-foreground));
-  opacity: 0.6;
-}
-
-input:focus {
-  border-color: hsl(var(--primary));
-  box-shadow: 0 0 0 2px hsl(var(--ring));
-  outline: none;
-}
-
-/* Estilo de texto para inputs según el modo */
-.input-text {
-  color: hsl(var(--muted-foreground));
-}
-
-.input-text:focus {
-  color: hsl(var(--foreground));
-}
-
-* {
-  transition: background-color 0.5s ease, color 0.5s ease;
-}

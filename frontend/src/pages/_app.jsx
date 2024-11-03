@@ -6,6 +6,7 @@ import PrivateLayout from '@layouts/PrivateLayout';
 import { AuthProvider } from '../context/authContext';
 import { useRouter } from 'next/router';
 import { AlertProvider } from '@context/alertContext';
+import { ThemeProvider } from '@context/themeContext';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -30,12 +31,14 @@ export default function MyApp({ Component, pageProps }) {
     : PrivateLayout;
 
   return (
-    <AlertProvider>
-      <AuthProvider>
-        <LayoutComponent key={router.asPath} className={montserrat.variable}>
-          <Component {...pageProps} />
-        </LayoutComponent>
-      </AuthProvider>
-    </AlertProvider>
+    <ThemeProvider>
+      <AlertProvider>
+        <AuthProvider>
+          <LayoutComponent key={router.asPath} className={`${montserrat.variable}`}>
+            <Component {...pageProps} />
+          </LayoutComponent>
+        </AuthProvider>
+      </AlertProvider>
+    </ThemeProvider>
   );
 }

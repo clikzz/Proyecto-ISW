@@ -1,45 +1,30 @@
-// components/Layout.jsx
 import { Bike, Sun, Moon } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@components/ui/button';
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@context/authContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import Script from 'next/script';
+import { useTheme } from '@context/themeContext';
 
 export default function Layout({ children }) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const router = useRouter();
   const { isAuthenticated, logout } = useAuth();
 
-  // Sincronizar el estado de isDarkMode con localStorage y aplicar el tema desde el inicio
-  useEffect(() => {
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-      setIsDarkMode(true);
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, []);
-
-  const toggleDarkMode = () => {
-    const newTheme = isDarkMode ? 'light' : 'dark';
-    setIsDarkMode(!isDarkMode);
-    localStorage.setItem('theme', newTheme);
-
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  };
-
   const pageVariants = {
-    hidden: { opacity: 0.5, y: 10, scale: 0.98 },
-    enter: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.3 } },
-    exit: { opacity: 0.5, y: -10, scale: 0.98, transition: { duration: 0.2 } },
+    hidden: { opacity: 0, y: 50, scale: 0.95 },
+    enter: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.5, ease: 'easeOut' },
+    },
+    exit: {
+      opacity: 0,
+      y: -50,
+      scale: 0.95,
+      transition: { duration: 0.5, ease: 'easeIn' },
+    },
   };
 
   const handleLogout = () => {
@@ -49,24 +34,8 @@ export default function Layout({ children }) {
 
   return (
     <>
-      {/* Script para cargar el tema antes del renderizado */}
-      <Script
-        id="theme-loader"
-        strategy="beforeInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              const theme = localStorage.getItem('theme');
-              if (theme) {
-                document.documentElement.classList.add(theme);
-              }
-            })();
-          `,
-        }}
-      />
-
-      <div className="theme-transition min-h-screen overflow-hidden ${className}">
-        <header className="absolute px-4 lg:px-6 h-14 flex items-center w-full z-10">
+      <div className="overflow-hidden min-h-screen bg-background text-foreground ${className}">
+        <header className="fixed px-4 lg:px-6 h-14 flex items-center w-full z-10">
           <Link className="flex items-center justify-center" href="/">
             <Bike className="h-6 w-6" />
             <span className="ml-2 text-lg font-bold">bikefy</span>
@@ -91,7 +60,10 @@ export default function Layout({ children }) {
             )}
             <button
               onClick={toggleDarkMode}
-              className="p-2 rounded-full transition-transform duration-300 hover:scale-110"
+              className="p-2 rounded-full hover:bg-accent"
+              aria-label={
+                isDarkMode ? 'Activar modo claro' : 'Activar modo oscuro'
+              }
             >
               {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
             </button>
@@ -100,7 +72,7 @@ export default function Layout({ children }) {
 
         <AnimatePresence mode="wait">
           <motion.main
-            key={router.pathname} // Cambiado a pathname para evitar re-renders innecesarios
+            key={router.pathname}
             variants={pageVariants}
             initial="hidden"
             animate="enter"
