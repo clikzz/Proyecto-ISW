@@ -2,8 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const employeeRoutes = require('./routes/employee');
-const pool = require('./config/db');
 const profileRoutes = require('./routes/profile');
+const transactionRoutes = require('./routes/transaction'); // Importa el enrutador de transacciones
+const pool = require('./config/db');
 require('dotenv').config();
 
 const app = express();
@@ -21,9 +22,10 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 const HOST = process.env.HOST || '0.0.0.0';
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 80;
 
 app.listen(PORT, HOST, async () => {
   console.log('\x1b[32m%s\x1b[0m', '=> API Iniciada exitosamente');
