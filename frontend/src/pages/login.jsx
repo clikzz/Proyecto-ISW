@@ -1,65 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
+import React from 'react';
+import { LogIn } from 'lucide-react';
+import LoginForm from '@components/LoginForm';
 import Link from 'next/link';
-import { loginUser } from '@api/auth';
-import { useAuth } from '@context/authContext';
-import { useAlert } from '@context/alertContext'; // Importar el hook de alerta
 
 export default function Login() {
-  const [rut, setRut] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [eyeAnimation, setEyeAnimation] = useState(false);
-  const { login } = useAuth();
-  const router = useRouter();
-  const { showAlert } = useAlert(); // Acceder a la función showAlert
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-    setEyeAnimation(true);
-    setTimeout(() => setEyeAnimation(false), 300);
-  };
-
-  const formatRut = (rut) => {
-    let cleanRut = rut.replace(/[^0-9Kk]/g, '');
-    if (cleanRut.length > 1) {
-      cleanRut = cleanRut.replace(
-        /^(\d{1,2})(\d{3})(\d{3})([0-9Kk])$/,
-        '$1.$2.$3-$4'
-      );
-    }
-    return cleanRut.slice(0, 12);
-  };
-
-  const handleRutChange = (e) => {
-    const rawRut = e.target.value;
-    const formatted = formatRut(rawRut);
-    setRut(formatted);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await loginUser(rut, password);
-      login(response.token, response.role);
-      showAlert('Inicio de sesión exitoso', 'success'); // Mostrar alerta de éxito
-      router.push('/home');
-    } catch (error) {
-      showAlert(
-        'Error en el inicio de sesión. Por favor, inténtalo de nuevo.',
-        'error'
-      ); // Mostrar alerta de error
-      console.error(
-        'Error en el inicio de sesión:',
-        error.response?.data || error.message
-      );
-    }
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md px-6">
@@ -81,101 +27,7 @@ export default function Login() {
               Regístrate
             </Link>
           </p>
-
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <label
-                htmlFor="rut"
-                className="block text-sm font-medium text-foreground"
-              >
-                RUT
-              </label>
-              <input
-                id="rut"
-                name="rut"
-                type="text"
-                value={rut}
-                onChange={handleRutChange}
-                required
-                className="mt-1 appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
-                placeholder="12.345.678-9"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-foreground"
-              >
-                Contraseña
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="appearance-none block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={togglePasswordVisibility}
-                >
-                  {showPassword ? (
-                    <EyeOff
-                      className={`h-5 w-5 text-muted-foreground ${
-                        eyeAnimation ? 'eye-animation' : ''
-                      }`}
-                    />
-                  ) : (
-                    <Eye
-                      className={`h-5 w-5 text-muted-foreground ${
-                        eyeAnimation ? 'eye-animation' : ''
-                      }`}
-                    />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-primary focus:ring-primary border-input rounded bg-background checkbox-hover-animation"
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 text-sm text-muted-foreground"
-                >
-                  Recordarme
-                </label>
-              </div>
-              <div className="text-sm">
-                <Link
-                  href="/forgot-password"
-                  className="font-medium text-primary hover:text-accent-foreground transition duration-300"
-                >
-                  ¿Olvidaste tu contraseña?
-                </Link>
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-300"
-              >
-                Iniciar sesión
-              </button>
-            </div>
-          </form>
+          <LoginForm />
         </div>
       </div>
     </div>

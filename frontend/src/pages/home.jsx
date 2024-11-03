@@ -22,11 +22,14 @@ export default function HomePage() {
   const isAuthorized = useAuthRedirect(['default', 'admin', 'employee']);
   const [name, setName] = useState('');
   const fetchProfileData = async () => {
-    try{
+    try {
       const profileData = await getProfile();
       setName(profileData.name_user);
     } catch (error) {
-      console.error('Error fetching profile data:', error.response?.data || error.message);
+      console.error(
+        'Error fetching profile data:',
+        error.response?.data || error.message
+      );
     }
   };
   fetchProfileData();
@@ -40,8 +43,10 @@ export default function HomePage() {
       {/* Sección de bienvenida */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Bienvenido/a de nuevo </h1>
-          <p className="text-3xl font-bold text-primary">{name}</p>
+          <p className="text-2xl font-semibold text-primary">
+            Bienvenido/a de nuevo{' '}
+          </p>
+          <p className="text-3xl font-bold">{name}</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="relative">
