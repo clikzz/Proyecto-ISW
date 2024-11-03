@@ -1,6 +1,6 @@
 /* Aplica theme-transition a todos los elementos */
 * {
-  transition: background-color 0.1s ease, color 0.1s ease;
+  transition: background-color 1s ease, color 1s ease;
 }
 
 /* Resto del código */
@@ -59,17 +59,11 @@
   }
 }
 
-/* Estilos base */
-@layer base {
-  html,
-  body {
-    height: 100%;
-    width: 100%;
-    background-color: hsl(var(--background));
-  }
-  #__next {
-    height: 100%;
-  }
+body,
+html {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
 }
 
 /* Animaciones y estilos adicionales */
@@ -111,4 +105,3 @@
 .scale-fade-animation {
   animation: scale-fade 0.3s ease-in-out;
 }
-

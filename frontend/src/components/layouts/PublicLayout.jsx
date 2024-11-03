@@ -1,13 +1,14 @@
-import { Bike, Sun, Moon } from 'lucide-react';
+'use client';
+
+import { Bike } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@components/ui/button';
 import { useRouter } from 'next/router';
 import { useAuth } from '@context/authContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTheme } from '@context/themeContext';
+import  ThemeToggle from '@components/ThemeToggle';
 
 export default function Layout({ children }) {
-  const { isDarkMode, toggleDarkMode } = useTheme();
   const router = useRouter();
   const { isAuthenticated, logout } = useAuth();
 
@@ -58,15 +59,7 @@ export default function Layout({ children }) {
                 </Link>
               </>
             )}
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-full hover:bg-accent"
-              aria-label={
-                isDarkMode ? 'Activar modo claro' : 'Activar modo oscuro'
-              }
-            >
-              {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
-            </button>
+            <ThemeToggle></ThemeToggle>
           </nav>
         </header>
 
