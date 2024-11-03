@@ -12,9 +12,13 @@ const getAllTransactions = async (req, res) => {
 
 const createTransaction = async (req, res) => {
   const { rut } = req.user; // Obtener el rut del usuario autenticado
+  console.log('req.body:', req.body);
   const transactionData = { ...req.body, rut };
+  console.log('transactionData:', transactionData);
   try {
+    console.log("1");
     const newTransaction = await Transaction.create(transactionData);
+    console.log("2");
     res.status(201).json(newTransaction);
   } catch (error) {
     console.error('Error al crear la transacción:', error);

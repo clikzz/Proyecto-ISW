@@ -40,6 +40,7 @@ export const getAllTransactions = async () => {
 
 export const createTransaction = async (transactionData) => {
   try {
+    console.log(transactionData);
     const response = await api.post('/', transactionData);
     return response.data;
   } catch (error) {
