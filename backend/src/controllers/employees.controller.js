@@ -1,4 +1,5 @@
 const employeeService = require('../services/employee.service');
+const User = require('../models/User');
 
 const employeeController = {
   getEmployees: async (req, res) => {
@@ -14,17 +15,31 @@ const employeeController = {
   addEmployee: async (req, res) => {
     try {
       const { rut, name_user, email } = req.body;
-      const newEmployee = await employeeService.addEmployee(
-        rut,
-        name_user,
-        email
-      );
-      res.status(201).json(newEmployee);
-    } catch (error) {
-      console.log('Error');
 
+      const existingEmail = await User.findByEmail(email);
+      const existingRut = await User.findByRut(rut);
+      if (existingEmail) {
+        return res
+          .status(400)
+          .json({ message: 'El correo electrónico ya está en uso' });
+      }
+      if (existingRut) {
+        return res.status(400).json({ message: 'El rut ya está en uso' });
+      }
+
+      const employee = await employeeService.addEmployee(rut, name_user, email);
+
+      res.status(201).json({
+        message: 'Employee added successfully',
+        employee,
+      });
+    } catch (error) {
       console.error('Error adding employee:', error);
-      res.status(500).json({ message: 'Error interno del servidor' });
+      console.log(error.message);
+
+      res
+        .status(500)
+        .json({ message: 'Error interno del servidor', error: error.message });
     }
   },
 

@@ -19,12 +19,14 @@ import { AlertCircle, RefreshCw, Trash } from 'lucide-react';
 import { formatDateTime } from '@helpers/dates';
 import { Button } from '@/components/ui/button';
 import AddEmployeeDialog from '@/components/AddEmployeeDialog';
+import { useAlert } from '@context/alertContext';
 
 export default function EmployeeList() {
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const { isAuthenticated } = useAuth();
+  const { showAlert } = useAlert();
 
   const fetchEmployees = async () => {
     if (!isAuthenticated) {
@@ -34,6 +36,7 @@ export default function EmployeeList() {
     try {
       setIsLoading(true);
       const response = await getEmployees();
+      showAlert('Lista de empleados actualizada', 'success');
       response.forEach((employee) => {
         if (!employee.phone_user) {
           employee.phone_user = 'SIN REGISTRAR';
@@ -49,7 +52,7 @@ export default function EmployeeList() {
       setEmployees(response);
       setError(null);
     } catch (error) {
-      console.error('Error fetching employees:', error);
+      showAlert('Error al obtener la lista de empleados', 'error');
       setError('Failed to fetch employees. Please try again later.');
     } finally {
       setIsLoading(false);
@@ -89,7 +92,7 @@ export default function EmployeeList() {
         <div className="flex items-center gap-2">
           <Button onClick={fetchEmployees} className="flex items-center">
             <RefreshCw className="mr-2 h-4 w-4" />
-            Refrescar
+            Actualizar
           </Button>
           <AddEmployeeDialog fetchEmployees={fetchEmployees} />
         </div>

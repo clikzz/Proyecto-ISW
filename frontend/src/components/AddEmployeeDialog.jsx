@@ -11,18 +11,41 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { UserPlus } from 'lucide-react';
 import { addEmployee } from '@api/employees';
+import { useAlert } from '@context/alertContext';
 
 export default function AddEmployeeDialog({ fetchEmployees }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newEmployee, setNewEmployee] = useState({
-    name: '',
+    name_user: '',
     rut: '',
     email: '',
   });
+  const { showAlert } = useAlert();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewEmployee((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const formatRut = (value) => {
+    const cleanValue = value
+      .replace(/\./g, '')
+      .replace(/-/g, '')
+      .replace(/\s+/g, '');
+    if (cleanValue.length > 11) return value;
+
+    const cuerpo = cleanValue.slice(0, -1);
+    const verificador = cleanValue.slice(-1);
+    const formattedCuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    return `${formattedCuerpo}-${verificador}`;
+  };
+
+  const handleRutChange = (event) => {
+    const formattedRut = formatRut(event.target.value);
+    if (formattedRut.length <= 12) {
+      setNewEmployee((prev) => ({ ...prev, rut: formattedRut }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -30,16 +53,17 @@ export default function AddEmployeeDialog({ fetchEmployees }) {
     try {
       console.log('Employee added:', newEmployee);
       await addEmployee(newEmployee);
+      showAlert('Empleado añadido', 'success');
+      setIsDialogOpen(false);
+      setNewEmployee({
+        name_user: '',
+        rut: '',
+        email: '',
+      });
+      fetchEmployees();
     } catch (error) {
-      console.error('Error adding employee:', error);
+      showAlert(error.response?.data.errors, 'error');
     }
-    setIsDialogOpen(false);
-    fetchEmployees();
-    setNewEmployee({
-      name_user: '',
-      rut: '',
-      email: '',
-    });
   };
 
   return (
@@ -72,7 +96,7 @@ export default function AddEmployeeDialog({ fetchEmployees }) {
               id="rut"
               name="rut"
               value={newEmployee.rut}
-              onChange={handleInputChange}
+              onChange={handleRutChange}
               placeholder="12.345.678-9"
               required
             />

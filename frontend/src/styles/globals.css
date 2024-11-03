@@ -6,44 +6,51 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: var(--font-sans);
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden; 
-}
-
 /* Definición de colores y variables globales */
 @layer base {
-  /* Modo claro (predeterminado) */
-:root {
-    /* Modo claro (predeterminado) */
-    --background: 220 10% 93%; /* #E0E1DD para el fondo general */
-    --foreground: 213 15% 15%; /* Color oscuro para texto */
-    --card: 220 10% 90%; /* Fondo claro para tarjetas */
-    --card-foreground: 213 20% 20%; /* Texto oscuro en tarjetas */
-    --primary: 217 20% 60%; /* #778DA9 para botones y elementos destacados */
-    --muted-foreground: 213 15% 30%; /* Color de texto secundario */
-    --accent: 215 30% 40%; /* #415A77 para acentos o íconos */
-    --border: 210 15% 70%; /* Borde claro */
-    --input: 220 10% 85%; /* Ajuste a un tono más oscuro para inputs */
-    --ring: 215 25% 45%; /* Anillos de foco */
+  :root {
+    /* Modo claro (actualizado con cards azules y mejor contraste) */
+    --background: 210 50% 98%;
+    --foreground: 210 80% 15%;
+    --card: 210 70% 95%; /* Card color más azul */
+    --card-foreground: 210 80% 20%;
+    --primary: 210 70% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 25 100% 50%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 40% 90%;
+    --muted-foreground: 210 40% 40%;
+    --accent: 210 60% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 40% 85%;
+    --input: 210 40% 96%;
+    --ring: 210 70% 40%;
+
     --radius: 0.5rem;
     --font-sans: 'Montserrat', sans-serif;
-}
+  }
 
-  /* Modo oscuro */
   .dark {
-    --background: 211 44% 8%; /* #0D1B2A */
-    --foreground: 220 8% 88%; /* #E0E1DD */
-    --card: 213 30% 15%; /* Fondo oscuro de tarjetas */
-    --card-foreground: 220 8% 88%; /* Texto claro en tarjetas */
-    --primary: 210 25% 55%; /* #778DA9 */
-    --muted-foreground: 220 8% 70%; /* Texto secundario claro */
-    --accent: 210 20% 40%; /* Color de acento */
-    --border: 210 15% 55%; /* Borde oscuro */
-    --input: 213 30% 15%; /* Fondo de inputs oscuros */
-    --ring: 220 8% 88%; /* Anillos de foco claros */
+    /* Modo oscuro (ajustado para mantener consistencia) */
+    --background: 211 44% 8%;
+    --foreground: 220 8% 88%;
+    --card: 213 30% 20%; /* Card color más oscuro para modo oscuro */
+    --card-foreground: 220 8% 98%; /* Texto más claro para mejor contraste */
+    --primary: 210 25% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 25 70% 45%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 213 30% 20%;
+    --muted-foreground: 220 8% 70%;
+    --accent: 210 20% 40%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 15% 55%;
+    --input: 213 30% 15%;
+    --ring: 220 8% 88%;
   }
 }
 
@@ -56,14 +63,15 @@ body {
     box-sizing: border-box;
   }
 
-  html, body {
+  html,
+  body {
     font-family: 'Montserrat', sans-serif;
     height: 100%;
     width: 100%;
     background-color: hsl(var(--background));
     transition: background-color 0.5s ease, color 0.5s ease;
   }
-  
+
   body {
     font-family: var(--font-sans);
     @apply bg-background text-foreground;
@@ -74,6 +82,21 @@ body {
 
   #__next {
     height: 100%;
+  }
+}
+
+/* Estilos específicos para botones, incluyendo el destructivo */
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-semibold text-sm transition-colors duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+
+  .btn-destructive {
+    @apply bg-destructive text-destructive-foreground hover:bg-destructive/90;
   }
 }
 
@@ -93,7 +116,6 @@ body {
   }
 }
 
-
 .eye-animation {
   animation: eye-bounce 0.3s ease-in-out;
 }
@@ -111,7 +133,7 @@ body {
 }
 
 .checkbox-hover-animation:hover {
-  animation: animate__pulse 0.5s; /* 0.5s es la duración, puedes ajustarla */
+  animation: animate__pulse 0.5s;
 }
 
 .scale-fade-animation {
@@ -120,7 +142,7 @@ body {
 
 /* Prevenir parpadeos al cargar tema */
 html:not(.dark) {
-  background-color: hsl(var(--background)); /* Fondo predeterminado para claro */
+  background-color: hsl(var(--background));
 }
 
 /* Estilo global para inputs */
@@ -146,9 +168,13 @@ input:focus {
 
 /* Estilo de texto para inputs según el modo */
 .input-text {
-  color: hsl(var(--muted-foreground)); /* Texto tenue al inicio */
+  color: hsl(var(--muted-foreground));
 }
 
 .input-text:focus {
-  color: hsl(var(--foreground)); /* Texto más oscuro o claro al enfocarse */
+  color: hsl(var(--foreground));
+}
+
+* {
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
