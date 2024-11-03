@@ -51,6 +51,7 @@ export default function BalanceFinanciero() {
   const [metodoPago, setMetodoPago] = useState("efectivo");
   const [descripcion, setDescripcion] = useState("");
   const [modalAbierto, setModalAbierto] = useState(false);
+  const [modalVerMasAbierto, setModalVerMasAbierto] = useState(false);
   const [resumen, setResumen] = useState({
     ingresos: 0,
     egresos: 0,
@@ -257,6 +258,14 @@ export default function BalanceFinanciero() {
                       </div>
                     </div>
                   ))}
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => setModalVerMasAbierto(true)}
+                      className="hover:underline"
+                    >
+                      Ver más...
+                    </button>
+                  </div>
                 </div>
               </div>
             </Card>
@@ -272,7 +281,47 @@ export default function BalanceFinanciero() {
           </div>
         </>
       )}
-
+      {modalVerMasAbierto && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-3xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Todas las Transacciones</h3>
+              <button
+                onClick={() => setModalVerMasAbierto(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="space-y-4 max-h-[35rem] overflow-y-auto">
+              {transacciones.map((t) => (
+                <div
+                  key={t.id_transaccion}
+                  className="flex items-center justify-between rounded-lg p-3 bg-background hover:bg-accent transition-colors"
+                >
+                  <div>
+                    <p className="font-medium">
+                      {t.tipo === "ingreso" ? "Ingreso" : "Egreso"}:{" "}
+                      {t.descripcion}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(t.fecha).toLocaleDateString()} - {t.metodo_pago}
+                    </p>
+                  </div>
+                  <div
+                    className={`mr-8 text-lg font-semibold ${
+                      t.tipo === "ingreso" ? "text-green-500" : "text-red-500"
+                    }`}
+                  >
+                    {t.tipo === "ingreso" ? "+" : "-"}
+                    {formatoPesoChileno(t.monto)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       {modalAbierto && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md">
