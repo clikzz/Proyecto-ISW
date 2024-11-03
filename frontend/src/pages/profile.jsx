@@ -13,7 +13,7 @@ export default function ProfilePage() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [rut, setRut] = useState('');
-  const [profilePicture, setProfilePicture] = useState('/placeholder.svg');
+  const [profilePicture, setProfilePicture] = useState('');
   const [activeTab, setActiveTab] = useState('Datos Personales');
 
   const isAuthorized = useAuthRedirect(['default', 'admin', 'employee']);

@@ -25,7 +25,7 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
           htmlFor="profile-picture"
           className="absolute bottom-2 right-2 p-2 bg-primary rounded-full cursor-pointer hover:bg-accent transition-colors flex items-center justify-center"
         >
-          <Camera className="h-5 w-5 text-card-foreground" />
+          <Camera className="h-5 w-5 text-white" />
           <input
             id="profile-picture"
             type="file"

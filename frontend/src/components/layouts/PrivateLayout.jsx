@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Bike,
   Sun,
@@ -13,50 +13,49 @@ import {
   Users,
   TrendingUp,
   DollarSign,
-} from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useAuth } from "@/context/authContext";
-import { motion, AnimatePresence } from "framer-motion";
-import Script from "next/script";
-import Notificaciones from "@/components/Notification";
+} from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useAuth } from '@/context/authContext';
+import Notificaciones from '@/components/Notification';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function PrivateLayout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const router = useRouter();
   const { logout, isAuthenticated, role, loading } = useAuth();
 
-  useEffect(() => {
-    const storedTheme = localStorage.getItem("theme");
-    if (storedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      setIsDarkMode(true);
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
-
+  const pageVariants = {
+    hidden: { opacity: 0, y: 50, scale: 0.95 },
+    enter: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.5, ease: 'easeOut' },
+    },
+    exit: {
+      opacity: 0,
+      y: -50,
+      scale: 0.95,
+      transition: { duration: 0.5, ease: 'easeIn' },
+    },
+  };
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      router.push("/login");
+      router.push('/login');
     }
   }, [loading, isAuthenticated, router]);
 
   const toggleDarkMode = () => {
-    const newTheme = isDarkMode ? "light" : "dark";
+    const newTheme = isDarkMode ? 'light' : 'dark';
     setIsDarkMode(!isDarkMode);
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
   };
 
   const handleLogout = () => {
     logout();
-  };
-
-  const pageVariants = {
-    hidden: { opacity: 0.5, y: 10, scale: 0.98 },
-    enter: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.3 } },
-    exit: { opacity: 0.5, y: -10, scale: 0.98, transition: { duration: 0.2 } },
+    router.push('/');
   };
 
   if (loading) {
@@ -74,30 +73,17 @@ export default function PrivateLayout({ children }) {
   const NavLink = ({ href, icon, children }) => (
     <Link
       href={href}
-      className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent transition-all"
+      className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent hover:text-white transition-all"
     >
-      {icon}
+      {React.cloneElement(icon, {
+        className: `${icon.props.className} hover:text-white`,
+      })}
       <span>{children}</span>
     </Link>
   );
 
   return (
     <>
-      <Script
-        id="theme-loader"
-        strategy="beforeInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              const theme = localStorage.getItem('theme');
-              if (theme) {
-                document.documentElement.classList.add(theme);
-              }
-            })();
-          `,
-        }}
-      />
-
       <div className="theme-transition min-h-screen flex bg-background text-foreground ml-[calc(16rem+4rem)]">
         {/* Sidebar */}
         <aside className="fixed top-8 left-8 h-[calc(100vh-4rem)] w-64 bg-card p-6 flex flex-col items-center rounded-3xl shadow-lg">
@@ -110,15 +96,18 @@ export default function PrivateLayout({ children }) {
             <NavLink href="/home" icon={<Home className="h-6 w-6" />}>
               Home
             </NavLink>
-            {role === "admin" && (
-              <NavLink href="/overview" icon={<TrendingUp className="h-6 w-6" />}>
+            {role === 'admin' && (
+              <NavLink
+                href="/overview"
+                icon={<TrendingUp className="h-6 w-6" />}
+              >
                 Overview
               </NavLink>
             )}
             <NavLink href="/inventario" icon={<Package className="h-6 w-6" />}>
               Inventario
             </NavLink>
-            {role === "admin" && (
+            {role === 'admin' && (
               <>
                 <NavLink href="/employees" icon={<Users className="h-6 w-6" />}>
                   Empleados
@@ -152,7 +141,7 @@ export default function PrivateLayout({ children }) {
                 onClick={toggleDarkMode}
                 className="p-2 rounded-full hover:bg-accent"
                 aria-label={
-                  isDarkMode ? "Activar modo claro" : "Activar modo oscuro"
+                  isDarkMode ? 'Activar modo claro' : 'Activar modo oscuro'
                 }
               >
                 {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
@@ -175,13 +164,9 @@ export default function PrivateLayout({ children }) {
               initial="hidden"
               animate="enter"
               exit="exit"
-              className="flex-1 overflow-y-auto p-6 relative bg-background"
+              className="flex-1 overflow-y-auto p-6"
             >
-              {children || (
-                <div className="flex items-center justify-center h-full">
-                  Página no implementada
-                </div>
-              )}
+              {children}
             </motion.main>
           </AnimatePresence>
         </div>

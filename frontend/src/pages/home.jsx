@@ -21,10 +21,12 @@ export default function HomePage() {
   const { user } = useAuth();
   const isAuthorized = useAuthRedirect(['default', 'admin', 'employee']);
   const [name, setName] = useState('');
+  const [role, setRole] = useState('');
   const fetchProfileData = async () => {
     try {
       const profileData = await getProfile();
       setName(profileData.name_user);
+      setRole(profileData.role_user);
     } catch (error) {
       console.error(
         'Error fetching profile data:',
@@ -42,9 +44,11 @@ export default function HomePage() {
     <div className="flex flex-col gap-6">
       {/* Sección de bienvenida */}
       <div className="flex items-center justify-between">
-        <div>
-          <p className="text-2xl font-bold text-primary">Bienvenido/a de nuevo </p>
-          <p className="text-3xl font-semibold">{name}</p>
+        <div style={{ minHeight: '3rem' }}>
+          <p className="text-2xl font-bold text-primary">
+            Bienvenido/a de nuevo{' '}
+          </p>
+          <p className="text-3xl font-semibold">{name || 'Cargando...'}</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="relative">
@@ -171,19 +175,19 @@ export default function HomePage() {
                 name: 'Candado Premium para Bicicleta',
                 category: 'Accesorios',
                 sales: '125 ventas',
-                image: '/placeholder.svg?height=40&width=40',
+                image: '',
               },
               {
                 name: 'Llantas Todo Terreno',
                 category: 'Repuestos',
                 sales: '98 ventas',
-                image: '/placeholder.svg?height=40&width=40',
+                image: '',
               },
               {
                 name: 'Batería para Bicicleta Eléctrica',
                 category: 'Componentes',
                 sales: '72 ventas',
-                image: '/placeholder.svg?height=40&width=40',
+                image: '',
               },
             ].map((product) => (
               <motion.div
