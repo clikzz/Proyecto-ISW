@@ -22,11 +22,14 @@ export default function HomePage() {
   const isAuthorized = useAuthRedirect(['default', 'admin', 'employee']);
   const [name, setName] = useState('');
   const fetchProfileData = async () => {
-    try{
+    try {
       const profileData = await getProfile();
       setName(profileData.name_user);
     } catch (error) {
-      console.error('Error fetching profile data:', error.response?.data || error.message);
+      console.error(
+        'Error fetching profile data:',
+        error.response?.data || error.message
+      );
     }
   };
   fetchProfileData();

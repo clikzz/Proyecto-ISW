@@ -23,10 +23,6 @@ export const loginUser = async (rut, password) => {
     const response = await api.post('/login', { rut, password });
     return response.data;
   } catch (error) {
-    console.error(
-      'Error en el inicio de sesión:',
-      error.response?.data || error.message
-    );
     throw error;
   }
 };
