@@ -1,12 +1,14 @@
-// pages/_app.js
-import '@styles/globals.css';
+'use client';
+
 import { Montserrat } from 'next/font/google';
 import PublicLayout from '@layouts/PublicLayout';
 import PrivateLayout from '@layouts/PrivateLayout';
 import { AuthProvider } from '../context/authContext';
 import { useRouter } from 'next/router';
 import { AlertProvider } from '@context/alertContext';
-import { ThemeProvider } from '@context/themeContext';
+import { ThemeProvider } from 'next-themes';
+import { useEffect, useState } from 'react';
+import '@styles/globals.css';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -17,6 +19,17 @@ const montserrat = Montserrat({
 
 export default function MyApp({ Component, pageProps }) {
   const router = useRouter();
+
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    // Evita renderizar hasta que el componente esté montado en el cliente
+    return null;
+  }
 
   // Determine which layout to use based on the current route
   const publicRoutes = [
@@ -31,10 +44,13 @@ export default function MyApp({ Component, pageProps }) {
     : PrivateLayout;
 
   return (
-    <ThemeProvider>
+    <ThemeProvider attribute="class" defaultTheme="light">
       <AlertProvider>
         <AuthProvider>
-          <LayoutComponent key={router.asPath} className={`${montserrat.variable}`}>
+          <LayoutComponent
+            key={router.asPath}
+            className={`${montserrat.variable}`}
+          >
             <Component {...pageProps} />
           </LayoutComponent>
         </AuthProvider>
