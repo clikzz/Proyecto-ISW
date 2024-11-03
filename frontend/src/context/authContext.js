@@ -42,7 +42,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('role');
     setIsAuthenticated(false);
     setRole(null);
-    router.push('/');
   };
 
   return (

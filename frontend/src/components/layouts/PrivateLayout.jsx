@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Bike,
   Sun,
@@ -13,13 +13,13 @@ import {
   Users,
   TrendingUp,
   DollarSign,
-} from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useAuth } from "@/context/authContext";
-import { motion, AnimatePresence } from "framer-motion";
-import Script from "next/script";
-import Notificaciones from "@/components/Notification";
+} from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useAuth } from '@/context/authContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import Script from 'next/script';
+import Notificaciones from '@/components/Notification';
 
 export default function PrivateLayout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -27,30 +27,31 @@ export default function PrivateLayout({ children }) {
   const { logout, isAuthenticated, role, loading } = useAuth();
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem("theme");
-    if (storedTheme === "dark") {
-      document.documentElement.classList.add("dark");
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
       setIsDarkMode(true);
     } else {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove('dark');
     }
   }, []);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      router.push("/login");
+      router.push('/login');
     }
   }, [loading, isAuthenticated, router]);
 
   const toggleDarkMode = () => {
-    const newTheme = isDarkMode ? "light" : "dark";
+    const newTheme = isDarkMode ? 'light' : 'dark';
     setIsDarkMode(!isDarkMode);
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
   };
 
   const handleLogout = () => {
     logout();
+    router.push('/');
   };
 
   const pageVariants = {
@@ -110,15 +111,18 @@ export default function PrivateLayout({ children }) {
             <NavLink href="/home" icon={<Home className="h-6 w-6" />}>
               Home
             </NavLink>
-            {role === "admin" && (
-              <NavLink href="/overview" icon={<TrendingUp className="h-6 w-6" />}>
+            {role === 'admin' && (
+              <NavLink
+                href="/overview"
+                icon={<TrendingUp className="h-6 w-6" />}
+              >
                 Overview
               </NavLink>
             )}
             <NavLink href="/inventario" icon={<Package className="h-6 w-6" />}>
               Inventario
             </NavLink>
-            {role === "admin" && (
+            {role === 'admin' && (
               <>
                 <NavLink href="/employees" icon={<Users className="h-6 w-6" />}>
                   Empleados
@@ -152,7 +156,7 @@ export default function PrivateLayout({ children }) {
                 onClick={toggleDarkMode}
                 className="p-2 rounded-full hover:bg-accent"
                 aria-label={
-                  isDarkMode ? "Activar modo claro" : "Activar modo oscuro"
+                  isDarkMode ? 'Activar modo claro' : 'Activar modo oscuro'
                 }
               >
                 {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}

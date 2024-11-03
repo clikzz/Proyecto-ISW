@@ -43,10 +43,8 @@ export default function HomePage() {
       {/* Sección de bienvenida */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-2xl font-semibold text-primary">
-            Bienvenido/a de nuevo{' '}
-          </p>
-          <p className="text-3xl font-bold">{name}</p>
+          <p className="text-2xl font-bold text-primary">Bienvenido/a de nuevo </p>
+          <p className="text-3xl font-semibold">{name}</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="relative">
