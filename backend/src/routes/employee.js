@@ -16,4 +16,7 @@ router.post('/addEmployee', validateEmployee, employeeController.addEmployee);
 // Ruta para eliminar un empleado
 router.delete('/deleteEmployee/:rut', employeeController.deleteEmployee);
 
+// Ruta para actualizar el rol de un empleado
+router.put('/updateEmployeeRole/:rut', employeeController.updateEmployeeRole);
+
 module.exports = router;

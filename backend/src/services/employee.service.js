@@ -32,6 +32,10 @@ const employeeService = {
   deleteEmployee: async (rut) => {
     await User.delete(rut);
   },
+
+  updateEmployeeRole: async (rut, newRole) => {
+    await User.updateRole(rut, newRole);
+  },
 };
 
 module.exports = employeeService;
