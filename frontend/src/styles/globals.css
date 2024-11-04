@@ -1,8 +1,3 @@
-/* Aplica theme-transition a todos los elementos */
-* {
-  transition: background-color 1s ease, color 1s ease;
-}
-
 /* Resto del código */
 @import 'animate.css/animate.min.css';
 @import 'aos/dist/aos.css';
@@ -13,6 +8,12 @@
 @tailwind utilities;
 
 /* Definición de colores y variables globales */
+
+* {
+  transition: background-color 0.05s ease, color 0.05s ease;
+  will-change: background-color, color;
+}
+
 @layer base {
   :root {
     /* Modo claro (actualizado con cards azules y mejor contraste) */
