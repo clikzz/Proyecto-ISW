@@ -6,7 +6,7 @@ import { Button } from '@components/ui/button';
 import { useRouter } from 'next/router';
 import { useAuth } from '@context/authContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import  ThemeToggle from '@components/ThemeToggle';
+import ThemeToggle from '@components/ThemeToggle';
 
 export default function Layout({ children }) {
   const router = useRouter();

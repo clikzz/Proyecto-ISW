@@ -75,8 +75,8 @@ export default function PrivateLayout({ children }) {
 
   return (
     <>
-      <div className="bg-background">
-        <div className="text-foreground min-h-screen flex ml-[calc(16rem+4rem)]">
+      <div className="bg-background text-foreground">
+        <div className="min-h-screen flex ml-[calc(16rem+4rem)]">
           {/* Sidebar */}
           <aside className="fixed top-8 left-8 h-[calc(100vh-4rem)] w-64 bg-card p-6 flex flex-col items-center rounded-3xl shadow-lg">
             <Link href="/" className="flex items-center space-x-2 mb-8">
@@ -132,7 +132,7 @@ export default function PrivateLayout({ children }) {
           </aside>
 
           {/* Main Content */}
-          <div className="flex-1 flex flex-col bg-background">
+          <div className="flex-1 flex flex-col">
             <header className="h-14 flex items-center justify-between px-6">
               <div className="ml-auto flex items-center space-x-4">
                 <ThemeToggle></ThemeToggle>
