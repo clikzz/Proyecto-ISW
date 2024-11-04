@@ -1,13 +1,12 @@
 const pool = require('../config/db');
 
 class Transaction {
-  static async getAll(rut) {
+  static async getAll() {
     const query = `
       SELECT * FROM transaccion
-      WHERE rut = $1
       ORDER BY fecha DESC
     `;
-    const result = await pool.query(query, [rut]);
+    const result = await pool.query(query);
     return result.rows;
   }
 
@@ -23,16 +22,15 @@ class Transaction {
     return result.rows[0];
   }
 
-  static async getSummary(rut) {
+  static async getSummary() {
     const query = `
       SELECT
         SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END) AS ingresos,
         SUM(CASE WHEN tipo = 'egreso' THEN monto ELSE 0 END) AS egresos,
         SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END) - SUM(CASE WHEN tipo = 'egreso' THEN monto ELSE 0 END) AS balance
       FROM transaccion
-      WHERE rut = $1
     `;
-    const result = await pool.query(query, [rut]);
+    const result = await pool.query(query);
     return result.rows[0];
   }
 }

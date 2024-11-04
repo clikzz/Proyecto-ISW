@@ -307,6 +307,9 @@ export default function BalanceFinanciero() {
                     <p className="text-sm text-muted-foreground">
                       {new Date(t.fecha).toLocaleDateString()} - {t.metodo_pago}
                     </p>
+                    <p className="text-xs text-muted-foreground">
+                      RUT: {t.rut}
+                    </p>
                   </div>
                   <div
                     className={`mr-8 text-lg font-semibold ${
