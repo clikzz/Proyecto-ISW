@@ -74,7 +74,7 @@ export default function AddEmployeeDialog({ fetchEmployees }) {
           Añadir empleado
         </Button>
       </DialogTrigger>
-      <DialogContent className="border-none">
+      <DialogContent className="border-none text-foreground">
         <DialogHeader>
           <DialogTitle>Nuevo empleado</DialogTitle>
         </DialogHeader>

@@ -55,3 +55,24 @@ export const deleteEmployee = async (rut) => {
     throw error;
   }
 };
+
+export const updateEmployeeRole = async (rut, newRole) => {
+  try {
+    const response = await api.put(
+      `/updateEmployeeRole/${rut}`, // Ensure this endpoint is correct
+      { newRole },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      'Error al actualizar empleado:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};

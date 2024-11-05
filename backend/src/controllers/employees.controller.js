@@ -53,6 +53,24 @@ const employeeController = {
       res.status(500).json({ message: 'Error interno del servidor' });
     }
   },
+
+  updateEmployeeRole: async (req, res) => {
+    try {
+      const { rut } = req.params;
+      const { newRole } = req.body;
+      console.log('rut:', rut);
+      console.log('newRole:', newRole);
+
+      const employee = await employeeService.updateEmployeeRole(rut, newRole);
+      res.status(200).json({
+        message: 'Employee updated successfully',
+        employee,
+      });
+    } catch (error) {
+      console.error('Error updating employee:', error);
+      res.status(500).json({ message: 'Error interno del servidor' });
+    }
+  },
 };
 
 module.exports = employeeController;

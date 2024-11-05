@@ -109,6 +109,11 @@ class User {
     const query = 'DELETE FROM "users" WHERE rut = $1';
     await db.query(query, [rut]);
   }
+
+  static async updateRole(rut, newRole) {
+    const query = 'UPDATE "users" SET role_user = $1 WHERE rut = $2';
+    await db.query(query, [newRole, rut]);
+  }
 }
 
 module.exports = User;
