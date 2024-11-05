@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const AuthContext = createContext({
   isAuthenticated: false,
@@ -18,28 +18,29 @@ export const AuthProvider = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const storedRole = localStorage.getItem('role');
+    const token = localStorage.getItem("token");
+    const storedRole = localStorage.getItem("role");
     if (token && storedRole) {
       setIsAuthenticated(true);
       setRole(storedRole);
     } else {
       setIsAuthenticated(false);
       setRole(null);
+      router.push("/login");
     }
     setLoading(false);
   }, []);
 
   const login = (token, role) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('role', role);
+    localStorage.setItem("token", token);
+    localStorage.setItem("role", role);
     setIsAuthenticated(true);
     setRole(role);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
     setIsAuthenticated(false);
     setRole(null);
   };

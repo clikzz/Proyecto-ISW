@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import {
   Bike,
   Bell,
@@ -11,13 +11,13 @@ import {
   Users,
   TrendingUp,
   DollarSign,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useAuth } from '@/context/authContext';
-import Notificaciones from '@/components/Notification';
-import { AnimatePresence, motion } from 'framer-motion';
-import ThemeToggle from '@/components/ThemeToggle';
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useAuth } from "@/context/authContext";
+import Notificaciones from "@/components/Notification";
+import { AnimatePresence, motion } from "framer-motion";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function PrivateLayout({ children }) {
   const router = useRouter();
@@ -29,25 +29,20 @@ export default function PrivateLayout({ children }) {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { duration: 0.5, ease: 'easeOut' },
+      transition: { duration: 0.5, ease: "easeOut" },
     },
     exit: {
       opacity: 0,
       y: -50,
       scale: 0.95,
-      transition: { duration: 0.5, ease: 'easeIn' },
+      transition: { duration: 0.5, ease: "easeIn" },
     },
   };
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [loading, isAuthenticated, router]);
-
-  const handleLogout = () => {
-    logout();
-    router.push('/');
-  };
 
   if (loading) {
     return (
@@ -88,7 +83,7 @@ export default function PrivateLayout({ children }) {
               <NavLink href="/home" icon={<Home className="h-6 w-6" />}>
                 Home
               </NavLink>
-              {role === 'admin' && (
+              {role === "admin" && (
                 <NavLink
                   href="/overview"
                   icon={<TrendingUp className="h-6 w-6" />}
@@ -102,7 +97,7 @@ export default function PrivateLayout({ children }) {
               >
                 Inventario
               </NavLink>
-              {role === 'admin' && (
+              {role === "admin" && (
                 <>
                   <NavLink
                     href="/employees"
@@ -122,7 +117,7 @@ export default function PrivateLayout({ children }) {
                 Perfil
               </NavLink>
               <button
-                onClick={handleLogout}
+                onClick={logout}
                 className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent w-full"
               >
                 <LogOut className="h-6 w-6" />
