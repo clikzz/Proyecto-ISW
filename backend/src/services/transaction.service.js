@@ -50,4 +50,16 @@ class TransactionService {
   }
 }
 
-module.exports = new TransactionService();
+const createSale = async (saleData) => {
+  return await Transaction.createSale(saleData);
+};
+
+const createPurchase = async (purchaseData) => {
+  return await Transaction.createPurchase(purchaseData);
+};
+
+module.exports = {
+  TransactionService,
+  createSale,
+  createPurchase,
+};
