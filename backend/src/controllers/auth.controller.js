@@ -66,7 +66,7 @@ exports.login = async (req, res) => {
 
     const status = await User.validateStatus(user.rut);
     if (status !== "enabled") {
-      return res.status(401).json({ message: "Usuario inactivo xd" });
+      return res.status(401).json({ message: "Usuario inactivo" });
     }
 
     const token = generateToken(user);
