@@ -87,8 +87,6 @@ class User {
     const result = await db.query(query, [rut]);
     return result.rows[0];
   }
-
-  // Otros métodos permanecen igual...
 }
 
 module.exports = User;
