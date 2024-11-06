@@ -9,6 +9,7 @@ import {
   User,
   LogOut,
   Users,
+  Truck,
   TrendingUp,
   DollarSign,
 } from "lucide-react";
@@ -104,6 +105,12 @@ export default function PrivateLayout({ children }) {
                     icon={<Users className="h-6 w-6" />}
                   >
                     Empleados
+                  </NavLink>
+                  <NavLink
+                    href="/suppliers"
+                    icon={<Truck className="h-6 w-6" />}
+                  >
+                    Proveedores
                   </NavLink>
                   <NavLink
                     href="/balance-financiero"
