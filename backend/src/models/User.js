@@ -23,8 +23,7 @@ class User {
   }
 
   static async findByEmail(email) {
-    const query =
-      "SELECT * FROM \"users\" WHERE email = $1";
+    const query = 'SELECT * FROM "users" WHERE email = $1';
     const result = await db.query(query, [email]);
     return result.rows[0];
   }
@@ -94,6 +93,17 @@ class User {
       RETURNING rut, name_user, email, role_user
     `;
     const result = await db.query(query, [rut]);
+    return result.rows[0];
+  }
+
+  static async updateRole(rut, newRole) {
+    const query = `
+      UPDATE "users"
+      SET role_user = $1
+      WHERE rut = $2
+      RETURNING rut, name_user, email, role_user
+    `;
+    const result = await db.query(query, [newRole, rut]);
     return result.rows[0];
   }
 }
