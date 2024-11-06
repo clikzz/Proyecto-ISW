@@ -1,5 +1,5 @@
-const db = require('../config/db');
-const bcrypt = require('bcrypt');
+const db = require("../config/db");
+const bcrypt = require("bcrypt");
 
 class User {
   static async create(
@@ -7,12 +7,12 @@ class User {
     name_user,
     email,
     password_user,
-    role_user = 'employee'
+    role_user = "employee"
   ) {
     const hashedPassword = await bcrypt.hash(password_user, 10);
     const query = `
       INSERT INTO "users" (rut, name_user, email, password_user, role_user, status)
-      VALUES ($1, $2, $3, $4, $5, 'activo')
+      VALUES ($1, $2, $3, $4, $5, 'enabled')
       RETURNING rut, name_user, email, role_user, created_at, status;
     `;
     const values = [rut, name_user, email, hashedPassword, role_user];
@@ -23,7 +23,8 @@ class User {
   }
 
   static async findByEmail(email) {
-    const query = 'SELECT * FROM "users" WHERE email = $1 AND status = \'activo\'';
+    const query =
+      "SELECT * FROM \"users\" WHERE email = $1";
     const result = await db.query(query, [email]);
     return result.rows[0];
   }
@@ -45,9 +46,11 @@ class User {
       count++;
     }
 
-    query = query.slice(0, -2) +
-      ' WHERE rut = $' + count +
-      ' RETURNING rut, name_user, phone_user, email, role_user, created_at, status';
+    query =
+      query.slice(0, -2) +
+      " WHERE rut = $" +
+      count +
+      " RETURNING rut, name_user, phone_user, email, role_user, created_at, status";
     values.push(rut);
 
     const result = await db.query(query, values);
@@ -58,37 +61,41 @@ class User {
     return bcrypt.compare(password, user.password_user);
   }
 
+  static async validateStatus(rut) {
+    const query = 'SELECT status FROM "users" WHERE rut = $1';
+    const result = await db.query(query, [rut]);
+    return result.rows[0].status;
+  }
+
   static async getEmployees() {
     const query = `
       SELECT
         rut,
         name_user,
-        phone_user, 
+        phone_user,
         email,
         role_user,
         created_at,
         status
       FROM "users"
       WHERE (role_user = $1 OR role_user = $2)
-        AND status = 'activo'
+        AND status = 'enabled'
       ORDER BY created_at DESC
     `;
-    const result = await db.query(query, ['employee', 'admin']);
+    const result = await db.query(query, ["employee", "admin"]);
     return result.rows;
   }
 
   static async softDelete(rut) {
     const query = `
       UPDATE "users"
-      SET status = 'inactivo'
+      SET status = 'disabled'
       WHERE rut = $1
       RETURNING rut, name_user, email, role_user
     `;
     const result = await db.query(query, [rut]);
     return result.rows[0];
   }
-
-  // Otros métodos permanecen igual...
 }
 
 module.exports = User;
