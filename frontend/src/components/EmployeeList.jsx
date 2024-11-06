@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useAuth } from '@context/authContext';
+import { useEffect, useState } from "react";
+import { useAuth } from "@context/authContext";
 import {
   getEmployees,
   updateEmployeeRole,
   deleteEmployee,
-} from '@api/employees';
+} from "@api/employees";
 
 import {
   Table,
@@ -15,9 +15,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+} from "@/components/ui/table";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertCircle,
   RefreshCw,
@@ -25,43 +25,43 @@ import {
   ArrowUp,
   ArrowDown,
   Search,
-} from 'lucide-react';
-import { formatDateTime } from '@helpers/dates';
-import { Button } from '@/components/ui/button';
-import AddEmployeeDialog from '@/components/AddEmployeeDialog';
-import { useAlert } from '@context/alertContext';
+} from "lucide-react";
+import { formatDateTime } from "@helpers/dates";
+import { Button } from "@/components/ui/button";
+import AddEmployeeDialog from "@/components/AddEmployeeDialog";
+import { useAlert } from "@context/alertContext";
 import {
   Select,
   SelectItem,
   SelectTrigger,
   SelectContent,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 export default function EmployeeList() {
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [searchValues, setSearchValues] = useState({
-    rut: '',
-    name: '',
-    phone: '',
-    email: '',
+    rut: "",
+    name: "",
+    phone: "",
+    email: "",
   });
   const { isAuthenticated } = useAuth();
   const { showAlert } = useAlert();
 
   const filteredEmployees = employees.filter((employee) => {
     return (
-      (employee.name || '')
+      (employee.name || "")
         .toLowerCase()
-        .includes((searchValues.name || '').toLowerCase()) &&
-      (employee.email || '')
+        .includes((searchValues.name || "").toLowerCase()) &&
+      (employee.email || "")
         .toLowerCase()
-        .includes((searchValues.email || '').toLowerCase()) &&
-      (employee.role || '')
+        .includes((searchValues.email || "").toLowerCase()) &&
+      (employee.role || "")
         .toLowerCase()
-        .includes((searchValues.role || '').toLowerCase())
+        .includes((searchValues.role || "").toLowerCase())
     );
   });
 
@@ -80,23 +80,23 @@ export default function EmployeeList() {
     try {
       setIsLoading(true);
       const response = await getEmployees();
-      showAlert('Lista de empleados actualizada', 'success');
+      showAlert("Lista de empleados actualizada", "success");
       response.forEach((employee) => {
         if (!employee.phone_user) {
-          employee.phone_user = 'SIN REGISTRAR';
+          employee.phone_user = "SIN REGISTRAR";
         }
-        if (employee.role_user === 'admin') {
-          employee.role = 'Administrador';
+        if (employee.role_user === "admin") {
+          employee.role = "Administrador";
         } else {
-          employee.role = 'Empleado';
+          employee.role = "Empleado";
         }
         employee.created_at = formatDateTime(employee.created_at);
       });
       setEmployees(response);
       setError(null);
     } catch (error) {
-      showAlert('Error al obtener la lista de empleados', 'error');
-      setError('Failed to fetch employees. Please try again later.');
+      showAlert("Error al obtener la lista de empleados", "error");
+      setError("Failed to fetch employees. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -113,7 +113,7 @@ export default function EmployeeList() {
         fetchEmployees();
       }
     } catch (error) {
-      console.error('Error deleting employee:', error);
+      console.error("Error deleting employee:", error);
     }
   };
 
@@ -122,24 +122,24 @@ export default function EmployeeList() {
       await updateEmployeeRole(rut, newRole);
       fetchEmployees();
     } catch (error) {
-      console.error('Error updating employee role:', error);
+      console.error("Error updating employee role:", error);
     }
   };
 
   const handleSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
     }
     setSortConfig({ key, direction });
   };
 
   const sortedEmployees = [...employees].sort((a, b) => {
     if (a[sortConfig.key] < b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? -1 : 1;
+      return sortConfig.direction === "asc" ? -1 : 1;
     }
     if (a[sortConfig.key] > b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? 1 : -1;
+      return sortConfig.direction === "asc" ? 1 : -1;
     }
     return 0;
   });
@@ -190,9 +190,9 @@ export default function EmployeeList() {
                 <TableRow className="font-bold">
                   <TableCell className="min-w-[100px]">
                     RUT
-                    <button onClick={() => handleSort('rut')}>
-                      {sortConfig.key === 'rut' &&
-                      sortConfig.direction === 'asc' ? (
+                    <button onClick={() => handleSort("rut")}>
+                      {sortConfig.key === "rut" &&
+                      sortConfig.direction === "asc" ? (
                         <ArrowUp className="h-4 w-4" />
                       ) : (
                         <ArrowDown className="h-4 w-4" />
@@ -201,9 +201,9 @@ export default function EmployeeList() {
                   </TableCell>
                   <TableCell className="min-w-[150px]">
                     Nombre
-                    <button onClick={() => handleSort('name_user')}>
-                      {sortConfig.key === 'name_user' &&
-                      sortConfig.direction === 'asc' ? (
+                    <button onClick={() => handleSort("name_user")}>
+                      {sortConfig.key === "name_user" &&
+                      sortConfig.direction === "asc" ? (
                         <ArrowUp className="h-4 w-4" />
                       ) : (
                         <ArrowDown className="h-4 w-4" />
@@ -212,9 +212,9 @@ export default function EmployeeList() {
                   </TableCell>
                   <TableCell className="min-w-[150px]">
                     Teléfono
-                    <button onClick={() => handleSort('phone_user')}>
-                      {sortConfig.key === 'phone_user' &&
-                      sortConfig.direction === 'asc' ? (
+                    <button onClick={() => handleSort("phone_user")}>
+                      {sortConfig.key === "phone_user" &&
+                      sortConfig.direction === "asc" ? (
                         <ArrowUp className="h-4 w-4" />
                       ) : (
                         <ArrowDown className="h-4 w-4" />
@@ -223,9 +223,9 @@ export default function EmployeeList() {
                   </TableCell>
                   <TableCell className="min-w-[250px]">
                     Email
-                    <button onClick={() => handleSort('email')}>
-                      {sortConfig.key === 'email' &&
-                      sortConfig.direction === 'asc' ? (
+                    <button onClick={() => handleSort("email")}>
+                      {sortConfig.key === "email" &&
+                      sortConfig.direction === "asc" ? (
                         <ArrowUp className="h-4 w-4" />
                       ) : (
                         <ArrowDown className="h-4 w-4" />
@@ -234,9 +234,9 @@ export default function EmployeeList() {
                   </TableCell>
                   <TableCell className="min-w-[150px]">
                     Creado
-                    <button onClick={() => handleSort('created_at')}>
-                      {sortConfig.key === 'created_at' &&
-                      sortConfig.direction === 'asc' ? (
+                    <button onClick={() => handleSort("created_at")}>
+                      {sortConfig.key === "created_at" &&
+                      sortConfig.direction === "asc" ? (
                         <ArrowUp className="h-4 w-4" />
                       ) : (
                         <ArrowDown className="h-4 w-4" />
@@ -245,9 +245,9 @@ export default function EmployeeList() {
                   </TableCell>
                   <TableCell className="min-w-[150px]">
                     Modificado
-                    <button onClick={() => handleSort('updated_at')}>
-                      {sortConfig.key === 'updated_at' &&
-                      sortConfig.direction === 'asc' ? (
+                    <button onClick={() => handleSort("updated_at")}>
+                      {sortConfig.key === "updated_at" &&
+                      sortConfig.direction === "asc" ? (
                         <ArrowUp className="h-4 w-4" />
                       ) : (
                         <ArrowDown className="h-4 w-4" />
@@ -256,9 +256,9 @@ export default function EmployeeList() {
                   </TableCell>
                   <TableCell className="min-w-[150px]">
                     Rol
-                    <button onClick={() => handleSort('role')}>
-                      {sortConfig.key === 'role' &&
-                      sortConfig.direction === 'asc' ? (
+                    <button onClick={() => handleSort("role")}>
+                      {sortConfig.key === "role" &&
+                      sortConfig.direction === "asc" ? (
                         <ArrowUp className="h-4 w-4" />
                       ) : (
                         <ArrowDown className="h-4 w-4" />

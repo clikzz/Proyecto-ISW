@@ -59,7 +59,7 @@ export const deleteEmployee = async (rut) => {
 export const updateEmployeeRole = async (rut, newRole) => {
   try {
     const response = await api.put(
-      `/updateEmployeeRole/${rut}`, // Ensure this endpoint is correct
+      `/updateEmployeeRole/${rut}`,
       { newRole },
       {
         headers: {
