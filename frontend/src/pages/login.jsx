@@ -1,11 +1,17 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { LogIn } from 'lucide-react';
-import LoginForm from '@components/LoginForm';
-import Link from 'next/link';
+import React from "react";
+import { LogIn } from "lucide-react";
+import LoginForm from "@components/LoginForm";
+import Link from "next/link";
+import { useAuth } from "@context/authContext";
+import router from "next/router";
 
 export default function Login() {
+  if (useAuth().isAuthenticated) {
+    router.push("/home");
+    return null;
+  }
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md px-6">
@@ -19,7 +25,7 @@ export default function Login() {
             Iniciar sesión
           </h2>
           <p className="text-sm text-center text-muted-foreground mb-6">
-            ¿No tienes una cuenta?{' '}
+            ¿No tienes una cuenta?{" "}
             <Link
               href="/register"
               className="font-medium text-primary hover:text-accent-foreground transition duration-300"
