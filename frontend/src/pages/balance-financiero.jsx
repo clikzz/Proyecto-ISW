@@ -104,7 +104,7 @@ export default function BalanceFinanciero() {
     try {
       const nuevaTransaccion = {
         tipo,
-        monto: parseFloat(monto),
+        monto: monto,
         metodo_pago: metodoPago,
         descripcion,
       };
