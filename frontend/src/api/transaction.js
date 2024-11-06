@@ -40,27 +40,25 @@ export const getAllTransactions = async () => {
 
 export const createTransaction = async (transactionData) => {
   try {
-    console.log(transactionData);
+    console.log("Enviando datos de transacción:", transactionData);
     const response = await api.post('/', transactionData);
     return response.data;
   } catch (error) {
     if (error.response) {
-      console.error('Error response:', error.response.data);
-      console.error('Error status:', error.response.status);
-      console.error('Error headers:', error.response.headers);
-      if (error.response.status === 404) {
-        console.error('Resource not found (404)');
-        return { message: 'Resource not found (404)' };
-      }
+      console.error('Error en la respuesta:', error.response.data);
+      console.error('Estado del error:', error.response.status);
+      console.error('Cabeceras del error:', error.response.headers);
+      throw error.response.data; // Lanzar los datos del error para ser capturados en el componente
     } else if (error.request) {
-      console.error('Error request:', error.request);
+      console.error('Error en la solicitud:', error.request);
     } else {
-      console.error('Error message:', error.message);
+      console.error('Mensaje de error:', error.message);
     }
-    console.error('Error config:', error.config);
+    console.error('Configuración del error:', error.config);
     throw error;
   }
 };
+
 
 export const getTransactionById = async (id) => {
   try {

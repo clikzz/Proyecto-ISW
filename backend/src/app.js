@@ -4,6 +4,9 @@ const authRoutes = require('./routes/auth');
 const employeeRoutes = require('./routes/employee');
 const profileRoutes = require('./routes/profile');
 const transactionRoutes = require('./routes/transaction'); // Importa el enrutador de transacciones
+const itemRoutes = require('./routes/item');
+const supplierRoutes = require('./routes/supplier');
+const inventoryRoutes = require('./routes/inventory');
 const pool = require('./config/db');
 require('dotenv').config();
 
@@ -23,6 +26,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/items', itemRoutes);
+app.use('/api/suppliers', supplierRoutes);
+app.use('/api/inventory', inventoryRoutes);
 
 const HOST = process.env.HOST || '0.0.0.0';
 const PORT = process.env.PORT || 80;

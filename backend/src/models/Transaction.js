@@ -3,8 +3,10 @@ const pool = require('../config/db');
 class Transaction {
   static async getAll() {
     const query = `
-      SELECT * FROM transaccion
-      ORDER BY fecha DESC
+      SELECT t.*, u.name_user, u.status as user_status
+      FROM transaccion t
+      LEFT JOIN users u ON t.rut = u.rut
+      ORDER BY t.fecha DESC
     `;
     const result = await pool.query(query);
     return result.rows;
@@ -27,7 +29,8 @@ class Transaction {
       SELECT
         SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END) AS ingresos,
         SUM(CASE WHEN tipo = 'egreso' THEN monto ELSE 0 END) AS egresos,
-        SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END) - SUM(CASE WHEN tipo = 'egreso' THEN monto ELSE 0 END) AS balance
+        SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END) -
+        SUM(CASE WHEN tipo = 'egreso' THEN monto ELSE 0 END) AS balance
       FROM transaccion
     `;
     const result = await pool.query(query);
