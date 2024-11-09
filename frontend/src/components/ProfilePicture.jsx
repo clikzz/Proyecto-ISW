@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Camera } from 'lucide-react';
 
+
 export default function ProfilePicture({ profilePicture, setProfilePicture }) {
+  // Cargar la imagen desde localStorage al cargar el componente
+  useEffect(() => {
+    const savedImage = localStorage.getItem('profilePicture');
+    if (savedImage) {
+      setProfilePicture(savedImage);
+    }
+  }, [setProfilePicture]);
+
   const handleProfilePictureChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => setProfilePicture(reader.result);
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        // Guardar la imagen en localStorage
+        localStorage.setItem('profilePicture', base64String);
+        setProfilePicture(base64String);
+      };
       reader.readAsDataURL(file);
     }
   };
