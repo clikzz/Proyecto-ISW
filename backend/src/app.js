@@ -1,12 +1,12 @@
 const express = require('express');
 const cors = require('cors');
-const authRoutes = require('./routes/auth');
-const employeeRoutes = require('./routes/employee');
-const profileRoutes = require('./routes/profile');
-const transactionRoutes = require('./routes/transaction'); // Importa el enrutador de transacciones
-const itemRoutes = require('./routes/item');
-const supplierRoutes = require('./routes/supplier');
-const inventoryRoutes = require('./routes/inventory');
+const authRoutes = require('./routes/auth.routes');
+const employeeRoutes = require('./routes/employee.routes');
+const profileRoutes = require('./routes/profile.routes');
+const transactionRoutes = require('./routes/transaction.routes'); // Importa el enrutador de transacciones
+const itemRoutes = require('./routes/item.routes');
+const supplierRoutes = require('./routes/supplier.routes');
+const inventoryRoutes = require('./routes/inventory.routes');
 const pool = require('./config/db');
 require('dotenv').config();
 
