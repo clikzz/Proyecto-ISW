@@ -7,6 +7,7 @@ const transactionRoutes = require('./routes/transaction.routes'); // Importa el 
 const itemRoutes = require('./routes/item.routes');
 const supplierRoutes = require('./routes/supplier.routes');
 const inventoryRoutes = require('./routes/inventory.routes');
+const userRoutes = require('./routes/user.routes');
 const pool = require('./config/db');
 require('dotenv').config();
 
@@ -23,7 +24,7 @@ app.use(express.json());
 
 // Rutas
 app.use('/api/auth', authRoutes);
-app.use('/api/employees', employeeRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/items', itemRoutes);

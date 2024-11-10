@@ -1,5 +1,5 @@
-const db = require("../config/db");
-const bcrypt = require("bcrypt");
+const db = require('../config/db');
+const bcrypt = require('bcrypt');
 
 class User {
   static async create(
@@ -7,7 +7,7 @@ class User {
     name_user,
     email,
     password_user,
-    role_user = "employee"
+    role_user = 'employee'
   ) {
     const hashedPassword = await bcrypt.hash(password_user, 10);
     const query = `
@@ -47,9 +47,9 @@ class User {
 
     query =
       query.slice(0, -2) +
-      " WHERE rut = $" +
+      ' WHERE rut = $' +
       count +
-      " RETURNING rut, name_user, phone_user, email, role_user, created_at, status";
+      ' RETURNING rut, name_user, phone_user, email, role_user, created_at, status';
     values.push(rut);
 
     const result = await db.query(query, values);
@@ -66,7 +66,7 @@ class User {
     return result.rows[0].status;
   }
 
-  static async getEmployees() {
+  static async getUsers() {
     const query = `
       SELECT
         rut,
@@ -81,7 +81,7 @@ class User {
         AND status = 'enabled'
       ORDER BY created_at DESC
     `;
-    const result = await db.query(query, ["employee", "admin"]);
+    const result = await db.query(query, ['employee', 'admin']);
     return result.rows;
   }
 

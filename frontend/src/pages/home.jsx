@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   Search,
   Upload,
@@ -10,61 +10,72 @@ import {
   Clock,
   Users,
   ShoppingCart,
-} from "lucide-react";
-import { motion } from "framer-motion";
-import { useAuth } from "../context/authContext";
-import useAuthRedirect from "@/hooks/useAuthRedirect";
-import { getProfile } from "@/api/profile";
-import { useState, useEffect } from "react";
-import { getEmployees } from '../api/employees';
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useAuth } from '../context/authContext';
+import useAuthRedirect from '@/hooks/useAuthRedirect';
+import { getProfile } from '@/api/profile';
+import { useState, useEffect } from 'react';
+import { getUsers } from '../api/user';
 
 export default function HomePage() {
   const { user } = useAuth();
-  const isAuthorized = useAuthRedirect(["default", "admin", "employee"]);
+  const isAuthorized = useAuthRedirect(['default', 'admin', 'employee']);
   const [totalEmployees, setTotalEmployees] = useState(0);
-  const [name, setName] = useState("");
-  const [role, setRole] = useState("");
+  const [name, setName] = useState('');
+  const [role, setRole] = useState('');
 
   const fetchProfileData = async () => {
     try {
       const profileData = await getProfile();
       setName(profileData.name_user);
-      setRole(profileData.role_user);
+      if (profileData.role_user === 'admin') {
+        setRole('Administrador');
+      }
+      if (profileData.role_user === 'employee') {
+        setRole('Empleado');
+      }
     } catch (error) {
       console.error(
-        "Error fetching profile data:",
+        'Error fetching profile data:',
         error.response?.data || error.message
       );
     }
   };
 
-  const fetchTotalEmployees = async () => {
+  const fetchTotalUsers = async () => {
     try {
-      const employees = await getEmployees();
-      setTotalEmployees(employees.length);
+      const users = await getUsers();
+      setTotalEmployees(users.length);
     } catch (error) {
-      console.error('Error al obtener el total de empleados:', error);
+      console.error(
+        'Error fetching total employees:',
+        error.response?.data || error.message
+      );
     }
   };
 
   useEffect(() => {
     fetchProfileData();
-    fetchTotalEmployees();
+    fetchTotalUsers();
   }, []);
 
   if (!isAuthorized) {
     return null;
   }
-  
+
   return (
     <div className="flex flex-col gap-6">
       {/* Sección de bienvenida */}
       <div className="flex items-center justify-between">
-        <div style={{ minHeight: "3rem" }}>
+        <div style={{ minHeight: '3rem' }}>
           <p className="text-2xl font-bold text-primary">
-            Bienvenido/a de nuevo{" "}
+            Bienvenido/a de nuevo
           </p>
-          <p className="text-3xl font-semibold">{name || "Cargando..."}</p>
+          <div className="flex items-center gap-4">
+            <p className="text-3xl font-semibold">{name || 'Cargando...'}</p>
+            <p className="text-sm text-muted-foreground"> ({role}) </p>
+          </div>
         </div>
         <div className="flex items-center gap-4">
           <div className="relative">
@@ -145,26 +156,26 @@ export default function HomePage() {
           <CardContent className="space-y-4">
             {[
               {
-                action: "Reparó",
-                item: "Sistema de Cambios MTB",
-                time: "hace 2 horas",
+                action: 'Reparó',
+                item: 'Sistema de Cambios MTB',
+                time: 'hace 2 horas',
               },
               {
-                action: "Vendió",
-                item: "Candado Premium para Bicicleta",
-                time: "hace 3 horas",
+                action: 'Vendió',
+                item: 'Candado Premium para Bicicleta',
+                time: 'hace 3 horas',
               },
               {
-                action: "Mantuvo",
-                item: "Batería para Bicicleta Eléctrica",
-                time: "hace 5 horas",
+                action: 'Mantuvo',
+                item: 'Batería para Bicicleta Eléctrica',
+                time: 'hace 5 horas',
               },
             ].map((activity, index) => (
               <motion.div
                 key={index}
                 className="flex items-center justify-between rounded-lg border-none p-3 bg-background"
                 whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                transition={{ type: 'spring', stiffness: 300 }}
               >
                 <div>
                   <p className="font-medium">
@@ -187,29 +198,29 @@ export default function HomePage() {
           <CardContent className="space-y-4">
             {[
               {
-                name: "Candado Premium para Bicicleta",
-                category: "Accesorios",
-                sales: "125 ventas",
-                image: "",
+                name: 'Candado Premium para Bicicleta',
+                category: 'Accesorios',
+                sales: '125 ventas',
+                image: '',
               },
               {
-                name: "Llantas Todo Terreno",
-                category: "Repuestos",
-                sales: "98 ventas",
-                image: "",
+                name: 'Llantas Todo Terreno',
+                category: 'Repuestos',
+                sales: '98 ventas',
+                image: '',
               },
               {
-                name: "Batería para Bicicleta Eléctrica",
-                category: "Componentes",
-                sales: "72 ventas",
-                image: "",
+                name: 'Batería para Bicicleta Eléctrica',
+                category: 'Componentes',
+                sales: '72 ventas',
+                image: '',
               },
             ].map((product) => (
               <motion.div
                 key={product.name}
                 className="flex items-center gap-4 rounded-lg border-none p-4 bg-background"
                 whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                transition={{ type: 'spring', stiffness: 300 }}
               >
                 <img
                   alt={product.name}
