@@ -13,7 +13,7 @@ const authMiddleware = (req, res, next) => {
       return res.status(403).json({ message: 'Token inválido' });
     }
 
-    req.user = { rut: user.rut, role: user.role }; 
+    req.user = { rut: user.rut, role: user.role };
     next();
   });
 };
