@@ -60,7 +60,7 @@ export const validateToken = async (token) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    return true;
+    return response.data;
   } catch (error) {
     if (
       error.response &&
