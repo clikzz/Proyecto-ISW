@@ -57,9 +57,11 @@ exports.updateSupplier = async (req, res) => {
 exports.deleteSupplier = async (req, res) => {
   try {
     const deletedSupplier = await supplierService.deleteSupplier(req.params.rut);
-    if (!deletedSupplier) return res.status(404).json({ message: 'Proveedor no encontrado' });
     res.json({ message: 'Proveedor eliminado correctamente', supplier: deletedSupplier });
   } catch (err) {
+    if (err.message === 'Proveedor no encontrado o ya eliminado') {
+      return res.status(404).json({ message: err.message });
+    }
     res.status(500).json({ message: 'Error al eliminar el proveedor', error: err.message });
   }
 };
