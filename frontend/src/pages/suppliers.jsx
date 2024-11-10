@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import useAuthRedirect from '@hooks/useAuthRedirect';
 import SupplierTable from '@components/SupplierTable';
+import { Truck } from 'lucide-react';
 
-function SuppliersPage() {
+export default function SuppliersPage() {
+  const isAuthorized = useAuthRedirect(['admin']);
+
+  if (!isAuthorized) {
+    return null;
+  }
+
   return (
-    <div className="container mx-auto py-10">
-      <div className="flex justify-between items-center py-4">
+    <div className="container mx-auto">
+      <div className="flex items-center">
+        <Truck size="32" className="mr-2" />
         <h1 className="text-2xl font-bold">Proveedores</h1>
       </div>
       <SupplierTable />
     </div>
   );
 }
-
-export default SuppliersPage;

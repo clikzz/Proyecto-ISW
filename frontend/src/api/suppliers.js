@@ -38,3 +38,24 @@ export const addSupplier = async (data) => {
     throw error;
   }
 };
+
+export const deleteSupplier = async (rut) => {
+  try {
+    const response = await api.delete(`/delete/${rut}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.error('Proveedor no encontrado:', error.response.data);
+    } else {
+      console.error(
+        'Error al eliminar proveedor:',
+        error.response?.data || error.message
+      );
+    }
+    throw error;
+  }
+};

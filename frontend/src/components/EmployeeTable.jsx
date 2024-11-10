@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ArrowUpDown, Search, Trash } from 'lucide-react'; // Ensure Trash is imported
+import { useAuth } from '@context/authContext';
+import {
+  getEmployees,
+  updateEmployeeRole,
+  deleteEmployee,
+} from '@api/employees';
+import { ArrowUpDown, Search, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -10,52 +16,47 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { getSuppliers, deleteSupplier } from '@api/suppliers';
 import { Card, CardContent } from '@/components/ui/card';
-import AddSupplierDialog from '@components/AddSupplierDialog';
-import ConfirmationDialog from '@components/ConfirmationDialog'; // Ensure ConfirmationDialog is imported
+import AddEmployeeDialog from '@/components/AddEmployeeDialog';
+import { useAlert } from '@context/alertContext';
+import {
+  Select,
+  SelectItem,
+  SelectTrigger,
+  SelectContent,
+} from '@/components/ui/select';
+import ConfirmationDialog from '@/components/ConfirmationDialog';
 
-export default function Component() {
-  const [suppliers, setSuppliers] = useState([]);
+export default function EmployeeTable() {
+  const [employees, setEmployees] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: 'ascending',
   });
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [DialogOpen, setDialogOpen] = useState(false);
-  const [supplierToDelete, setSupplierToDelete] = useState(null);
+  const { isAuthenticated } = useAuth();
+  const { showAlert } = useAlert();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [employeeToDelete, setEmployeeToDelete] = useState(null);
 
-  const handleAddSupplier = () => {
-    setIsDialogOpen(true);
-  };
-
-  const handleDeleteClick = (rut) => {
-    setSupplierToDelete(rut);
-    setDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-    fetchSuppliers();
-  };
-
-  const handleCloseConfirmationDialog = () => {
-    setDialogOpen(false);
-  };
-
-  const fetchSuppliers = async () => {
+  const fetchEmployees = async () => {
     try {
-      const suppliers = await getSuppliers();
-      setSuppliers(suppliers);
+      const response = await getEmployees();
+      response.forEach((employee) => {
+        if (!employee.phone_user) {
+          employee.phone_user = 'SIN REGISTRAR';
+        }
+        if (employee.role_user === 'admin') {
+          employee.role = 'Administrador';
+        } else {
+          employee.role = 'Empleado';
+        }
+      });
+      setEmployees(response);
     } catch (error) {
-      console.error('Error al obtener proveedores:', error);
+      showAlert('Error al obtener la lista de empleados', 'error');
     }
   };
-
-  useEffect(() => {
-    fetchSuppliers();
-  }, []);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -69,22 +70,41 @@ export default function Component() {
     setSortConfig({ key, direction });
   };
 
+  const handleDeleteClick = (rut) => {
+    setEmployeeToDelete(rut);
+    setDialogOpen(true);
+  };
+
   const handleConfirmDelete = async () => {
     try {
-      await deleteSupplier(supplierToDelete);
-      fetchSuppliers();
+      await deleteEmployee(employeeToDelete);
+      fetchEmployees();
     } catch (error) {
-      console.error('Error deleting supplier:', error);
+      console.error('Error deleting employee:', error);
     } finally {
       setDialogOpen(false);
-      setSupplierToDelete(null);
+      setEmployeeToDelete(null);
     }
   };
 
-  const sortedSuppliers = useMemo(() => {
-    let sortableSuppliers = [...suppliers];
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setEmployeeToDelete(null);
+  };
+
+  const handleRoleChange = async (rut, newRole) => {
+    try {
+      await updateEmployeeRole(rut, newRole);
+      fetchEmployees();
+    } catch (error) {
+      console.error('Error updating employee role:', error);
+    }
+  };
+
+  const sortedEmployees = useMemo(() => {
+    let sortableEmployees = [...employees];
     if (sortConfig.key !== null) {
-      sortableSuppliers.sort((a, b) => {
+      sortableEmployees.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
         }
@@ -94,12 +114,16 @@ export default function Component() {
         return 0;
       });
     }
-    return sortableSuppliers;
-  }, [suppliers, sortConfig]);
+    return sortableEmployees;
+  }, [employees, sortConfig]);
 
-  const filteredSuppliers = sortedSuppliers.filter((supplier) =>
-    supplier.name_supplier.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredEmployees = sortedEmployees.filter((employee) =>
+    employee.name_user.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  useEffect(() => {
+    fetchEmployees();
+  }, [isAuthenticated]);
 
   return (
     <div className="container mx-auto py-10 text-foreground relative">
@@ -109,13 +133,13 @@ export default function Component() {
             placeholder="Buscar por nombre..."
             value={searchTerm}
             onChange={handleSearch}
-            className="max-w-sm "
+            className="max-w-sm"
           />
           <Search className="ml-2 h-4 w-4" />
         </div>
-        <Button className="ml-4" onClick={handleAddSupplier}>
-          Añadir Proveedor
-        </Button>
+        <div className="flex items-center gap-2">
+          <AddEmployeeDialog fetchEmployees={fetchEmployees} />
+        </div>
       </div>
       <Card className="border-none pt-4">
         <CardContent>
@@ -126,7 +150,7 @@ export default function Component() {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('rut_supplier')}
+                      onClick={() => handleSort('rut')}
                       className="text-foreground"
                     >
                       <strong>RUT</strong>
@@ -136,7 +160,7 @@ export default function Component() {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('name_supplier')}
+                      onClick={() => handleSort('name_user')}
                       className="text-foreground"
                     >
                       <strong>Nombre</strong>
@@ -146,17 +170,7 @@ export default function Component() {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('email_supplier')}
-                      className="text-foreground"
-                    >
-                      <strong>Correo</strong>
-                      <ArrowUpDown className="ml-2 h-4 w-4 " />
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('phone_supplier')}
+                      onClick={() => handleSort('phone_user')}
                       className="text-foreground"
                     >
                       <strong>Teléfono</strong>
@@ -166,10 +180,20 @@ export default function Component() {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('address_supplier')}
+                      onClick={() => handleSort('email')}
                       className="text-foreground"
                     >
-                      <strong>Dirección</strong>
+                      <strong>Email</strong>
+                      <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort('role')}
+                      className="text-foreground"
+                    >
+                      <strong>Rol</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
@@ -179,17 +203,31 @@ export default function Component() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredSuppliers.map((supplier) => (
-                  <TableRow key={supplier.rut_supplier}>
-                    <TableCell>{supplier.rut_supplier}</TableCell>
-                    <TableCell>{supplier.name_supplier}</TableCell>
-                    <TableCell>{supplier.email_supplier}</TableCell>
-                    <TableCell>{supplier.phone_supplier}</TableCell>
-                    <TableCell>{supplier.address_supplier}</TableCell>
+                {filteredEmployees.map((employee) => (
+                  <TableRow key={employee.rut}>
+                    <TableCell>{employee.rut}</TableCell>
+                    <TableCell>{employee.name_user}</TableCell>
+                    <TableCell>{employee.phone_user}</TableCell>
+                    <TableCell>{employee.email}</TableCell>
+                    <TableCell>
+                      <Select
+                        value={employee.role}
+                        onValueChange={(value) =>
+                          handleRoleChange(employee.rut, value)
+                        }
+                        className="bg-background"
+                      >
+                        <SelectTrigger>{employee.role}</SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="admin">Administrador</SelectItem>
+                          <SelectItem value="employee">Empleado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
                     <TableCell>
                       <Button
                         className="bg-red-500 hover:bg-red-600 p-1"
-                        onClick={() => handleDeleteClick(supplier.rut_supplier)}
+                        onClick={() => handleDeleteClick(employee.rut)}
                       >
                         <Trash />
                       </Button>
@@ -201,14 +239,9 @@ export default function Component() {
           </div>
         </CardContent>
       </Card>
-      {isDialogOpen && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <AddSupplierDialog onClose={handleCloseDialog} />
-        </div>
-      )}
       <ConfirmationDialog
-        open={DialogOpen}
-        handleClose={handleCloseConfirmationDialog}
+        open={dialogOpen}
+        handleClose={handleCloseDialog}
         handleConfirm={handleConfirmDelete}
         className="bg-background text-foreground"
       />

@@ -1,7 +1,5 @@
-'use client';
-
 import useAuthRedirect from '@hooks/useAuthRedirect';
-import EmployeeList from '@components/EmployeeList';
+import EmployeeTable from '@components/EmployeeTable';
 import { Users } from 'lucide-react';
 
 export default function EmployeesPage() {
@@ -12,12 +10,12 @@ export default function EmployeesPage() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex gap-2 ">
-        <Users />
-        <h1 className="text-2xl font-bold mb-4">Empleados</h1>
+    <div className="container mx-auto">
+      <div className="flex items-center">
+        <Users size="32" className="mr-2" />
+        <h1 className="text-2xl font-bold">Empleados</h1>
       </div>
-      <EmployeeList />
+      <EmployeeTable />
     </div>
   );
 }
