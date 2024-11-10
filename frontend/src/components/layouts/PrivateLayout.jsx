@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 import {
   Bike,
   Bell,
@@ -12,13 +12,13 @@ import {
   Truck,
   TrendingUp,
   DollarSign,
-} from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useAuth } from "@/context/authContext";
-import Notificaciones from "@/components/Notification";
-import { AnimatePresence, motion } from "framer-motion";
-import ThemeToggle from "@/components/ThemeToggle";
+} from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useAuth } from '@/context/authContext';
+import Notificaciones from '@/components/Notification';
+import { AnimatePresence, motion } from 'framer-motion';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function PrivateLayout({ children }) {
   const router = useRouter();
@@ -30,18 +30,18 @@ export default function PrivateLayout({ children }) {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { duration: 0.5, ease: "easeOut" },
+      transition: { duration: 0.5, ease: 'easeOut' },
     },
     exit: {
       opacity: 0,
       y: -50,
       scale: 0.95,
-      transition: { duration: 0.5, ease: "easeIn" },
+      transition: { duration: 0.5, ease: 'easeIn' },
     },
   };
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      router.push("/login");
+      router.push('/login');
     }
   }, [loading, isAuthenticated, router]);
 
@@ -57,17 +57,22 @@ export default function PrivateLayout({ children }) {
     return null;
   }
 
-  const NavLink = ({ href, icon, children }) => (
-    <Link
-      href={href}
-      className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent hover:text-white transition-all"
-    >
-      {React.cloneElement(icon, {
-        className: `${icon.props.className} hover:text-white`,
-      })}
-      <span>{children}</span>
-    </Link>
-  );
+  const NavLink = ({ href, icon, children }) => {
+    const isActive = router.pathname === href;
+    return (
+      <Link
+        href={href}
+        className={`flex items-center space-x-3 p-3 rounded-full transition-all ${
+          isActive ? 'bg-accent text-white hover:bg-accent hover:text-white' : 'hover:bg-accent hover:text-white'
+        }`}
+      >
+        {React.cloneElement(icon, {
+          className: `${icon.props.className} ${isActive ? 'text-white' : ''}`,
+        })}
+        <span>{children}</span>
+      </Link>
+    );
+  };
 
   return (
     <>
@@ -84,7 +89,7 @@ export default function PrivateLayout({ children }) {
               <NavLink href="/home" icon={<Home className="h-6 w-6" />}>
                 Home
               </NavLink>
-              {role === "admin" && (
+              {role === 'admin' && (
                 <NavLink
                   href="/overview"
                   icon={<TrendingUp className="h-6 w-6" />}
@@ -98,13 +103,10 @@ export default function PrivateLayout({ children }) {
               >
                 Inventario
               </NavLink>
-              {role === "admin" && (
+              {role === 'admin' && (
                 <>
-                  <NavLink
-                    href="/employees"
-                    icon={<Users className="h-6 w-6" />}
-                  >
-                    Empleados
+                  <NavLink href="/users" icon={<Users className="h-6 w-6" />}>
+                    Usuarios
                   </NavLink>
                   <NavLink
                     href="/suppliers"

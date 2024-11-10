@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@context/authContext';
-import {
-  getEmployees,
-  updateEmployeeRole,
-  deleteEmployee,
-} from '@api/employees';
+import { getUsers, updateUserRole, deleteUser } from '@api/user';
 import { ArrowUpDown, Search, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,7 +13,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent } from '@/components/ui/card';
-import AddEmployeeDialog from '@/components/AddEmployeeDialog';
+import AddUserDialog from '@/components/AddUserDialog';
 import { useAlert } from '@context/alertContext';
 import {
   Select,
@@ -27,8 +23,8 @@ import {
 } from '@/components/ui/select';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 
-export default function EmployeeTable() {
-  const [employees, setEmployees] = useState([]);
+export default function UsersTable() {
+  const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -37,22 +33,22 @@ export default function EmployeeTable() {
   const { isAuthenticated } = useAuth();
   const { showAlert } = useAlert();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [employeeToDelete, setEmployeeToDelete] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null);
 
-  const fetchEmployees = async () => {
+  const fetchUsers = async () => {
     try {
-      const response = await getEmployees();
-      response.forEach((employee) => {
-        if (!employee.phone_user) {
-          employee.phone_user = 'SIN REGISTRAR';
+      const response = await getUsers();
+      response.forEach((user) => {
+        if (!user.phone_user) {
+          user.phone_user = 'SIN REGISTRAR';
         }
-        if (employee.role_user === 'admin') {
-          employee.role = 'Administrador';
+        if (user.role_user === 'admin') {
+          user.role = 'Administrador';
         } else {
-          employee.role = 'Empleado';
+          user.role = 'Empleado';
         }
       });
-      setEmployees(response);
+      setUsers(response);
     } catch (error) {
       showAlert('Error al obtener la lista de empleados', 'error');
     }
@@ -71,40 +67,40 @@ export default function EmployeeTable() {
   };
 
   const handleDeleteClick = (rut) => {
-    setEmployeeToDelete(rut);
+    setUserToDelete(rut);
     setDialogOpen(true);
   };
 
   const handleConfirmDelete = async () => {
     try {
-      await deleteEmployee(employeeToDelete);
-      fetchEmployees();
+      await deleteUser(userToDelete);
+      fetchUsers();
     } catch (error) {
-      console.error('Error deleting employee:', error);
+      console.error('Error deleting user:', error);
     } finally {
       setDialogOpen(false);
-      setEmployeeToDelete(null);
+      setUserToDelete(null);
     }
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
-    setEmployeeToDelete(null);
+    setUserToDelete(null);
   };
 
   const handleRoleChange = async (rut, newRole) => {
     try {
-      await updateEmployeeRole(rut, newRole);
-      fetchEmployees();
+      await updateUserRole(rut, newRole);
+      fetchUsers();
     } catch (error) {
-      console.error('Error updating employee role:', error);
+      console.error('Error updating user role:', error);
     }
   };
 
-  const sortedEmployees = useMemo(() => {
-    let sortableEmployees = [...employees];
+  const sortedUsers = useMemo(() => {
+    let sortableUsers = [...users];
     if (sortConfig.key !== null) {
-      sortableEmployees.sort((a, b) => {
+      sortableUsers.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
         }
@@ -114,15 +110,15 @@ export default function EmployeeTable() {
         return 0;
       });
     }
-    return sortableEmployees;
-  }, [employees, sortConfig]);
+    return sortableUsers;
+  }, [users, sortConfig]);
 
-  const filteredEmployees = sortedEmployees.filter((employee) =>
-    employee.name_user.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = sortedUsers.filter((user) =>
+    user.name_user.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   useEffect(() => {
-    fetchEmployees();
+    fetchUsers();
   }, [isAuthenticated]);
 
   return (
@@ -138,7 +134,7 @@ export default function EmployeeTable() {
           <Search className="ml-2 h-4 w-4" />
         </div>
         <div className="flex items-center gap-2">
-          <AddEmployeeDialog fetchEmployees={fetchEmployees} />
+          <AddUserDialog fetchUsers={fetchUsers} />
         </div>
       </div>
       <Card className="border-none pt-4">
@@ -203,21 +199,21 @@ export default function EmployeeTable() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredEmployees.map((employee) => (
-                  <TableRow key={employee.rut}>
-                    <TableCell>{employee.rut}</TableCell>
-                    <TableCell>{employee.name_user}</TableCell>
-                    <TableCell>{employee.phone_user}</TableCell>
-                    <TableCell>{employee.email}</TableCell>
+                {filteredUsers.map((user) => (
+                  <TableRow key={user.rut}>
+                    <TableCell>{user.rut}</TableCell>
+                    <TableCell>{user.name_user}</TableCell>
+                    <TableCell>{user.phone_user}</TableCell>
+                    <TableCell>{user.email}</TableCell>
                     <TableCell>
                       <Select
-                        value={employee.role}
+                        value={user.role}
                         onValueChange={(value) =>
-                          handleRoleChange(employee.rut, value)
+                          handleRoleChange(user.rut, value)
                         }
                         className="bg-background"
                       >
-                        <SelectTrigger>{employee.role}</SelectTrigger>
+                        <SelectTrigger>{user.role}</SelectTrigger>
                         <SelectContent>
                           <SelectItem value="admin">Administrador</SelectItem>
                           <SelectItem value="employee">Empleado</SelectItem>
@@ -227,7 +223,7 @@ export default function EmployeeTable() {
                     <TableCell>
                       <Button
                         className="bg-red-500 hover:bg-red-600 p-1"
-                        onClick={() => handleDeleteClick(employee.rut)}
+                        onClick={() => handleDeleteClick(user.rut)}
                       >
                         <Trash />
                       </Button>

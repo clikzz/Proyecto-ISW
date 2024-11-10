@@ -10,12 +10,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { UserPlus } from 'lucide-react';
-import { addEmployee } from '@api/employees';
+import { addUser } from '@api/user';
 import { useAlert } from '@context/alertContext';
 
-export default function AddEmployeeDialog({ fetchEmployees }) {
+export default function AddUserDialog({ fetchUsers }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newEmployee, setNewEmployee] = useState({
+  const [newUser, setNewUser] = useState({
     name_user: '',
     rut: '',
     email: '',
@@ -24,7 +24,7 @@ export default function AddEmployeeDialog({ fetchEmployees }) {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewEmployee((prev) => ({ ...prev, [name]: value }));
+    setNewUser((prev) => ({ ...prev, [name]: value }));
   };
 
   const formatRut = (value) => {
@@ -44,23 +44,23 @@ export default function AddEmployeeDialog({ fetchEmployees }) {
   const handleRutChange = (event) => {
     const formattedRut = formatRut(event.target.value);
     if (formattedRut.length <= 12) {
-      setNewEmployee((prev) => ({ ...prev, rut: formattedRut }));
+      setNewUser((prev) => ({ ...prev, rut: formattedRut }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log('Employee added:', newEmployee);
-      await addEmployee(newEmployee);
-      showAlert('Empleado añadido', 'success');
+      console.log('User added:', newUser);
+      await addUser(newUser);
+      showAlert('User añadido', 'success');
       setIsDialogOpen(false);
-      setNewEmployee({
+      setNewUser({
         name_user: '',
         rut: '',
         email: '',
       });
-      fetchEmployees();
+      fetchUsers();
     } catch (error) {
       showAlert(error.response?.data.errors, 'error');
     }
@@ -69,14 +69,14 @@ export default function AddEmployeeDialog({ fetchEmployees }) {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center">
+        <Button className="flex items-center rounded-xl">
           <UserPlus className="mr-2 h-4 w-4" />
-          Añadir empleado
+          Añadir Usuario
         </Button>
       </DialogTrigger>
       <DialogContent className="border-none text-foreground">
         <DialogHeader>
-          <DialogTitle>Nuevo empleado</DialogTitle>
+          <DialogTitle>Formulario de nuevo usuario</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -84,7 +84,7 @@ export default function AddEmployeeDialog({ fetchEmployees }) {
             <Input
               id="name_user"
               name="name_user"
-              value={newEmployee.name_user}
+              value={newUser.name_user}
               onChange={handleInputChange}
               placeholder="Nombre completo"
               required
@@ -95,7 +95,7 @@ export default function AddEmployeeDialog({ fetchEmployees }) {
             <Input
               id="rut"
               name="rut"
-              value={newEmployee.rut}
+              value={newUser.rut}
               onChange={handleRutChange}
               placeholder="12.345.678-9"
               required
@@ -107,7 +107,7 @@ export default function AddEmployeeDialog({ fetchEmployees }) {
               id="email"
               name="email"
               type="email"
-              value={newEmployee.email}
+              value={newUser.email}
               onChange={handleInputChange}
               placeholder="ejemplo@mail.com"
               required

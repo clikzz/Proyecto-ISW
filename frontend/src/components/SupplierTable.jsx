@@ -13,7 +13,8 @@ import {
 import { getSuppliers, deleteSupplier } from '@api/suppliers';
 import { Card, CardContent } from '@/components/ui/card';
 import AddSupplierDialog from '@components/AddSupplierDialog';
-import ConfirmationDialog from '@components/ConfirmationDialog'; // Ensure ConfirmationDialog is imported
+import ConfirmationDialog from '@components/ConfirmationDialog';
+import { ListPlus } from 'lucide-react';
 
 export default function Component() {
   const [suppliers, setSuppliers] = useState([]);
@@ -113,7 +114,8 @@ export default function Component() {
           />
           <Search className="ml-2 h-4 w-4" />
         </div>
-        <Button className="ml-4" onClick={handleAddSupplier}>
+        <Button className="ml-4 rounded-xl" onClick={handleAddSupplier}>
+          <ListPlus className="h-4 w-4" />
           Añadir Proveedor
         </Button>
       </div>
