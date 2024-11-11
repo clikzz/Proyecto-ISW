@@ -9,7 +9,6 @@ const AuthContext = createContext({
   role: null,
   login: () => {},
   logout: () => {},
-  updateRole: () => {},
   loading: true,
 });
 
@@ -49,11 +48,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     setIsAuthenticated(false);
     setRole(null);
-    router.push('/login');
-  };
-
-  const handleUpdateRole = (newRole) => {
-    setRole(newRole);
+    router.push('/');
   };
 
   return (
@@ -63,7 +58,6 @@ export const AuthProvider = ({ children }) => {
         role,
         login: handleLogin,
         logout: handleLogout,
-        updateRole: handleUpdateRole,
         loading,
       }}
     >

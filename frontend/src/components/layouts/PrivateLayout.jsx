@@ -125,7 +125,7 @@ export default function PrivateLayout({ children }) {
                 Perfil
               </NavLink>
               <NavLink
-                href="/login"
+                href="#"
                 onClick={(e) => {
                   e.preventDefault();
                   logout();
