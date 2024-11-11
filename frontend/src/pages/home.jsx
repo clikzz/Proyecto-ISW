@@ -19,7 +19,6 @@ import { useState, useEffect } from 'react';
 import { getUsers } from '../api/user';
 
 export default function HomePage() {
-  const { user } = useAuth();
   const isAuthorized = useAuthRedirect(['default', 'admin', 'employee']);
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [name, setName] = useState('');
@@ -86,7 +85,7 @@ export default function HomePage() {
               className="w-[250px] pl-8"
             />
           </div>
-          <Button className="gap-2">
+          <Button className="rounded-xl gap-2">
             <Upload className="h-4 w-4" />
             Sube un Producto
           </Button>

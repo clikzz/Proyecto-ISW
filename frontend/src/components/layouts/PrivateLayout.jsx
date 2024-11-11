@@ -43,7 +43,7 @@ export default function PrivateLayout({ children }) {
     if (!loading && !isAuthenticated) {
       router.push('/login');
     }
-  }, [loading, isAuthenticated, router]);
+  }, [loading, isAuthenticated, router, role]);
 
   if (loading) {
     return (
@@ -53,17 +53,16 @@ export default function PrivateLayout({ children }) {
     );
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  const NavLink = ({ href, icon, children }) => {
+  const NavLink = ({ href, icon, children, onClick }) => {
     const isActive = router.pathname === href;
     return (
       <Link
         href={href}
+        onClick={onClick}
         className={`flex items-center space-x-3 p-3 rounded-full transition-all ${
-          isActive ? 'bg-accent text-white hover:bg-accent hover:text-white' : 'hover:bg-accent hover:text-white'
+          isActive
+            ? 'bg-accent text-white hover:bg-accent hover:text-white'
+            : 'hover:bg-accent hover:text-white'
         }`}
       >
         {React.cloneElement(icon, {
@@ -125,13 +124,16 @@ export default function PrivateLayout({ children }) {
               <NavLink href="/profile" icon={<User className="h-6 w-6" />}>
                 Perfil
               </NavLink>
-              <button
-                onClick={logout}
-                className="flex items-center space-x-3 p-3 rounded-full hover:bg-accent w-full"
+              <NavLink
+                href="/login"
+                onClick={(e) => {
+                  e.preventDefault();
+                  logout();
+                }}
+                icon={<LogOut className="h-6 w-6" />}
               >
-                <LogOut className="h-6 w-6" />
-                <span>Cerrar Sesión</span>
-              </button>
+                Cerrar Sesion
+              </NavLink>
             </nav>
           </aside>
 

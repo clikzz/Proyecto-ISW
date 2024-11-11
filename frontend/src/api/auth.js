@@ -60,19 +60,20 @@ export const validateToken = async (token) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data;
+    return { isValid: true, role: response.data.role };
   } catch (error) {
     if (
       error.response &&
       (error.response.status === 401 || error.response.status === 403)
     ) {
       console.error('Token is invalid or expired');
+      return { isValid: false, role: null };
     } else {
       console.error(
         'Error al validar el token:',
         error.response?.data || error.message
       );
+      throw error;
     }
-    return false;
   }
 };
