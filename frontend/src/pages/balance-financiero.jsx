@@ -45,14 +45,14 @@ const formatoPesoChileno = (valor) => {
 };
 
 export default function BalanceFinanciero() {
-  const [transacciones, setTransacciones] = useState([]);
-  const [tipo, setTipo] = useState("ingreso");
-  const [monto, setMonto] = useState("");
-  const [metodoPago, setMetodoPago] = useState("efectivo");
-  const [descripcion, setDescripcion] = useState("");
-  const [modalAbierto, setModalAbierto] = useState(false);
-  const [modalVerMasAbierto, setModalVerMasAbierto] = useState(false);
-  const [resumen, setResumen] = useState({
+  const [transactions, setTransactions] = useState([]);
+  const [transaction_type, setTransactionType] = useState("ingreso");
+  const [amount, setAmount] = useState("");
+  const [payment_method, setPaymentMethod] = useState("efectivo");
+  const [description, setDescription] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalViewMoreOpen, setModalViewMoreOpen] = useState(false);
+  const [summary, setSummary] = useState({
     ingresos: 0,
     egresos: 0,
     balance: 0,
@@ -60,11 +60,11 @@ export default function BalanceFinanciero() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchTransacciones = async () => {
+  const fetchTransactions = async () => {
     try {
       const data = await getAllTransactions();
       if (Array.isArray(data)) {
-        setTransacciones(data);
+        setTransactions(data);
       } else {
         console.error("Unexpected response format:", data);
       }
@@ -74,7 +74,7 @@ export default function BalanceFinanciero() {
     }
   };
 
-  const fetchResumen = async () => {
+  const fetchSummary = async () => {
     try {
       setLoading(true);
       console.log("Fetching summary...");
@@ -83,7 +83,7 @@ export default function BalanceFinanciero() {
         setError(data.message);
       } else {
         console.log("Summary fetched:", data);
-        setResumen(data);
+        setSummary(data);
         setError(null);
       }
     } catch (error) {
@@ -95,27 +95,28 @@ export default function BalanceFinanciero() {
   };
 
   useEffect(() => {
-    fetchTransacciones();
-    fetchResumen();
+    fetchTransactions();
+    fetchSummary();
   }, []);
 
-  const agregarTransaccion = async (e) => {
+  const addTransaction = async (e) => {
     e.preventDefault();
     try {
-      const nuevaTransaccion = {
-        tipo,
-        monto: monto,
-        metodo_pago: metodoPago,
-        descripcion,
+      const newTransaction = {
+        transaction_type,
+        amount: amount, // Asegúrate de que el monto sea un número
+        payment_method,
+        description,
       };
-      console.log("Adding new transaction:", nuevaTransaccion);
-      await createTransaction(nuevaTransaccion);
-      await fetchTransacciones();
-      await fetchResumen();
-      setMonto("");
-      setMetodoPago("efectivo");
-      setDescripcion("");
+      console.log("Adding new transaction:", newTransaction);
+      await createTransaction(newTransaction);
+      await fetchTransactions();
+      await fetchSummary();
+      setAmount("");
+      setPaymentMethod("efectivo");
+      setDescription("");
       setError(null);
+      setModalOpen(false); // Cierra el modal después de agregar la transacción
     } catch (error) {
       console.error("Error al agregar la transacción:", error);
       setError("Error al agregar la transacción");
@@ -127,7 +128,7 @@ export default function BalanceFinanciero() {
     datasets: [
       {
         label: "Monto",
-        data: [resumen.ingresos, resumen.egresos, resumen.balance],
+        data: [summary.ingresos, summary.egresos, summary.balance],
         backgroundColor: [
           "rgba(75, 192, 192, 0.6)",
           "rgba(255, 99, 132, 0.6)",
@@ -157,7 +158,7 @@ export default function BalanceFinanciero() {
           </div>
           <button
             className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90"
-            onClick={() => setModalAbierto(true)}
+            onClick={() => setModalOpen(true)}
           >
             <Upload className="h-4 w-4" />
             Nueva Transacción
@@ -185,7 +186,7 @@ export default function BalanceFinanciero() {
                 <div className="flex flex-col justify-between space-y-0">
                   <h3 className="text-sm font-medium mb-2">Balance Total</h3>
                   <div className="text-2xl font-bold">
-                    {formatoPesoChileno(resumen.balance)}
+                    {formatoPesoChileno(summary.balance)}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Actualizado al momento
@@ -199,7 +200,7 @@ export default function BalanceFinanciero() {
                 <div className="flex flex-col justify-between space-y-0">
                   <h3 className="text-sm font-medium mb-2">Ingresos Totales</h3>
                   <div className="text-2xl font-bold text-green-500">
-                    {formatoPesoChileno(resumen.ingresos)}
+                    {formatoPesoChileno(summary.ingresos)}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Total de ingresos
@@ -213,7 +214,7 @@ export default function BalanceFinanciero() {
                 <div className="flex flex-col justify-between space-y-0">
                   <h3 className="text-sm font-medium mb-2">Egresos Totales</h3>
                   <div className="text-2xl font-bold text-red-500">
-                    {formatoPesoChileno(resumen.egresos)}
+                    {formatoPesoChileno(summary.egresos)}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Total de egresos
@@ -231,36 +232,36 @@ export default function BalanceFinanciero() {
                   Resumen de Transacciones
                 </h3>
                 <div className="space-y-4">
-                  {transacciones.slice(0, 4).map((t) => (
+                  {transactions.slice(0, 4).map((t) => (
                     <div
-                      key={t.id_transaccion}
+                      key={t.id_transaction}
                       className="flex items-center justify-between rounded-lg p-3 bg-background hover:bg-accent transition-colors"
                     >
                       <div>
                         <p className="font-medium">
-                          {t.tipo === "ingreso" ? "Ingreso" : "Egreso"}:{" "}
-                          {t.descripcion}
+                          {t.transaction_type === "ingreso" ? "Ingreso" : "Egreso"}:{" "}
+                          {t.description}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {new Date(t.fecha).toLocaleDateString()} -{" "}
-                          {t.metodo_pago}
+                          {new Date(t.transaction_date).toLocaleDateString()} -{" "}
+                          {t.payment_method === "efectivo" ? "Efectivo" : "Transferencia"}
                         </p>
                       </div>
                       <div
                         className={`text-lg font-semibold ${
-                          t.tipo === "ingreso"
+                          t.transaction_type === "ingreso"
                             ? "text-green-500"
                             : "text-red-500"
                         }`}
                       >
-                        {t.tipo === "ingreso" ? "+" : "-"}
-                        {formatoPesoChileno(t.monto)}
+                        {t.transaction_type === "ingreso" ? "+" : "-"}
+                        {formatoPesoChileno(t.amount)}
                       </div>
                     </div>
                   ))}
                   <div className="flex justify-center">
                     <button
-                      onClick={() => setModalVerMasAbierto(true)}
+                      onClick={() => setModalViewMoreOpen(true)}
                       className="hover:underline"
                     >
                       Ver más...
@@ -281,31 +282,31 @@ export default function BalanceFinanciero() {
           </div>
         </>
       )}
-      {modalVerMasAbierto && (
+      {modalViewMoreOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-3xl">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Todas las Transacciones</h3>
               <button
-                onClick={() => setModalVerMasAbierto(false)}
+                onClick={() => setModalViewMoreOpen(false)}
                 className="text-gray-500 hover:text-gray-700"
               >
                 <X className="h-6 w-6" />
               </button>
             </div>
             <div className="space-y-4 max-h-[35rem] overflow-y-auto">
-              {transacciones.map((t) => (
+              {transactions.map((t) => (
                 <div
-                  key={t.id_transaccion}
+                  key={t.id_transaction}
                   className="flex items-center justify-between rounded-lg p-3 bg-background hover:bg-accent transition-colors"
                 >
                   <div>
                     <p className="font-medium">
-                      {t.tipo === "ingreso" ? "Ingreso" : "Egreso"}:{" "}
-                      {t.descripcion}
+                      {t.transaction_type === "ingreso" ? "Ingreso" : "Egreso"}:{" "}
+                      {t.description}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(t.fecha).toLocaleDateString()} - {t.metodo_pago}
+                      {new Date(t.transaction_date).toLocaleDateString()} - {t.payment_method === "efectivo" ? "Efectivo" : "Transferencia"}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       RUT: {t.rut}
@@ -313,11 +314,11 @@ export default function BalanceFinanciero() {
                   </div>
                   <div
                     className={`mr-8 text-lg font-semibold ${
-                      t.tipo === "ingreso" ? "text-green-500" : "text-red-500"
+                      t.transaction_type === "ingreso" ? "text-green-500" : "text-red-500"
                     }`}
                   >
-                    {t.tipo === "ingreso" ? "+" : "-"}
-                    {formatoPesoChileno(t.monto)}
+                    {t.transaction_type === "ingreso" ? "+" : "-"}
+                    {formatoPesoChileno(t.amount)}
                   </div>
                 </div>
               ))}
@@ -325,7 +326,7 @@ export default function BalanceFinanciero() {
           </div>
         </div>
       )}
-      {modalAbierto && (
+      {modalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
@@ -333,25 +334,25 @@ export default function BalanceFinanciero() {
                 Agregar Nueva Transacción
               </h3>
               <button
-                onClick={() => setModalAbierto(false)}
+                onClick={() => setModalOpen(false)}
                 className="text-gray-500 hover:text-gray-700"
               >
                 <X className="h-6 w-6" />
               </button>
             </div>
-            <form onSubmit={agregarTransaccion} className="space-y-4">
+            <form onSubmit={addTransaction} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label
-                    htmlFor="tipo"
+                    htmlFor="transaction_type"
                     className="block text-sm font-medium text-foreground"
                   >
                     Tipo de Transacción
                   </label>
                   <select
-                    id="tipo"
-                    value={tipo}
-                    onChange={(e) => setTipo(e.target.value)}
+                    id="transaction_type"
+                    value={transaction_type}
+                    onChange={(e) => setTransactionType(e.target.value)}
                     className="mt-1 block w-full py-2 px-3 border border-input bg-background rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                   >
                     <option value="ingreso">Ingreso</option>
@@ -360,16 +361,16 @@ export default function BalanceFinanciero() {
                 </div>
                 <div>
                   <label
-                    htmlFor="monto"
+                    htmlFor="amount"
                     className="block text-sm font-medium text-foreground"
                   >
                     Monto
                   </label>
                   <input
-                    id="monto"
+                    id="amount"
                     type="number"
-                    value={monto}
-                    onChange={(e) => setMonto(e.target.value)}
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
                     required
                     className="mt-1 block w-full py-2 px-3 border border-input bg-background rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                   />
@@ -377,15 +378,15 @@ export default function BalanceFinanciero() {
               </div>
               <div>
                 <label
-                  htmlFor="metodoPago"
+                  htmlFor="payment_method"
                   className="block text-sm font-medium text-foreground"
                 >
                   Método de Pago
                 </label>
                 <select
-                  id="metodoPago"
-                  value={metodoPago}
-                  onChange={(e) => setMetodoPago(e.target.value)}
+                  id="payment_method"
+                  value={payment_method}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
                   className="mt-1 block w-full py-2 px-3 border border-input bg-background rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 >
                   <option value="efectivo">Efectivo</option>
@@ -394,15 +395,15 @@ export default function BalanceFinanciero() {
               </div>
               <div>
                 <label
-                  htmlFor="descripcion"
+                  htmlFor="description"
                   className="block text-sm font-medium text-foreground"
                 >
                   Descripción
                 </label>
                 <input
-                  id="descripcion"
-                  value={descripcion}
-                  onChange={(e) => setDescripcion(e.target.value)}
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                   required
                   className="mt-1 block w-full py-2 px-3 border border-input bg-background rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 />
