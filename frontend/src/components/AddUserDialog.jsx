@@ -12,20 +12,12 @@ import { Button } from '@/components/ui/button';
 import { UserPlus } from 'lucide-react';
 import { addUser } from '@api/user';
 import { useAlert } from '@context/alertContext';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { newUserValidation } from '@/validations/newUser';
 
 export default function AddUserDialog({ fetchUsers }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newUser, setNewUser] = useState({
-    name_user: '',
-    rut: '',
-    email: '',
-  });
   const { showAlert } = useAlert();
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewUser((prev) => ({ ...prev, [name]: value }));
-  };
 
   const formatRut = (value) => {
     const cleanValue = value
@@ -41,28 +33,35 @@ export default function AddUserDialog({ fetchUsers }) {
     return `${formattedCuerpo}-${verificador}`;
   };
 
-  const handleRutChange = (event) => {
-    const formattedRut = formatRut(event.target.value);
+  const handleRutChange = (e, setFieldValue) => {
+    const value = e.target.value.toUpperCase();
+    const numericValue = value.replace(/[^0-9K]/g, '');
+    const formattedRut = formatRut(numericValue);
     if (formattedRut.length <= 12) {
-      setNewUser((prev) => ({ ...prev, rut: formattedRut }));
+      setFieldValue('rut', formattedRut);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
-      console.log('User added:', newUser);
-      await addUser(newUser);
-      showAlert('User añadido', 'success');
+      if (!newUserValidation) {
+        throw new Error('Validation schema is not defined');
+      }
+      await newUserValidation.validate(values, { abortEarly: false });
+      await addUser(values);
       setIsDialogOpen(false);
-      setNewUser({
-        name_user: '',
-        rut: '',
-        email: '',
-      });
+      resetForm();
       fetchUsers();
     } catch (error) {
-      showAlert(error.response?.data.errors, 'error');
+      console.log(error);
+      showAlert(
+        error.response?.data.errors ||
+          error.response?.data.message ||
+          error.message,
+        'error'
+      );
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -78,43 +77,69 @@ export default function AddUserDialog({ fetchUsers }) {
         <DialogHeader>
           <DialogTitle>Formulario de nuevo usuario</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="name_user">Nombre</Label>
-            <Input
-              id="name_user"
-              name="name_user"
-              value={newUser.name_user}
-              onChange={handleInputChange}
-              placeholder="Nombre completo"
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="rut">RUT</Label>
-            <Input
-              id="rut"
-              name="rut"
-              value={newUser.rut}
-              onChange={handleRutChange}
-              placeholder="12.345.678-9"
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={newUser.email}
-              onChange={handleInputChange}
-              placeholder="ejemplo@mail.com"
-              required
-            />
-          </div>
-          <Button type="submit">Agregar</Button>
-        </form>
+        <Formik
+          initialValues={{ name_user: '', rut: '', email: '' }}
+          validationSchema={newUserValidation}
+          onSubmit={handleSubmit}
+        >
+          {({ values, handleChange, setFieldValue }) => (
+            <Form className="space-y-4">
+              <div>
+                <Label htmlFor="name_user">Nombre</Label>
+                <Field
+                  as={Input}
+                  id="name_user"
+                  name="name_user"
+                  value={values.name_user}
+                  onChange={handleChange}
+                  placeholder="Nombre completo"
+                  required
+                />
+                <ErrorMessage
+                  name="name_user"
+                  component="div"
+                  style={{ color: 'red' }}
+                />
+              </div>
+              <div>
+                <Label htmlFor="rut">RUT</Label>
+                <Field
+                  as={Input}
+                  id="rut"
+                  name="rut"
+                  value={values.rut}
+                  onChange={(e) => handleRutChange(e, setFieldValue)}
+                  placeholder="12.345.678-9"
+                  required
+                />
+                <ErrorMessage
+                  name="rut"
+                  component="div"
+                  style={{ color: 'red' }}
+                />
+              </div>
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Field
+                  as={Input}
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={values.email}
+                  onChange={handleChange}
+                  placeholder="ejemplo@mail.com"
+                  required
+                />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  style={{ color: 'red' }}
+                />
+              </div>
+              <Button type="submit">Agregar</Button>
+            </Form>
+          )}
+        </Formik>
       </DialogContent>
     </Dialog>
   );
