@@ -42,24 +42,23 @@ export default function Layout({ children }) {
             <span className="ml-2 text-lg font-bold">bikefy</span>
           </Link>
           <nav className="ml-auto flex gap-4">
-            {isAuthenticated ? (
-              <>
-                <Link href="/home">
-                  <Button>Home</Button>
-                </Link>
-                <Button onClick={handleLogout}>Cerrar Sesión</Button>
-              </>
-            ) : (
-              <>
-                <Link href="/login">
-                  <Button>Inicia Sesión</Button>
-                </Link>
-                <Link href="/register">
-                  <Button>Regístrate</Button>
-                </Link>
-              </>
-            )}
-            <ThemeToggle></ThemeToggle>
+            <div className="flex items-center gap-4">
+              {isAuthenticated ? (
+                <>
+                  <Link href="/home">
+                    <Button>Home</Button>
+                  </Link>
+                  <Button onClick={handleLogout}>Cerrar Sesión</Button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login">
+                    <Button className="rounded-xl">Inicia Sesión</Button>
+                  </Link>
+                </>
+              )}
+              <ThemeToggle></ThemeToggle>
+            </div>
           </nav>
         </header>
 

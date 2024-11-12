@@ -2,12 +2,12 @@ import axios from 'axios';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const api = axios.create({
-  baseURL: `${API_URL}/employees`,
+  baseURL: `${API_URL}/user`,
 });
 
-export const getEmployees = async () => {
+export const getUsers = async () => {
   try {
-    const response = await api.get('/getEmployees', {
+    const response = await api.get('/getUsers', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -15,16 +15,16 @@ export const getEmployees = async () => {
     return response.data;
   } catch (error) {
     console.error(
-      'Error al obtener empleados:',
+      'Error al obtener usuarios:',
       error.response?.data || error.message
     );
     throw error;
   }
 };
 
-export const addEmployee = async (newEmployee) => {
+export const addUser = async (newUser) => {
   try {
-    const response = await api.post('/addEmployee', newEmployee, {
+    const response = await api.post('/addUser', newUser, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -32,16 +32,16 @@ export const addEmployee = async (newEmployee) => {
     return response.data;
   } catch (error) {
     console.error(
-      'Error al añadir empleado:',
+      'Error al añadir usuario:',
       error.response?.data || error.message
     );
     throw error;
   }
 };
 
-export const deleteEmployee = async (rut) => {
+export const deleteUser = async (rut) => {
   try {
-    const response = await api.delete(`/deleteEmployee/${rut}`, {
+    const response = await api.delete(`/deleteUser/${rut}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -49,18 +49,18 @@ export const deleteEmployee = async (rut) => {
     return response.data;
   } catch (error) {
     console.error(
-      'Error al eliminar empleado:',
+      'Error al eliminar usuario:',
       error.response?.data || error.message
     );
     throw error;
   }
 };
 
-export const updateEmployeeRole = async (rut, newRole) => {
+export const updateUserRole = async (rut, newRole) => {
   try {
     const response = await api.put(
-      `/updateEmployeeRole/${rut}`,
-      { newRole },
+      `/updateUserRole/${rut}`,
+      { role: newRole },
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -70,7 +70,7 @@ export const updateEmployeeRole = async (rut, newRole) => {
     return response.data;
   } catch (error) {
     console.error(
-      'Error al actualizar empleado:',
+      'Error al actualizar rol de usuario:',
       error.response?.data || error.message
     );
     throw error;

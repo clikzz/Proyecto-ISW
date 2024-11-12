@@ -12,10 +12,30 @@ const inventorySchema = Joi.object({
     Joi.object({
       id_item: Joi.number()
         .integer()
-        .required()
+        .allow(null)
         .messages({
           'number.base': 'El ID del item debe ser un número.',
-          'any.required': 'El ID del item es obligatorio.',
+        }),
+      name_item: Joi.string()
+        .max(50)
+        .when('id_item', { is: null, then: Joi.required() })
+        .messages({
+          'string.empty': 'El nombre del item no puede estar vacío.',
+          'string.max': 'El nombre del item no puede exceder los 50 caracteres.',
+        }),
+      description: Joi.string()
+        .allow('')
+        .optional()
+        .when('id_item', { is: null, then: Joi.optional() })
+        .messages({
+          'string.base': 'La descripción debe ser de tipo texto.',
+        }),
+      category: Joi.string()
+        .max(50)
+        .when('id_item', { is: null, then: Joi.required() })
+        .messages({
+          'string.empty': 'La categoría no puede estar vacía.',
+          'string.max': 'La categoría no puede exceder los 50 caracteres.',
         }),
       cantidad: Joi.number()
         .integer()
@@ -34,6 +54,14 @@ const inventorySchema = Joi.object({
           'number.positive': 'El precio unitario debe ser positivo.',
           'any.required': 'El precio unitario es obligatorio.',
         }),
+      selling_price: Joi.number()
+        .positive()
+        .when('id_item', { is: null, then: Joi.required() })
+        .messages({
+          'number.base': 'El precio de venta debe ser un número.',
+          'number.positive': 'El precio de venta debe ser positivo.',
+          'any.required': 'El precio de venta es obligatorio cuando se crea un nuevo item.',
+        }),
     })
   ).required()
     .messages({
@@ -46,6 +74,11 @@ const inventorySchema = Joi.object({
       .messages({
         'string.base': 'El RUT debe ser una cadena de texto.',
         'any.required': 'El RUT del empleado que registra la transacción es obligatorio.',
+      }),
+    rut_supplier: Joi.string()
+      .when('type', { is: 'compra', then: Joi.required() })
+      .messages({
+        'any.required': 'Para la compra de un nuevo item, es necesario proporcionar el rut del proveedor.',
       }),
     monto: Joi.number()
       .positive()

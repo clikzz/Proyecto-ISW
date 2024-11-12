@@ -19,12 +19,12 @@ class Supplier {
   }
 
   static async findAll() {
-    const result = await db.query('SELECT * FROM supplier');
+    const result = await db.query('SELECT * FROM supplier WHERE is_deleted = FALSE');
     return result.rows;
   }
 
   static async findById(rut_supplier) {
-    const result = await db.query('SELECT * FROM supplier WHERE rut_supplier = $1', [rut_supplier]);
+    const result = await db.query('SELECT * FROM supplier WHERE rut_supplier = $1 AND is_deleted = FALSE', [rut_supplier]);
     return result.rows[0];
   }
 
@@ -32,7 +32,7 @@ class Supplier {
     const query = `
       UPDATE supplier
       SET name_supplier = $1, email_supplier = $2, phone_supplier = $3, address_supplier = $4, updated_at = CURRENT_TIMESTAMP
-      WHERE rut_supplier = $5
+      WHERE rut_supplier = $5 AND is_deleted = FALSE
       RETURNING *;
     `;
     const values = [
@@ -47,7 +47,13 @@ class Supplier {
   }
 
   static async delete(rut_supplier) {
-    const result = await db.query('DELETE FROM supplier WHERE rut_supplier = $1 RETURNING *', [rut_supplier]);
+    const query = `
+      UPDATE supplier
+      SET is_deleted = TRUE, updated_at = CURRENT_TIMESTAMP
+      WHERE rut_supplier = $1 AND is_deleted = FALSE
+      RETURNING *;
+    `;
+    const result = await db.query(query, [rut_supplier]);
     return result.rows[0];
   }
 }

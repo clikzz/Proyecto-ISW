@@ -52,3 +52,27 @@ export const resetPassword = async (token, newPassword) => {
     throw error;
   }
 };
+
+export const validateToken = async (token) => {
+  try {
+    const response = await api.post('/validate-token', null, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (
+      error.response &&
+      (error.response.status === 401 || error.response.status === 403)
+    ) {
+      console.error('Token is invalid or expired');
+    } else {
+      console.error(
+        'Error al validar el token:',
+        error.response?.data || error.message
+      );
+    }
+    return false;
+  }
+};
