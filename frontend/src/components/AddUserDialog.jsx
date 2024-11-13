@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { UserPlus } from 'lucide-react';
-import { addUser } from '@api/user';
-import { useAlert } from '@context/alertContext';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { newUserValidation } from '@/validations/newUser';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { UserPlus } from "lucide-react";
+import { addUser } from "@api/user";
+import { useAlert } from "@context/alertContext";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { newUserValidation } from "@/validations/newUser";
 
 export default function AddUserDialog({ fetchUsers }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -21,31 +21,31 @@ export default function AddUserDialog({ fetchUsers }) {
 
   const formatRut = (value) => {
     const cleanValue = value
-      .replace(/\./g, '')
-      .replace(/-/g, '')
-      .replace(/\s+/g, '');
+      .replace(/\./g, "")
+      .replace(/-/g, "")
+      .replace(/\s+/g, "");
     if (cleanValue.length > 11) return value;
 
     const cuerpo = cleanValue.slice(0, -1);
     const verificador = cleanValue.slice(-1);
-    const formattedCuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const formattedCuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
     return `${formattedCuerpo}-${verificador}`;
   };
 
   const handleRutChange = (e, setFieldValue) => {
     const value = e.target.value.toUpperCase();
-    const numericValue = value.replace(/[^0-9K]/g, '');
+    const numericValue = value.replace(/[^0-9K]/g, "");
     const formattedRut = formatRut(numericValue);
     if (formattedRut.length <= 12) {
-      setFieldValue('rut', formattedRut);
+      setFieldValue("rut", formattedRut);
     }
   };
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
       if (!newUserValidation) {
-        throw new Error('Validation schema is not defined');
+        throw new Error("Validation schema is not defined");
       }
       await newUserValidation.validate(values, { abortEarly: false });
       await addUser(values);
@@ -58,7 +58,7 @@ export default function AddUserDialog({ fetchUsers }) {
         error.response?.data.errors ||
           error.response?.data.message ||
           error.message,
-        'error'
+        "error"
       );
     } finally {
       setSubmitting(false);
@@ -78,7 +78,7 @@ export default function AddUserDialog({ fetchUsers }) {
           <DialogTitle>Formulario de nuevo usuario</DialogTitle>
         </DialogHeader>
         <Formik
-          initialValues={{ name_user: '', rut: '', email: '' }}
+          initialValues={{ name_user: "", rut: "", email: "" }}
           validationSchema={newUserValidation}
           onSubmit={handleSubmit}
         >
@@ -98,7 +98,7 @@ export default function AddUserDialog({ fetchUsers }) {
                 <ErrorMessage
                   name="name_user"
                   component="div"
-                  style={{ color: 'red' }}
+                  style={{ color: "red" }}
                 />
               </div>
               <div>
@@ -115,7 +115,7 @@ export default function AddUserDialog({ fetchUsers }) {
                 <ErrorMessage
                   name="rut"
                   component="div"
-                  style={{ color: 'red' }}
+                  style={{ color: "red" }}
                 />
               </div>
               <div>
@@ -133,7 +133,7 @@ export default function AddUserDialog({ fetchUsers }) {
                 <ErrorMessage
                   name="email"
                   component="div"
-                  style={{ color: 'red' }}
+                  style={{ color: "red" }}
                 />
               </div>
               <Button type="submit">Agregar</Button>

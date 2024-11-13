@@ -1,5 +1,5 @@
-const db = require('../config/db');
-const bcrypt = require('bcrypt');
+const db = require("../config/db");
+const bcrypt = require("bcrypt");
 
 class User {
   static async create(
@@ -7,13 +7,34 @@ class User {
     name_user,
     email,
     password_user,
-    role_user = 'employee'
+    role_user = "employee"
   ) {
     const hashedPassword = await bcrypt.hash(password_user, 10);
     const query = `
       INSERT INTO "users" (rut, name_user, email, password_user, role_user, status)
       VALUES ($1, $2, $3, $4, $5, 'enabled')
       RETURNING rut, name_user, email, role_user, created_at, status;
+    `;
+    const values = [rut, name_user, email, hashedPassword, role_user];
+    const result = await db.query(query, values);
+    console.log(result.rows[0]);
+
+    return result.rows[0];
+  }
+
+  static async softCreate(
+    rut,
+    name_user,
+    email,
+    password_user,
+    role_user = "employee"
+  ) {
+    const hashedPassword = await bcrypt.hash(password_user, 10);
+    const query = `
+    UPDATE "users"
+    SET name_user = $2, email = $3, password_user = $4, role_user = $5, status = 'enabled'
+    WHERE rut = $1
+    RETURNING rut, name_user, email, role_user, created_at, status;
     `;
     const values = [rut, name_user, email, hashedPassword, role_user];
     const result = await db.query(query, values);
@@ -67,6 +88,7 @@ class User {
   static async getUsers() {
     const query = `
       SELECT
+        profile_picture,
         rut,
         name_user,
         phone_user,
@@ -79,7 +101,7 @@ class User {
         AND status = 'enabled'
       ORDER BY created_at DESC
     `;
-    const result = await db.query(query, ['employee', 'admin']);
+    const result = await db.query(query, ["employee", "admin"]);
     return result.rows;
   }
 
@@ -102,6 +124,17 @@ class User {
       RETURNING rut, name_user, email, role_user
     `;
     const result = await db.query(query, [newRole, rut]);
+    return result.rows[0];
+  }
+
+  static async updateStatusAndPassword(rut, status, password) {
+    const query = `
+      UPDATE "users"
+      SET status = $1, password_user = $2
+      WHERE rut = $3
+      RETURNING rut, name_user, email, role_user
+    `;
+    const result = await db.query(query, [status, password, rut]);
     return result.rows[0];
   }
 }
