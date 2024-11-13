@@ -1,5 +1,5 @@
-const User = require('../models/User');
-const { sendWelcomeEmail } = require('./email.service');
+const User = require("../models/User");
+const { sendWelcomeEmail } = require("./email.service");
 
 const userService = {
   getUsers: async () => {
@@ -10,6 +10,22 @@ const userService = {
     const temporaryPassword = Math.random().toString(36).slice(-8);
 
     const newUser = await User.create(rut, name_user, email, temporaryPassword);
+
+    sendWelcomeEmail(newUser.email, newUser.name_user, temporaryPassword);
+
+    const { password_user, ...userWithoutPassword } = newUser;
+    return userWithoutPassword;
+  },
+
+  softAddUser: async (rut, name_user, email) => {
+    const temporaryPassword = Math.random().toString(36).slice(-8);
+
+    const newUser = await User.softCreate(
+      rut,
+      name_user,
+      email,
+      temporaryPassword
+    );
 
     sendWelcomeEmail(newUser.email, newUser.name_user, temporaryPassword);
 
