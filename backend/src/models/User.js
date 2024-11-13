@@ -47,9 +47,7 @@ class User {
 
     query =
       query.slice(0, -2) +
-      ' WHERE rut = $' +
-      count +
-      ' RETURNING rut, name_user, phone_user, email, role_user, created_at, status';
+      `, updated_at = NOW() AT TIME ZONE 'America/Santiago' WHERE rut = $${count} RETURNING rut, name_user, phone_user, email, role_user, created_at, updated_at, status`;
     values.push(rut);
 
     const result = await db.query(query, values);

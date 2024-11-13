@@ -59,3 +59,21 @@ export const changePassword = async (passwordData) => {
     throw error;
   }
 };
+
+export const uploadProfilePicture = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const response = await api.post('/upload-profile-picture', formData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al subir la imagen:', error.response?.data || error.message);
+    throw error;
+  }
+};
