@@ -19,25 +19,28 @@ const userController = {
       const existingEmail = await User.findByEmail(email);
       const existingRut = await User.findByRut(rut);
 
-      if (existingEmail === existingRut) {
-        console.log("entro");
-
-        const user = await userService.softAddUser(rut, name_user, email);
-        console.log(user);
-
-        return res.status(201).json({
-          message: "User updated successfully",
-          user,
-        });
+      if (existingRut) {
+        if (existingRut.status === "enabled") {
+          return res.status(400).json({ message: "User already exists" });
+        } else {
+          if (existingEmail) {
+            if (existingEmail.rut === rut) {
+              await userService.softAddUser(rut, name_user, email);
+              return res
+                .status(201)
+                .json({ message: "User added successfully" });
+            } else {
+              return res.status(400).json({ message: "Email already in use" });
+            }
+          } else {
+            await userService.softAddUser(rut, name_user, email);
+            return res.status(201).json({ message: "User added successfully" });
+          }
+        }
       }
 
       if (existingEmail) {
-        return res
-          .status(400)
-          .json({ message: "El correo electrónico ya está en uso" });
-      }
-      if (existingRut) {
-        return res.status(400).json({ message: "El rut ya está en uso" });
+        return res.status(400).json({ message: "Email already in use" });
       }
 
       const user = await userService.addUser(rut, name_user, email);

@@ -18,8 +18,6 @@ const userService = {
   },
 
   softAddUser: async (rut, name_user, email) => {
-    console.log(rut, name_user, email);
-
     const temporaryPassword = Math.random().toString(36).slice(-8);
 
     const newUser = await User.softCreate(
