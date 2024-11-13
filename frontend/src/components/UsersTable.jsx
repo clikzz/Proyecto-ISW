@@ -209,59 +209,50 @@ export default function UsersTable() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsers.map(
-                  (user) => (
-                    console.log(user),
-                    (
-                      <TableRow key={user.rut}>
-                        <TableCell>
-                          <figure
-                            className="w-12 h-12 rounded-full overflow-hidden shadow-md cursor-pointer"
-                            onClick={() =>
-                              handleImageClick(user.profile_picture)
-                            }
-                          >
-                            <img
-                              key={user.profile_picture}
-                              src={user.profile_picture}
-                              alt="Foto de perfil"
-                              className="w-full h-full object-cover"
-                            />
-                          </figure>
-                        </TableCell>
-                        <TableCell>{user.name_user}</TableCell>
-                        <TableCell>{user.rut}</TableCell>
-                        <TableCell>{user.phone_user}</TableCell>
-                        <TableCell>{user.email}</TableCell>
-                        <TableCell>
-                          <Select
-                            value={user.role}
-                            onValueChange={(value) =>
-                              handleRoleChange(user.rut, value)
-                            }
-                            className="bg-background"
-                          >
-                            <SelectTrigger>{user.role}</SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="admin">
-                                Administrador
-                              </SelectItem>
-                              <SelectItem value="employee">Empleado</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            className="bg-red-500 hover:bg-red-600 p-1"
-                            onClick={() => handleDeleteClick(user.rut)}
-                          >
-                            <Trash />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  )
-                )}
+                {filteredUsers.map((user) => (
+                  <TableRow key={user.rut}>
+                    <TableCell>
+                      <figure
+                        className="w-12 h-12 rounded-full overflow-hidden shadow-md cursor-pointer"
+                        onClick={() => handleImageClick(user.profile_picture)}
+                      >
+                        <img
+                          key={user.profile_picture}
+                          src={user.profile_picture}
+                          alt="Foto de perfil"
+                          className="w-full h-full object-cover"
+                        />
+                      </figure>
+                    </TableCell>
+                    <TableCell>{user.name_user}</TableCell>
+                    <TableCell>{user.rut}</TableCell>
+                    <TableCell>{user.phone_user}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>
+                      <Select
+                        value={user.role}
+                        onValueChange={(value) =>
+                          handleRoleChange(user.rut, value)
+                        }
+                        className="bg-background"
+                      >
+                        <SelectTrigger>{user.role}</SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="admin">Administrador</SelectItem>
+                          <SelectItem value="employee">Empleado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        className="bg-red-500 hover:bg-red-600 p-1"
+                        onClick={() => handleDeleteClick(user.rut)}
+                      >
+                        <Trash />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>
