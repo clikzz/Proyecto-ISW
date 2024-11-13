@@ -11,21 +11,21 @@ class Inventory {
     }
 
     const transactionQuery = `
-      INSERT INTO transaccion (rut, tipo, monto, fecha, metodo_pago, descripcion)
+      INSERT INTO transaction (rut, transaction_type, amount, transaction_date, payment_method, description)
       VALUES ($1, $2, $3, NOW(), $4, $5)
-      RETURNING id_transaccion;
+      RETURNING id_transaction;
     `;
 
     const transactionValues = [
       details.rut,
       type,
-      details.monto,
-      details.metodo_pago,
-      details.descripcion,
+      details.amount,
+      details.payment_method,
+      details.description,
     ];
 
     const result = await db.query(transactionQuery, transactionValues);
-    const transactionId = result.rows[0].id_transaccion;
+    const transactionId = result.rows[0].id_transaction;
 
     for (let item of items) {
       if (type === 'venta') {
@@ -84,7 +84,7 @@ class Inventory {
 
       // Insertar el detalle de la transacción en la tabla `transaction_item`
       const itemQuery = `
-        INSERT INTO transaction_item (id_transaccion, id_item, cantidad_item, precio_unitario)
+        INSERT INTO transaction_item (id_transaction_item, id_item, cantidad_item, precio_unitario)
         VALUES ($1, $2, $3, $4);
       `;
       const itemValues = [
@@ -98,6 +98,34 @@ class Inventory {
     }
 
     return transactionId;
+  }
+
+  static async getPurchases() {
+    const query = `
+      SELECT t.id_transaction, t.rut, t.transaction_type, t.amount, t.transaction_date, t.payment_method, t.description,
+            ti.id_item, ti.cantidad_item, ti.precio_unitario, ti.id_transaction_item
+      FROM transaction t
+      JOIN transaction_item ti ON t.id_transaction = ti.id_transaction_item
+      WHERE t.transaction_type = 'compra'
+      ORDER BY t.transaction_date DESC;
+    `;
+  
+    const result = await db.query(query);
+    return result.rows;
+  }
+
+  static async getSales() {
+    const query = `
+      SELECT t.id_transaction, t.rut, t.transaction_type, t.amount, t.transaction_date, t.payment_method, t.description,
+            ti.id_item, ti.cantidad_item, ti.precio_unitario, ti.id_transaction_item
+      FROM transaction t
+      JOIN transaction_item ti ON t.id_transaction = ti.id_transaction_item
+      WHERE t.transaction_type = 'venta'
+      ORDER BY t.transaction_date DESC;
+    `;
+  
+    const result = await db.query(query);
+    return result.rows;
   }
 }
 
