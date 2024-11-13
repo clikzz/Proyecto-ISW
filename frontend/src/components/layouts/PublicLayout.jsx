@@ -46,9 +46,11 @@ export default function Layout({ children }) {
               {isAuthenticated ? (
                 <>
                   <Link href="/home">
-                    <Button>Home</Button>
+                    <Button className="rounded-xl">Home</Button>
                   </Link>
-                  <Button onClick={handleLogout}>Cerrar Sesión</Button>
+                  <Button className="rounded-xl" onClick={handleLogout}>
+                    Cerrar Sesión
+                  </Button>
                 </>
               ) : (
                 <>

@@ -101,7 +101,7 @@ export default function HomePage() {
               className="w-[250px] pl-8"
             />
           </div>
-          <Button className="gap-2">
+          <Button className="rounded-xl gap-2">
             <Upload className="h-4 w-4" />
             Agregar Actividad
           </Button>

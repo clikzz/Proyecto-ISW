@@ -161,14 +161,17 @@ exports.validateToken = (req, res) => {
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ message: 'Token is missing' });
+    return res.status(401).json({ isValid: false, role: null });
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(401).json({ message: 'Token is invalid or expired' });
+      return res.status(401).json({ isValid: false, role: null });
     }
-    res.status(200).json({ message: 'Token is valid' });
+
+    const role = decoded.role;
+
+    res.status(200).json({ isValid: true, role });
   });
 };
 

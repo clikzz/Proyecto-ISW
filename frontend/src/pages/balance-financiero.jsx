@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bar, Line } from "react-chartjs-2";
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Bar, Line } from 'react-chartjs-2';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel";
+} from '@/components/ui/carousel';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -20,7 +20,7 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
+} from 'chart.js';
 import {
   Search,
   Upload,
@@ -28,12 +28,12 @@ import {
   TrendingUp,
   TrendingDown,
   X,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   getAllTransactions,
   createTransaction,
   getTransactionsSummary,
-} from "../api/transaction";
+} from '../api/transaction';
 
 ChartJS.register(
   CategoryScale,
@@ -48,19 +48,19 @@ ChartJS.register(
 
 // Función para formatear números a pesos chilenos
 const formatoPesoChileno = (valor) => {
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
+  return new Intl.NumberFormat('es-CL', {
+    style: 'currency',
+    currency: 'CLP',
     minimumFractionDigits: 0,
   }).format(valor);
 };
 
 export default function BalanceFinanciero() {
   const [transactions, setTransactions] = useState([]);
-  const [transaction_type, setTransactionType] = useState("ingreso");
-  const [amount, setAmount] = useState("");
-  const [payment_method, setPaymentMethod] = useState("efectivo");
-  const [description, setDescription] = useState("");
+  const [transaction_type, setTransactionType] = useState('ingreso');
+  const [amount, setAmount] = useState('');
+  const [payment_method, setPaymentMethod] = useState('efectivo');
+  const [description, setDescription] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [modalViewMoreOpen, setModalViewMoreOpen] = useState(false);
   const [summary, setSummary] = useState({
@@ -77,29 +77,29 @@ export default function BalanceFinanciero() {
       if (Array.isArray(data)) {
         setTransactions(data);
       } else {
-        console.error("Unexpected response format:", data);
+        console.error('Unexpected response format:', data);
       }
     } catch (error) {
-      console.error("Failed to fetch transactions:", error);
-      setError("Failed to fetch transactions");
+      console.error('Failed to fetch transactions:', error);
+      setError('Failed to fetch transactions');
     }
   };
 
   const fetchSummary = async () => {
     try {
       setLoading(true);
-      console.log("Fetching summary...");
+      console.log('Fetching summary...');
       const data = await getTransactionsSummary();
       if (data.message) {
         setError(data.message);
       } else {
-        console.log("Summary fetched:", data);
+        console.log('Summary fetched:', data);
         setSummary(data);
         setError(null);
       }
     } catch (error) {
-      console.error("Error al obtener el resumen:", error);
-      setError("Error al obtener el resumen");
+      console.error('Error al obtener el resumen:', error);
+      setError('Error al obtener el resumen');
     } finally {
       setLoading(false);
     }
@@ -119,76 +119,76 @@ export default function BalanceFinanciero() {
         payment_method,
         description,
       };
-      console.log("Adding new transaction:", newTransaction);
+      console.log('Adding new transaction:', newTransaction);
       await createTransaction(newTransaction);
       await fetchTransactions();
       await fetchSummary();
-      setAmount("");
-      setPaymentMethod("efectivo");
-      setDescription("");
+      setAmount('');
+      setPaymentMethod('efectivo');
+      setDescription('');
       setError(null);
       setModalOpen(false);
     } catch (error) {
-      console.error("Error al agregar la transacción:", error);
-      setError("Error al agregar la transacción");
+      console.error('Error al agregar la transacción:', error);
+      setError('Error al agregar la transacción');
     }
   };
 
   // Configuración del gráfico de barras
   const data = {
-    labels: ["Ingresos", "Egresos", "Balance"],
+    labels: ['Ingresos', 'Egresos', 'Balance'],
     datasets: [
       {
-        label: "Monto",
+        label: 'Monto',
         data: [summary.ingresos, summary.egresos, summary.balance],
         backgroundColor: [
-          "rgba(152,251,152, 0.8)",
-          "rgb(240,128,128)",
-          "rgba(84, 153, 199, 1)",
+          'rgba(152,251,152, 0.8)',
+          'rgb(240,128,128)',
+          'rgba(84, 153, 199, 1)',
         ],
       },
     ],
   };
 
   // Configuración del gráfico de líneas
-const lineData = (() => {
-  // Ordenar las transacciones por fecha
-  const sortedTransactions = [...transactions].sort((a, b) =>
-    new Date(a.transaction_date) - new Date(b.transaction_date)
-  );
+  const lineData = (() => {
+    // Ordenar las transacciones por fecha
+    const sortedTransactions = [...transactions].sort(
+      (a, b) => new Date(a.transaction_date) - new Date(b.transaction_date)
+    );
 
-  return {
-    labels: sortedTransactions.map((t) =>
-      new Date(t.transaction_date).toLocaleDateString("es-CL", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })
-    ),
-    datasets: [
-      {
-        label: "Ingresos",
-        data: sortedTransactions.map((t) =>
-          t.transaction_type === "ingreso" ? t.amount : null
-        ),
-        borderColor: "rgb(152,251,152)",
-        backgroundColor: "rgb(152,251,152)",
-        fill: false,
-        spanGaps: true,
-      },
-      {
-        label: "Egresos",
-        data: sortedTransactions.map((t) =>
-          t.transaction_type === "egreso" ? t.amount : null
-        ),
-        borderColor: "rgba(240,128,128)",
-        backgroundColor: "rgba(240,128,128)",
-        fill: false,
-        spanGaps: true,
-      },
-    ],
-  };
-})();
+    return {
+      labels: sortedTransactions.map((t) =>
+        new Date(t.transaction_date).toLocaleDateString('es-CL', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        })
+      ),
+      datasets: [
+        {
+          label: 'Ingresos',
+          data: sortedTransactions.map((t) =>
+            t.transaction_type === 'ingreso' ? t.amount : null
+          ),
+          borderColor: 'rgb(152,251,152)',
+          backgroundColor: 'rgb(152,251,152)',
+          fill: false,
+          spanGaps: true,
+        },
+        {
+          label: 'Egresos',
+          data: sortedTransactions.map((t) =>
+            t.transaction_type === 'egreso' ? t.amount : null
+          ),
+          borderColor: 'rgba(240,128,128)',
+          backgroundColor: 'rgba(240,128,128)',
+          fill: false,
+          spanGaps: true,
+        },
+      ],
+    };
+  })();
 
   return (
     <div className="flex flex-col gap-6 relative">
@@ -283,26 +283,26 @@ const lineData = (() => {
                     >
                       <div>
                         <p className="font-medium">
-                          {t.transaction_type === "ingreso"
-                            ? "Ingreso"
-                            : "Egreso"}
+                          {t.transaction_type === 'ingreso'
+                            ? 'Ingreso'
+                            : 'Egreso'}
                           : {t.description}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {new Date(t.transaction_date).toLocaleDateString()} -{" "}
-                          {t.payment_method === "efectivo"
-                            ? "Efectivo"
-                            : "Transferencia"}
+                          {new Date(t.transaction_date).toLocaleDateString()} -{' '}
+                          {t.payment_method === 'efectivo'
+                            ? 'Efectivo'
+                            : 'Transferencia'}
                         </p>
                       </div>
                       <div
                         className={`text-lg font-semibold ${
-                          t.transaction_type === "ingreso"
-                            ? "text-green-500"
-                            : "text-red-500"
+                          t.transaction_type === 'ingreso'
+                            ? 'text-green-500'
+                            : 'text-red-500'
                         }`}
                       >
-                        {t.transaction_type === "ingreso" ? "+" : "-"}
+                        {t.transaction_type === 'ingreso' ? '+' : '-'}
                         {formatoPesoChileno(t.amount)}
                       </div>
                     </div>
@@ -343,8 +343,14 @@ const lineData = (() => {
                       </Card>
                     </CarouselItem>
                   </CarouselContent>
-                  <CarouselPrevious className=" -left-4 w-8 h-8 rounded-full flex items-center justify-center" variant="ghost"/>
-                  <CarouselNext className="-right-4 w-8 h-8 rounded-full flex items-center justify-center" variant="ghost"/>
+                  <CarouselPrevious
+                    className=" -left-4 flex items-center justify-center"
+                    variant="ghost"
+                  />
+                  <CarouselNext
+                    className="-right-4 flex items-center justify-center"
+                    variant="ghost"
+                  />
                 </Carousel>
               </div>
             </Card>
@@ -371,14 +377,14 @@ const lineData = (() => {
                 >
                   <div>
                     <p className="font-medium">
-                      {t.transaction_type === "ingreso" ? "Ingreso" : "Egreso"}:{" "}
+                      {t.transaction_type === 'ingreso' ? 'Ingreso' : 'Egreso'}:{' '}
                       {t.description}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(t.transaction_date).toLocaleDateString()} -{" "}
-                      {t.payment_method === "efectivo"
-                        ? "Efectivo"
-                        : "Transferencia"}
+                      {new Date(t.transaction_date).toLocaleDateString()} -{' '}
+                      {t.payment_method === 'efectivo'
+                        ? 'Efectivo'
+                        : 'Transferencia'}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       RUT: {t.rut}
@@ -386,12 +392,12 @@ const lineData = (() => {
                   </div>
                   <div
                     className={`mr-8 text-lg font-semibold ${
-                      t.transaction_type === "ingreso"
-                        ? "text-green-500"
-                        : "text-red-500"
+                      t.transaction_type === 'ingreso'
+                        ? 'text-green-500'
+                        : 'text-red-500'
                     }`}
                   >
-                    {t.transaction_type === "ingreso" ? "+" : "-"}
+                    {t.transaction_type === 'ingreso' ? '+' : '-'}
                     {formatoPesoChileno(t.amount)}
                   </div>
                 </div>

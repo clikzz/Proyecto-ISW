@@ -1,5 +1,3 @@
-'use client';
-
 import { Montserrat } from 'next/font/google';
 import PublicLayout from '@layouts/PublicLayout';
 import PrivateLayout from '@layouts/PrivateLayout';
@@ -27,11 +25,9 @@ export default function MyApp({ Component, pageProps }) {
   }, []);
 
   if (!isMounted) {
-    // Evita renderizar hasta que el componente esté montado en el cliente
     return null;
   }
 
-  // Determine which layout to use based on the current route
   const publicRoutes = [
     '/',
     '/login',

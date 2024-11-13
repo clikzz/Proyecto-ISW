@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { loginUser } from "@api/auth";
-import { useAuth } from "@context/authContext";
-import { useAlert } from "@context/alertContext";
+import React, { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { loginUser } from '@api/auth';
+import { useAuth } from '@context/authContext';
+import { useAlert } from '@context/alertContext';
 
 export default function LoginForm() {
-  const [rut, setRut] = useState("");
-  const [password, setPassword] = useState("");
+  const [rut, setRut] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [eyeAnimation, setEyeAnimation] = useState(false);
   const { login } = useAuth();
@@ -24,11 +24,11 @@ export default function LoginForm() {
   };
 
   const formatRut = (rut) => {
-    let cleanRut = rut.replace(/[^0-9Kk]/g, "");
+    let cleanRut = rut.replace(/[^0-9Kk]/g, '');
     if (cleanRut.length > 1) {
       cleanRut = cleanRut.replace(
         /^(\d{1,2})(\d{3})(\d{3})([0-9Kk])$/,
-        "$1.$2.$3-$4"
+        '$1.$2.$3-$4'
       );
     }
     return cleanRut.slice(0, 12);
@@ -45,10 +45,10 @@ export default function LoginForm() {
     try {
       const response = await loginUser(rut, password);
       login(response.token, response.role);
-      showAlert(response.message, "success");
-      router.push("/home");
+      showAlert(response.message, 'success');
+      router.push('/home');
     } catch (error) {
-      showAlert(error.response?.data.message, "error");
+      showAlert(error.response?.data.message, 'error');
     }
   };
 
@@ -67,6 +67,7 @@ export default function LoginForm() {
           type="text"
           value={rut}
           onChange={handleRutChange}
+          maxLength={12}
           required
           className="mt-1 block w-full px-3 py-2 border border-input rounded-md shadow-sm bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-300"
           placeholder="12.345.678-9"
@@ -84,7 +85,7 @@ export default function LoginForm() {
           <input
             id="password"
             name="password"
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -99,13 +100,13 @@ export default function LoginForm() {
             {showPassword ? (
               <EyeOff
                 className={`h-5 w-5 text-muted-foreground ${
-                  eyeAnimation ? "eye-animation" : ""
+                  eyeAnimation ? 'eye-animation' : ''
                 }`}
               />
             ) : (
               <Eye
                 className={`h-5 w-5 text-muted-foreground ${
-                  eyeAnimation ? "eye-animation" : ""
+                  eyeAnimation ? 'eye-animation' : ''
                 }`}
               />
             )}

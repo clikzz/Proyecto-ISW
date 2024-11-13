@@ -21,46 +21,45 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('token');
-      const storedRole = localStorage.getItem('role');
-      if (token && storedRole) {
-        const isValid = await validateToken(token);
+      if (token) {
+        const { isValid, role: fetchedRole } = await validateToken(token);
         if (isValid) {
           setIsAuthenticated(true);
-          setRole(storedRole);
+          setRole(fetchedRole);
         } else {
-          setIsAuthenticated(false);
-          setRole(null);
-          localStorage.removeItem('token');
-          localStorage.removeItem('role');
-          router.push('/login');
+          handleLogout();
         }
       } else {
-        setIsAuthenticated(false);
-        setRole(null);
-        router.push('/login');
+        handleLogout();
       }
       setLoading(false);
     };
+
     checkAuth();
   }, []);
 
-  const login = (token, role) => {
+  const handleLogin = (token, role) => {
     localStorage.setItem('token', token);
-    localStorage.setItem('role', role);
     setIsAuthenticated(true);
     setRole(role);
   };
 
-  const logout = () => {
+  const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('role');
     setIsAuthenticated(false);
     setRole(null);
+    router.push('/');
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, role, login, logout, loading }}
+      value={{
+        isAuthenticated,
+        role,
+        login: handleLogin,
+        logout: handleLogout,
+        loading,
+      }}
     >
       {children}
     </AuthContext.Provider>
