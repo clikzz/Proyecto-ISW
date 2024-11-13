@@ -115,7 +115,7 @@ export default function BalanceFinanciero() {
     try {
       const newTransaction = {
         transaction_type,
-        amount: amount, // Asegúrate de que el monto sea un número
+        amount: amount,
         payment_method,
         description,
       };
@@ -127,7 +127,7 @@ export default function BalanceFinanciero() {
       setPaymentMethod("efectivo");
       setDescription("");
       setError(null);
-      setModalOpen(false); // Cierra el modal después de agregar la transacción
+      setModalOpen(false);
     } catch (error) {
       console.error("Error al agregar la transacción:", error);
       setError("Error al agregar la transacción");
@@ -156,13 +156,6 @@ const lineData = (() => {
   const sortedTransactions = [...transactions].sort((a, b) =>
     new Date(a.transaction_date) - new Date(b.transaction_date)
   );
-
-  // Calcular el balance acumulativo
-  let runningBalance = 0;
-  const balances = sortedTransactions.map(t => {
-    runningBalance += t.transaction_type === "ingreso" ? t.amount : -t.amount;
-    return runningBalance;
-  });
 
   return {
     labels: sortedTransactions.map((t) =>
