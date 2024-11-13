@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
+import { getTransactionsSummary } from '@/api/transaction';
 
 const formatoPesoChileno = (valor) => {
   return new Intl.NumberFormat('es-CL', {
@@ -10,7 +11,22 @@ const formatoPesoChileno = (valor) => {
   }).format(valor);
 };
 
-export default function BalanceCards({ summary }) {
+export default function BalanceCards({ transactions }) {
+  const [summary, setSummary] = useState({ ingresos: 0, egresos: 0, balance: 0 });
+
+  const fetchSummary = async () => {
+    try {
+      const data = await getTransactionsSummary();
+      setSummary(data);
+    } catch (error) {
+      console.error('Error al obtener el resumen:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSummary();
+  }, [transactions]);
+
   const cards = [
     { title: 'Balance Total', value: summary.balance, icon: DollarSign },
     { title: 'Ingresos Totales', value: summary.ingresos, icon: TrendingUp, color: 'green' },

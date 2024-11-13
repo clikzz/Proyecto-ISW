@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import { Upload, X } from 'lucide-react';
+import { createTransaction } from '@/api/transaction';
 
-export default function NewTransactionForm({ onSubmit }) {
+export default function NewTransactionForm({ onTransactionAdded }) {
   const [isOpen, setIsOpen] = useState(false);
   const [transaction_type, setTransactionType] = useState('ingreso');
   const [amount, setAmount] = useState('');
   const [payment_method, setPaymentMethod] = useState('efectivo');
   const [description, setDescription] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit({ transaction_type, amount, payment_method, description });
-    setIsOpen(false);
+    try {
+      const newTransaction = { transaction_type, amount, payment_method, description };
+      await createTransaction(newTransaction);
+      onTransactionAdded();
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Error al agregar la transacción:', error);
+    }
   };
 
   if (!isOpen) {
