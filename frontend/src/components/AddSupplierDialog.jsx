@@ -1,106 +1,190 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { UserPlus } from 'lucide-react';
 import { addSupplier } from '@api/suppliers';
+import { useAlert } from '@context/alertContext';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { newSupplierValidation } from '@/validations/newSupplier';
 
-const AddSupplierDialog = ({ onClose }) => {
-  const [formData, setFormData] = useState({
-    rut_supplier: '',
-    name_supplier: '',
-    email_supplier: '',
-    phone_supplier: '',
-    address_supplier: '',
-  });
-  const [errorMessages, setErrorMessages] = useState([]);
+export default function AddSupplierDialog({ fetchSuppliers }) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { showAlert } = useAlert();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const formatRut = (value) => {
+    const cleanValue = value
+      .replace(/\./g, '')
+      .replace(/-/g, '')
+      .replace(/\s+/g, '');
+    if (cleanValue.length > 11) return value;
+
+    const cuerpo = cleanValue.slice(0, -1);
+    const verificador = cleanValue.slice(-1);
+    const formattedCuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    return `${formattedCuerpo}-${verificador}`;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleRutChange = (e, setFieldValue) => {
+    const value = e.target.value.toUpperCase();
+    const numericValue = value.replace(/[^0-9K]/g, '');
+    const formattedRut = formatRut(numericValue);
+    if (formattedRut.length <= 12) {
+      setFieldValue('rut_supplier', formattedRut);
+    }
+  };
+
+  const handleSubmit = async (
+    values,
+    { setSubmitting, resetForm, setErrors }
+  ) => {
+    console.log(values);
+
     try {
-      await addSupplier(formData);
-      onClose();
-    } catch (error) {
-      if (error.response && error.response.data && error.response.data.errors) {
-        setErrorMessages(error.response.data.errors);
-      } else {
-        console.error('Error al añadir proveedor:', error);
+      if (!newSupplierValidation) {
+        throw new Error('Validation schema is not defined');
       }
+      await newSupplierValidation.validate(values, { abortEarly: false });
+      await addSupplier(values);
+      setIsDialogOpen(false);
+      resetForm();
+      fetchSuppliers();
+    } catch (error) {
+      console.log(error);
+      if (error.response?.data?.errors) {
+        setErrors(error.response.data.errors);
+      } else {
+        showAlert(error.response?.data.message || error.message, 'error');
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75">
-      <div className="bg-background text-foreground p-6 rounded-md shadow-md">
-        <h2 className="text-xl font-bold mb-4">Añadir Proveedor</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <Input
-              name="rut_supplier"
-              placeholder="RUT"
-              value={formData.rut_supplier}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <Input
-              name="name_supplier"
-              placeholder="Nombre"
-              value={formData.name_supplier}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <Input
-              name="email_supplier"
-              placeholder="Correo"
-              value={formData.email_supplier}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <Input
-              name="phone_supplier"
-              placeholder="Teléfono"
-              value={formData.phone_supplier}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <Input
-              name="address_supplier"
-              placeholder="Dirección"
-              value={formData.address_supplier}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          {errorMessages.length > 0 && (
-            <div className="mb-4 text-red-500">
-              <ul>
-                {errorMessages.map((message, index) => (
-                  <li key={index}>{message}</li>
-                ))}
-              </ul>
-            </div>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <DialogTrigger asChild>
+        <Button className="flex items-center rounded-xl">
+          <UserPlus className="mr-2 h-4 w-4" />
+          Añadir Proveedor
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="border-none text-foreground">
+        <DialogHeader>
+          <DialogTitle>Formulario de nuevo proveedor</DialogTitle>
+        </DialogHeader>
+        <Formik
+          initialValues={{
+            rut_supplier: '',
+            name_supplier: '',
+            email_supplier: '',
+            phone_supplier: '',
+            address_supplier: '',
+          }}
+          validationSchema={newSupplierValidation}
+          onSubmit={handleSubmit}
+        >
+          {({ values, handleChange, setFieldValue }) => (
+            <Form className="space-y-4">
+              <div>
+                <Label htmlFor="rut_supplier">RUT</Label>
+                <Field
+                  as={Input}
+                  id="rut_supplier"
+                  name="rut_supplier"
+                  value={values.rut_supplier}
+                  onChange={(e) => handleRutChange(e, setFieldValue)}
+                  placeholder="12.345.678-9"
+                  required
+                />
+                <ErrorMessage
+                  name="rut_supplier"
+                  component="div"
+                  style={{ color: 'red' }}
+                />
+              </div>
+              <div>
+                <Label htmlFor="name_supplier">Nombre</Label>
+                <Field
+                  as={Input}
+                  id="name_supplier"
+                  name="name_supplier"
+                  value={values.name_supplier}
+                  onChange={handleChange}
+                  placeholder="Nombre completo"
+                  required
+                />
+                <ErrorMessage
+                  name="name_supplier"
+                  component="div"
+                  style={{ color: 'red' }}
+                />
+              </div>
+              <div>
+                <Label htmlFor="email_supplier">Email</Label>
+                <Field
+                  as={Input}
+                  id="email_supplier"
+                  name="email_supplier"
+                  type="email"
+                  value={values.email_supplier}
+                  onChange={handleChange}
+                  placeholder="ejemplo@mail.com"
+                  required
+                />
+                <ErrorMessage
+                  name="email_supplier"
+                  component="div"
+                  style={{ color: 'red' }}
+                />
+              </div>
+              <div>
+                <Label htmlFor="phone_supplier">Teléfono</Label>
+                <Field
+                  as={Input}
+                  id="phone_supplier"
+                  name="phone_supplier"
+                  value={values.phone_supplier}
+                  onChange={handleChange}
+                  placeholder="Teléfono"
+                  required
+                />
+                <ErrorMessage
+                  name="phone_supplier"
+                  component="div"
+                  style={{ color: 'red' }}
+                />
+              </div>
+              <div>
+                <Label htmlFor="address_supplier">Dirección</Label>
+                <Field
+                  as={Input}
+                  id="address_supplier"
+                  name="address_supplier"
+                  value={values.address_supplier}
+                  onChange={handleChange}
+                  placeholder="Dirección"
+                  required
+                />
+                <ErrorMessage
+                  name="address_supplier"
+                  component="div"
+                  style={{ color: 'red' }}
+                />
+              </div>
+              <Button type="submit">Agregar</Button>
+            </Form>
           )}
-          <div className="flex justify-end">
-            <Button type="button" onClick={onClose} className="mr-2">
-              Cancelar
-            </Button>
-            <Button type="submit">Guardar</Button>
-          </div>
-        </form>
-      </div>
-    </div>
+        </Formik>
+      </DialogContent>
+    </Dialog>
   );
-};
-
-export default AddSupplierDialog;
+}
