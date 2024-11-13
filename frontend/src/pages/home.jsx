@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Search,
   Upload,
@@ -10,34 +10,35 @@ import {
   Clock,
   Users,
   ShoppingCart,
-} from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useAuth } from '../context/authContext';
-import useAuthRedirect from '@/hooks/useAuthRedirect';
-import { getProfile } from '@/api/profile';
-import { useState, useEffect } from 'react';
-import { getUsers } from '../api/user';
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { useAuth } from "../context/authContext";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import { getProfile } from "@/api/profile";
+import { useState, useEffect } from "react";
+import { getUsers } from "../api/user";
 
 export default function HomePage() {
   const { user } = useAuth();
-  const isAuthorized = useAuthRedirect(['default', 'admin', 'employee']);
+  const isAuthorized = useAuthRedirect(["default", "admin", "employee"]);
   const [totalEmployees, setTotalEmployees] = useState(0);
-  const [name, setName] = useState('');
-  const [role, setRole] = useState('');
+  const [mesesActivos, setMesesActivos] = useState(0);
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
 
   const fetchProfileData = async () => {
     try {
       const profileData = await getProfile();
       setName(profileData.name_user);
-      if (profileData.role_user === 'admin') {
-        setRole('Administrador');
+      if (profileData.role_user === "admin") {
+        setRole("Administrador");
       }
-      if (profileData.role_user === 'employee') {
-        setRole('Empleado');
+      if (profileData.role_user === "employee") {
+        setRole("Empleado");
       }
     } catch (error) {
       console.error(
-        'Error fetching profile data:',
+        "Error fetching profile data:",
         error.response?.data || error.message
       );
     }
@@ -49,15 +50,29 @@ export default function HomePage() {
       setTotalEmployees(users.length);
     } catch (error) {
       console.error(
-        'Error fetching total employees:',
+        "Error fetching total employees:",
         error.response?.data || error.message
       );
     }
   };
 
   useEffect(() => {
+    // Llamadas para obtener datos de perfil y total de usuarios
     fetchProfileData();
     fetchTotalUsers();
+
+    // Cálculo de meses activos desde octubre 2024 (creacion del proyecto)
+    const calcularMeses = () => {
+      const fechaInicio = new Date('2024-10-01');
+      const fechaActual = new Date();
+      const diffAnios = fechaActual.getFullYear() - fechaInicio.getFullYear();
+      const diffMeses = fechaActual.getMonth() - fechaInicio.getMonth();
+      const mesesTotales = diffAnios * 12 + diffMeses;
+
+      setMesesActivos(mesesTotales);
+    };
+
+    calcularMeses();
   }, []);
 
   if (!isAuthorized) {
@@ -68,12 +83,12 @@ export default function HomePage() {
     <div className="flex flex-col gap-6">
       {/* Sección de bienvenida */}
       <div className="flex items-center justify-between">
-        <div style={{ minHeight: '3rem' }}>
+        <div style={{ minHeight: "3rem" }}>
           <p className="text-2xl font-bold text-primary">
             Bienvenido/a de nuevo
           </p>
           <div className="flex items-center gap-4">
-            <p className="text-3xl font-semibold">{name || 'Cargando...'}</p>
+            <p className="text-3xl font-semibold">{name || "Cargando..."}</p>
             <p className="text-sm text-muted-foreground"> ({role}) </p>
           </div>
         </div>
@@ -82,13 +97,13 @@ export default function HomePage() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Buscar productos"
+              placeholder="Buscar Actividad"
               className="w-[250px] pl-8"
             />
           </div>
           <Button className="gap-2">
             <Upload className="h-4 w-4" />
-            Sube un Producto
+            Agregar Actividad
           </Button>
         </div>
       </div>
@@ -136,9 +151,9 @@ export default function HomePage() {
               <CardTitle className="text-sm font-medium mb-2">
                 Actividad del Taller
               </CardTitle>
-              <div className="text-2xl font-bold">5 meses</div>
+              <div className="text-2xl font-bold">{mesesActivos} meses</div>
               <p className="text-xs text-muted-foreground">
-                Activo desde ago 2023
+                Activo desde Oct 2024
               </p>
             </div>
             <Clock className="h-8 w-8 text-muted-foreground ml-auto" />
@@ -156,26 +171,26 @@ export default function HomePage() {
           <CardContent className="space-y-4">
             {[
               {
-                action: 'Reparó',
-                item: 'Sistema de Cambios MTB',
-                time: 'hace 2 horas',
+                action: "Reparó",
+                item: "Sistema de Cambios MTB",
+                time: "hace 2 horas",
               },
               {
-                action: 'Vendió',
-                item: 'Candado Premium para Bicicleta',
-                time: 'hace 3 horas',
+                action: "Vendió",
+                item: "Candado Premium para Bicicleta",
+                time: "hace 3 horas",
               },
               {
-                action: 'Mantuvo',
-                item: 'Batería para Bicicleta Eléctrica',
-                time: 'hace 5 horas',
+                action: "Mantuvo",
+                item: "Batería para Bicicleta Eléctrica",
+                time: "hace 5 horas",
               },
             ].map((activity, index) => (
               <motion.div
                 key={index}
                 className="flex items-center justify-between rounded-lg border-none p-3 bg-background"
                 whileHover={{ scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 300 }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
                 <div>
                   <p className="font-medium">
@@ -198,29 +213,29 @@ export default function HomePage() {
           <CardContent className="space-y-4">
             {[
               {
-                name: 'Candado Premium para Bicicleta',
-                category: 'Accesorios',
-                sales: '125 ventas',
-                image: '',
+                name: "Candado Premium para Bicicleta",
+                category: "Accesorios",
+                sales: "125 ventas",
+                image: "",
               },
               {
-                name: 'Llantas Todo Terreno',
-                category: 'Repuestos',
-                sales: '98 ventas',
-                image: '',
+                name: "Llantas Todo Terreno",
+                category: "Repuestos",
+                sales: "98 ventas",
+                image: "",
               },
               {
-                name: 'Batería para Bicicleta Eléctrica',
-                category: 'Componentes',
-                sales: '72 ventas',
-                image: '',
+                name: "Batería para Bicicleta Eléctrica",
+                category: "Componentes",
+                sales: "72 ventas",
+                image: "",
               },
             ].map((product) => (
               <motion.div
                 key={product.name}
                 className="flex items-center gap-4 rounded-lg border-none p-4 bg-background"
                 whileHover={{ scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 300 }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
                 <img
                   alt={product.name}
