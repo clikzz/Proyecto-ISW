@@ -4,6 +4,8 @@ const {
   changeUserPassword,
 } = require('../services/profile.service');
 const bcrypt = require('bcrypt');
+const cloudinary = require('../config/cloudinary');
+const fs = require('fs');
 
 // Actualizar perfil
 exports.updateProfile = async (req, res) => {
@@ -71,18 +73,57 @@ exports.changePassword = async (req, res) => {
 
 exports.getProfile = async (req, res) => {
   try {
-    const rut = req.user.rut; // Aquí asumo que 'rut' se obtiene del token JWT
+    const rut = req.user.rut;
     const user = await User.findByRut(rut);
 
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    // Envía solo los datos necesarios del usuario, sin la contraseña
-    const { name_user, phone_user, created_at, role_user } = user; // Desestructuramos sin 'rut' ya que lo tenemos en 'req.user'
-    res.json({ name_user, phone_user, rut, created_at, role_user });
+    const { name_user, phone_user, created_at, updated_at, role_user, profile_picture } = user;
+    console.log('Updated_at:', updated_at);
+    res.json({ name_user, phone_user, rut, created_at, updated_at, role_user, profile_picture });
   } catch (error) {
     console.error('Error al obtener el perfil:', error);
     res.status(500).json({ message: 'Error al obtener el perfil' });
+  }
+};
+
+// Subir imagen de perfil
+exports.uploadProfilePicture = async (req, res) => {
+  try {
+    // Verifica que el archivo esté presente
+    if (!req.file) {
+      return res.status(400).json({ message: 'No se proporcionó ningún archivo' });
+    }
+
+    // Subir el archivo a Cloudinary usando el buffer de memoria
+    cloudinary.uploader.upload_stream(
+      { folder: 'profile_pictures' },
+      async (error, result) => {
+        if (error) {
+          console.error('Error al subir a Cloudinary:', error);
+          return res.status(500).json({ message: 'Error al subir la imagen a Cloudinary', error });
+        }
+
+        // Construye el objeto de actualización para pasar a findByRutAndUpdate
+        const updates = { profile_picture: result.secure_url };
+
+        // Actualiza el perfil del usuario con la URL de la imagen
+        const user = await User.findByRutAndUpdate(req.user.rut, updates);
+
+        if (!user) {
+          return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        res.status(200).json({
+          message: 'Imagen de perfil actualizada',
+          profilePicture: result.secure_url,
+        });
+      }
+    ).end(req.file.buffer);
+  } catch (error) {
+    console.error('Error al subir la imagen:', error);
+    res.status(500).json({ message: 'Error al subir la imagen', error });
   }
 };
