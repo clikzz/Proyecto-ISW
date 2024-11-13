@@ -2,12 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bar } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
   Legend,
@@ -30,6 +39,8 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
   Legend
@@ -123,6 +134,7 @@ export default function BalanceFinanciero() {
     }
   };
 
+  // Configuración del gráfico de barras
   const data = {
     labels: ["Ingresos", "Egresos", "Balance"],
     datasets: [
@@ -130,13 +142,60 @@ export default function BalanceFinanciero() {
         label: "Monto",
         data: [summary.ingresos, summary.egresos, summary.balance],
         backgroundColor: [
-          "rgba(75, 192, 192, 0.6)",
-          "rgba(255, 99, 132, 0.6)",
-          "rgba(54, 162, 235, 0.6)",
+          "rgba(152,251,152, 0.8)",
+          "rgb(240,128,128)",
+          "rgba(84, 153, 199, 1)",
         ],
       },
     ],
   };
+
+  // Configuración del gráfico de líneas
+const lineData = (() => {
+  // Ordenar las transacciones por fecha
+  const sortedTransactions = [...transactions].sort((a, b) =>
+    new Date(a.transaction_date) - new Date(b.transaction_date)
+  );
+
+  // Calcular el balance acumulativo
+  let runningBalance = 0;
+  const balances = sortedTransactions.map(t => {
+    runningBalance += t.transaction_type === "ingreso" ? t.amount : -t.amount;
+    return runningBalance;
+  });
+
+  return {
+    labels: sortedTransactions.map((t) =>
+      new Date(t.transaction_date).toLocaleDateString("es-CL", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+    ),
+    datasets: [
+      {
+        label: "Ingresos",
+        data: sortedTransactions.map((t) =>
+          t.transaction_type === "ingreso" ? t.amount : null
+        ),
+        borderColor: "rgb(152,251,152)",
+        backgroundColor: "rgb(152,251,152)",
+        fill: false,
+        spanGaps: true,
+      },
+      {
+        label: "Egresos",
+        data: sortedTransactions.map((t) =>
+          t.transaction_type === "egreso" ? t.amount : null
+        ),
+        borderColor: "rgba(240,128,128)",
+        backgroundColor: "rgba(240,128,128)",
+        fill: false,
+        spanGaps: true,
+      },
+    ],
+  };
+})();
 
   return (
     <div className="flex flex-col gap-6 relative">
@@ -148,14 +207,6 @@ export default function BalanceFinanciero() {
           <p className="text-3xl font-semibold">Taller de Bicicletas</p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <input
-              type="search"
-              placeholder="Buscar transacciones"
-              className="w-[250px] pl-8 py-2 border rounded bg-background text-foreground"
-            />
-          </div>
           <button
             className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90"
             onClick={() => setModalOpen(true)}
@@ -239,12 +290,16 @@ export default function BalanceFinanciero() {
                     >
                       <div>
                         <p className="font-medium">
-                          {t.transaction_type === "ingreso" ? "Ingreso" : "Egreso"}:{" "}
-                          {t.description}
+                          {t.transaction_type === "ingreso"
+                            ? "Ingreso"
+                            : "Egreso"}
+                          : {t.description}
                         </p>
                         <p className="text-sm text-muted-foreground">
                           {new Date(t.transaction_date).toLocaleDateString()} -{" "}
-                          {t.payment_method === "efectivo" ? "Efectivo" : "Transferencia"}
+                          {t.payment_method === "efectivo"
+                            ? "Efectivo"
+                            : "Transferencia"}
                         </p>
                       </div>
                       <div
@@ -270,15 +325,36 @@ export default function BalanceFinanciero() {
                 </div>
               </div>
             </Card>
-
-            <div className="bg-background border-none rounded-lg shadow-sm">
+            <Card className="bg-background border-none rounded-lg shadow-sm relative overflow-hidden">
               <div className="p-6">
-                <h3 className="text-lg font-semibold mb-4">
-                  Gráfico de Balance
-                </h3>
-                <Bar data={data} />
+                <Carousel className="w-full relative">
+                  <CarouselContent>
+                    <CarouselItem>
+                      <Card className="bg-background border-none rounded-lg shadow-sm">
+                        <CardContent className="p-6">
+                          <h3 className="text-lg font-semibold mb-4">
+                            Gráfico de Balance
+                          </h3>
+                          <Bar data={data} />
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                    <CarouselItem>
+                      <Card className="bg-background border-none rounded-lg shadow-sm">
+                        <CardContent className="p-6">
+                          <h3 className="text-lg font-semibold mb-4">
+                            Gráfico de Línea
+                          </h3>
+                          <Line data={lineData} />
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  </CarouselContent>
+                  <CarouselPrevious className=" -left-4 w-8 h-8 rounded-full flex items-center justify-center" variant="ghost"/>
+                  <CarouselNext className="-right-4 w-8 h-8 rounded-full flex items-center justify-center" variant="ghost"/>
+                </Carousel>
               </div>
-            </div>
+            </Card>
           </div>
         </>
       )}
@@ -306,7 +382,10 @@ export default function BalanceFinanciero() {
                       {t.description}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(t.transaction_date).toLocaleDateString()} - {t.payment_method === "efectivo" ? "Efectivo" : "Transferencia"}
+                      {new Date(t.transaction_date).toLocaleDateString()} -{" "}
+                      {t.payment_method === "efectivo"
+                        ? "Efectivo"
+                        : "Transferencia"}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       RUT: {t.rut}
@@ -314,7 +393,9 @@ export default function BalanceFinanciero() {
                   </div>
                   <div
                     className={`mr-8 text-lg font-semibold ${
-                      t.transaction_type === "ingreso" ? "text-green-500" : "text-red-500"
+                      t.transaction_type === "ingreso"
+                        ? "text-green-500"
+                        : "text-red-500"
                     }`}
                   >
                     {t.transaction_type === "ingreso" ? "+" : "-"}
