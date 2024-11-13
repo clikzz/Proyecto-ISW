@@ -68,7 +68,7 @@ export default function AddUserDialog({ fetchUsers }) {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center rounded-xl">
+        <Button className="flex items-center">
           <UserPlus className="mr-2 h-4 w-4" />
           Añadir Usuario
         </Button>
