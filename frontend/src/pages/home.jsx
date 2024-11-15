@@ -92,20 +92,6 @@ export default function HomePage() {
             <p className="text-sm text-muted-foreground"> ({role}) </p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Buscar Actividad"
-              className="w-[250px] pl-8"
-            />
-          </div>
-          <Button className="rounded-xl gap-2">
-            <Upload className="h-4 w-4" />
-            Agregar Actividad
-          </Button>
-        </div>
       </div>
 
       {/* Estadísticas */}

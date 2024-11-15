@@ -28,7 +28,7 @@ export default function NewTransactionForm({ onTransactionAdded }) {
         onClick={() => setIsOpen(true)}
       >
         <Upload className="h-4 w-4" />
-        Nueva Transacción
+        Agregar Movimiento
       </button>
     );
   }
@@ -37,7 +37,7 @@ export default function NewTransactionForm({ onTransactionAdded }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">Agregar Nueva Transacción</h3>
+          <h3 className="text-lg font-semibold">Agrega un Movimiento</h3>
           <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-gray-700">
             <X className="h-6 w-6" />
           </button>
@@ -46,7 +46,7 @@ export default function NewTransactionForm({ onTransactionAdded }) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="transaction_type" className="block text-sm font-medium text-foreground">
-                Tipo de Transacción
+                Tipo de Movimiento
               </label>
               <select
                 id="transaction_type"
@@ -102,7 +102,7 @@ export default function NewTransactionForm({ onTransactionAdded }) {
             type="submit"
             className="w-full bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90"
           >
-            Agregar Transacción
+            Agregar Movimiento
           </button>
         </form>
       </div>
