@@ -114,10 +114,10 @@ export default function PrivateLayout({ children }) {
                     Proveedores
                   </NavLink>
                   <NavLink
-                    href="/balance-financiero"
+                    href="/finanzas"
                     icon={<DollarSign className="h-6 w-6" />}
                   >
-                    Balance
+                    Finanzas
                   </NavLink>
                 </>
               )}
