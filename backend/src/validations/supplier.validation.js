@@ -39,6 +39,9 @@ const createSupplierSchema = Joi.object({
 });
 
 const updateSupplierSchema = Joi.object({
+  rut_supplier: Joi.string()
+    .max(12)
+    .optional(),
   name_supplier: Joi.string()
     .max(50)
     .optional(),

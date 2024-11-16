@@ -23,37 +23,38 @@ class Supplier {
     return result.rows;
   }
 
-  static async findById(rut_supplier) {
-    const result = await db.query('SELECT * FROM supplier WHERE rut_supplier = $1 AND is_deleted = FALSE', [rut_supplier]);
+  static async findById(id) {
+    const result = await db.query('SELECT * FROM supplier WHERE id = $1 AND is_deleted = FALSE', [id]);
     return result.rows[0];
   }
 
-  static async update(rut_supplier, data) {
+  static async update(id, data) {
     const query = `
       UPDATE supplier
-      SET name_supplier = $1, email_supplier = $2, phone_supplier = $3, address_supplier = $4, updated_at = CURRENT_TIMESTAMP
-      WHERE rut_supplier = $5 AND is_deleted = FALSE
+      SET rut_supplier = $1, name_supplier = $2, email_supplier = $3, phone_supplier = $4, address_supplier = $5, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $6 AND is_deleted = FALSE
       RETURNING *;
     `;
     const values = [
+      data.rut_supplier,
       data.name_supplier,
       data.email_supplier,
       data.phone_supplier,
       data.address_supplier,
-      rut_supplier,
+      id,
     ];
     const result = await db.query(query, values);
     return result.rows[0];
   }
 
-  static async delete(rut_supplier) {
+  static async delete(id) {
     const query = `
       UPDATE supplier
       SET is_deleted = TRUE, updated_at = CURRENT_TIMESTAMP
-      WHERE rut_supplier = $1 AND is_deleted = FALSE
+      WHERE id = $1 AND is_deleted = FALSE
       RETURNING *;
     `;
-    const result = await db.query(query, [rut_supplier]);
+    const result = await db.query(query, [id]);
     return result.rows[0];
   }
 }

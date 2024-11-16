@@ -1,6 +1,6 @@
 import useAuthRedirect from '@hooks/useAuthRedirect';
-import UsersTable from '@components/UsersTable';
-import { Router, Users } from 'lucide-react';
+import UsersTable from '@components/users/UsersTable';
+import { Users } from 'lucide-react';
 import { useRouter } from 'next/router';
 
 export default function UsersPage() {
