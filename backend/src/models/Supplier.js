@@ -19,12 +19,17 @@ class Supplier {
   }
 
   static async findAll() {
-    const result = await db.query('SELECT * FROM supplier WHERE is_deleted = FALSE');
+    const result = await db.query(
+      'SELECT * FROM supplier WHERE is_deleted = FALSE'
+    );
     return result.rows;
   }
 
   static async findById(id) {
-    const result = await db.query('SELECT * FROM supplier WHERE id = $1 AND is_deleted = FALSE', [id]);
+    const result = await db.query(
+      'SELECT * FROM supplier WHERE id = $1 AND is_deleted = FALSE',
+      [id]
+    );
     return result.rows[0];
   }
 

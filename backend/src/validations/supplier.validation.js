@@ -17,10 +17,10 @@ const createSupplierSchema = Joi.object({
     }),
   email_supplier: Joi.string()
     .email()
-    .required()
+    .allow('')
+    .optional()
     .messages({
       'string.email': 'El correo debe ser válido.',
-      'any.required': 'El correo del proveedor es obligatorio.',
     }),
   phone_supplier: Joi.string()
     .max(12)
@@ -30,11 +30,11 @@ const createSupplierSchema = Joi.object({
       'any.required': 'El teléfono del proveedor es obligatorio.',
     }),
   address_supplier: Joi.string()
+    .allow('')
     .max(50)
-    .required()
+    .optional()
     .messages({
       'string.max': 'La dirección no puede exceder los 50 caracteres.',
-      'any.required': 'La dirección del proveedor es obligatoria.',
     }),
 });
 
@@ -47,11 +47,13 @@ const updateSupplierSchema = Joi.object({
     .optional(),
   email_supplier: Joi.string()
     .email()
+    .allow('')
     .optional(),
   phone_supplier: Joi.string()
     .max(12)
     .optional(),
   address_supplier: Joi.string()
+    .allow('')
     .max(50)
     .optional(),
 });

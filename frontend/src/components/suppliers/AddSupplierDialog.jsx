@@ -95,7 +95,9 @@ export default function AddSupplierDialog({ fetchSuppliers }) {
           {({ values, handleChange, setFieldValue }) => (
             <Form className="space-y-4">
               <div>
-                <Label htmlFor="rut_supplier">RUT</Label>
+                <Label htmlFor="rut_supplier">
+                  RUT <span style={{ color: 'red' }}>*</span>
+                </Label>
                 <Field
                   as={Input}
                   id="rut_supplier"
@@ -112,7 +114,9 @@ export default function AddSupplierDialog({ fetchSuppliers }) {
                 />
               </div>
               <div>
-                <Label htmlFor="name_supplier">Nombre</Label>
+                <Label htmlFor="name_supplier">
+                  Nombre <span style={{ color: 'red' }}>*</span>
+                </Label>
                 <Field
                   as={Input}
                   id="name_supplier"
@@ -129,25 +133,9 @@ export default function AddSupplierDialog({ fetchSuppliers }) {
                 />
               </div>
               <div>
-                <Label htmlFor="email_supplier">Email</Label>
-                <Field
-                  as={Input}
-                  id="email_supplier"
-                  name="email_supplier"
-                  type="email"
-                  value={values.email_supplier}
-                  onChange={handleChange}
-                  placeholder="ejemplo@mail.com"
-                  required
-                />
-                <ErrorMessage
-                  name="email_supplier"
-                  component="div"
-                  style={{ color: 'red' }}
-                />
-              </div>
-              <div>
-                <Label htmlFor="phone_supplier">Teléfono</Label>
+                <Label htmlFor="phone_supplier">
+                  Teléfono <span style={{ color: 'red' }}>*</span>
+                </Label>
                 <Field
                   as={Input}
                   id="phone_supplier"
@@ -164,7 +152,24 @@ export default function AddSupplierDialog({ fetchSuppliers }) {
                 />
               </div>
               <div>
-                <Label htmlFor="address_supplier">Dirección</Label>
+                <Label htmlFor="email_supplier">Email (opcional)</Label>
+                <Field
+                  as={Input}
+                  id="email_supplier"
+                  name="email_supplier"
+                  type="email"
+                  value={values.email_supplier}
+                  onChange={handleChange}
+                  placeholder="ejemplo@mail.com"
+                />
+                <ErrorMessage
+                  name="email_supplier"
+                  component="div"
+                  style={{ color: 'red' }}
+                />
+              </div>
+              <div>
+                <Label htmlFor="address_supplier">Dirección (opcional)</Label>
                 <Field
                   as={Input}
                   id="address_supplier"
@@ -172,7 +177,6 @@ export default function AddSupplierDialog({ fetchSuppliers }) {
                   value={values.address_supplier}
                   onChange={handleChange}
                   placeholder="Dirección"
-                  required
                 />
                 <ErrorMessage
                   name="address_supplier"

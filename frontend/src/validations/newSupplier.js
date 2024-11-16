@@ -20,12 +20,14 @@ export const newSupplierValidation = Yup.object().shape({
     .lowercase()
     .required('El nombre es requerido'),
   email_supplier: Yup.string()
+    .nullable()
+    .notRequired()
     .matches(
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
       'El email debe tener un formato válido'
     )
     .email('El email debe ser válido')
-    .required('El email es requerido'),
+    .transform((value) => (value === '' ? null : value)),
   phone_supplier: Yup.string()
     .matches(
       /^(\+?56)?(\s?)(0?9)(\s?)[9876543]\d{7}$/,
@@ -33,8 +35,10 @@ export const newSupplierValidation = Yup.object().shape({
     )
     .required('El teléfono es requerido'),
   address_supplier: Yup.string()
+    .nullable()
+    .notRequired()
     .min(5, 'La dirección debe tener al menos 10 caracteres')
     .max(100, 'La dirección debe tener como máximo 100 caracteres')
     .trim()
-    .required('La dirección es requerida'),
+    .transform((value) => (value === '' ? null : value)),
 });
