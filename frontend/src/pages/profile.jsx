@@ -41,7 +41,7 @@ export default function ProfilePage() {
 
   return (
     <main className="flex items-center justify-center">
-      <Card className="w-full max-w-2xl px-12 py-12 bg-card rounded-2xl shadow-xl border-none">
+      <Card className="w-full max-w-xl px-12 py-12 bg-card rounded-2xl shadow-xl border-none">
         <CardContent className="space-y-8">
           <ProfilePicture
             profilePicture={profilePicture}

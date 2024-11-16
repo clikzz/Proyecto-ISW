@@ -14,6 +14,7 @@ import { addSupplier } from '@api/suppliers';
 import { useAlert } from '@context/alertContext';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { newSupplierValidation } from '@/validations/newSupplier';
+import PhoneInput from '@/components/ui/phone-input';
 
 export default function AddSupplierDialog({ fetchSuppliers }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -58,12 +59,7 @@ export default function AddSupplierDialog({ fetchSuppliers }) {
       resetForm();
       fetchSuppliers();
     } catch (error) {
-      console.log(error);
-      if (error.response?.data?.errors) {
-        setErrors(error.response.data.errors);
-      } else {
-        showAlert(error.response?.data.message || error.message, 'error');
-      }
+      showAlert(error.response?.data.errors, 'error');
     } finally {
       setSubmitting(false);
     }
@@ -136,13 +132,11 @@ export default function AddSupplierDialog({ fetchSuppliers }) {
                 <Label htmlFor="phone_supplier">
                   Teléfono <span style={{ color: 'red' }}>*</span>
                 </Label>
-                <Field
-                  as={Input}
+                <PhoneInput
                   id="phone_supplier"
                   name="phone_supplier"
                   value={values.phone_supplier}
-                  onChange={handleChange}
-                  placeholder="Teléfono"
+                  onChange={(value) => setFieldValue('phone_supplier', value)}
                   required
                 />
                 <ErrorMessage

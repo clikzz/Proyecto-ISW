@@ -23,12 +23,10 @@ exports.getSuppliers = async (req, res) => {
     const suppliers = await supplierService.getAllSuppliers();
     res.json(suppliers);
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: 'Error al obtener los proveedores',
-        error: err.message,
-      });
+    res.status(500).json({
+      message: 'Error al obtener los proveedores',
+      error: err.message,
+    });
   }
 };
 
@@ -71,18 +69,16 @@ exports.updateSupplier = async (req, res) => {
     );
     res.json(updatedSupplier);
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: 'Error al actualizar el proveedor',
-        error: err.message,
-      });
+    res.status(500).json({
+      message: 'Error al actualizar el proveedor',
+      error: err.message,
+    });
   }
 };
 
 exports.deleteSupplier = async (req, res) => {
   try {
-    const deletedSupplier = await supplierService.deleteSupplier(req.params.id);
+    const deletedSupplier = await supplierService.deleteSupplier(req.params.rut);
     res.json({
       message: 'Proveedor eliminado correctamente',
       supplier: deletedSupplier,
