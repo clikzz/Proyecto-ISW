@@ -9,7 +9,11 @@ import NewTransactionForm from '@/components/NewTransactionForm';
 
 export default function BalanceFinanciero() {
   const [transactions, setTransactions] = useState([]);
-  const [summary, setSummary] = useState({ ingresos: 0, egresos: 0, balance: 0 });
+  const [summary, setSummary] = useState({
+    ingresos: 0,
+    egresos: 0,
+    balance: 0,
+  });
 
   const fetchTransactions = async () => {
     try {
@@ -39,13 +43,20 @@ export default function BalanceFinanciero() {
   }, [transactions]);
 
   return (
-    <div className="flex flex-col gap-6 relative">
+    <div className="container mx-auto flex flex-col gap-6 relative">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-primary">Balance Financiero</h1>
+          <h1 className="text-2xl font-bold text-primary">
+            Balance Financiero
+          </h1>
           <p className="text-3xl font-semibold">Taller de Bicicletas</p>
         </div>
-        <NewTransactionForm onTransactionAdded={() => { fetchTransactions(); fetchSummary(); }} />
+        <NewTransactionForm
+          onTransactionAdded={() => {
+            fetchTransactions();
+            fetchSummary();
+          }}
+        />
       </div>
 
       <BalanceCards transactions={transactions} />

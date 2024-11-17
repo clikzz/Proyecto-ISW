@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Bike,
   Bell,
@@ -12,6 +12,8 @@ import {
   Truck,
   TrendingUp,
   DollarSign,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -23,6 +25,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 export default function PrivateLayout({ children }) {
   const router = useRouter();
   const { logout, isAuthenticated, role, loading } = useAuth();
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const pageVariants = {
     hidden: { opacity: 0, y: 50, scale: 0.95 },
@@ -39,6 +42,7 @@ export default function PrivateLayout({ children }) {
       transition: { duration: 0.5, ease: 'easeIn' },
     },
   };
+
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       router.push('/login');
@@ -68,106 +72,119 @@ export default function PrivateLayout({ children }) {
         {React.cloneElement(icon, {
           className: `${icon.props.className} ${isActive ? 'text-white' : ''}`,
         })}
-        <span>{children}</span>
+        {isExpanded && <span>{children}</span>}
       </Link>
     );
   };
 
   return (
-    <>
-      <div className="bg-background text-foreground">
-        <div className="min-h-screen flex ml-[calc(16rem+4rem)]">
-          {/* Sidebar */}
-          <aside className="fixed top-8 left-8 h-[calc(100vh-4rem)] w-64 bg-card p-6 flex flex-col items-center rounded-3xl shadow-lg">
-            <Link href="/" className="flex items-center space-x-2 mb-8">
-              <Bike className="h-8 w-8 text-primary" />
+    <div className="bg-background text-foreground">
+      <div
+        className={`min-h-screen flex ${
+          isExpanded ? 'ml-64' : 'ml-20'
+        } transition-all duration-300`}
+      >
+        {/* Sidebar */}
+        <aside
+          className={`fixed left-8 top-8 bottom-8 rounded- ${
+            isExpanded ? 'w-64' : 'w-24'
+          } bg-card p-6 flex flex-col items-center shadow-lg transition-all duration-300`}
+        >
+          <Link href="/" className="flex items-center space-x-2 mb-8">
+            <Bike className="h-8 w-8 text-primary" />
+            {isExpanded && (
               <span className="text-xl font-semibold">bikefy</span>
-            </Link>
+            )}
+          </Link>
 
-            <nav className="space-y-4 w-full">
-              <NavLink href="/home" icon={<Home className="h-6 w-6" />}>
-                Home
+          <nav className="space-y-4 w-full">
+            <NavLink href="/home" icon={<Home className="h-6 w-6" />}>
+              Home
+            </NavLink>
+            {role === 'admin' && (
+              <NavLink
+                href="/overview"
+                icon={<TrendingUp className="h-6 w-6" />}
+              >
+                Overview
               </NavLink>
-              {role === 'admin' && (
-                <NavLink
-                  href="/overview"
-                  icon={<TrendingUp className="h-6 w-6" />}
-                >
-                  Overview
+            )}
+            <NavLink href="/inventario" icon={<Package className="h-6 w-6" />}>
+              Inventario
+            </NavLink>
+            {role === 'admin' && (
+              <>
+                <NavLink href="/users" icon={<Users className="h-6 w-6" />}>
+                  Usuarios
                 </NavLink>
-              )}
-              <NavLink
-                href="/inventario"
-                icon={<Package className="h-6 w-6" />}
-              >
-                Inventario
-              </NavLink>
-              {role === 'admin' && (
-                <>
-                  <NavLink href="/users" icon={<Users className="h-6 w-6" />}>
-                    Usuarios
-                  </NavLink>
-                  <NavLink
-                    href="/suppliers"
-                    icon={<Truck className="h-6 w-6" />}
-                  >
-                    Proveedores
-                  </NavLink>
-                  <NavLink
-                    href="/finanzas"
-                    icon={<DollarSign className="h-6 w-6" />}
-                  >
-                    Finanzas
-                  </NavLink>
-                </>
-              )}
-              <NavLink href="/profile" icon={<User className="h-6 w-6" />}>
-                Perfil
-              </NavLink>
-              <NavLink
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  logout();
-                }}
-                icon={<LogOut className="h-6 w-6" />}
-              >
-                Cerrar Sesion
-              </NavLink>
-            </nav>
-          </aside>
+                <NavLink href="/suppliers" icon={<Truck className="h-6 w-6" />}>
+                  Proveedores
+                </NavLink>
+                <NavLink
+                  href="/finanzas"
+                  icon={<DollarSign className="h-6 w-6" />}
+                >
+                  Finanzas
+                </NavLink>
+              </>
+            )}
+            <NavLink href="/profile" icon={<User className="h-6 w-6" />}>
+              Perfil
+            </NavLink>
+            <NavLink
+              href="#"
+              onClick={(e) => {
+                logout();
+              }}
+              icon={<LogOut className="h-6 w-6" />}
+            >
+              Cerrar Sesion
+            </NavLink>
+          </nav>
 
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col">
-            <header className="h-14 flex items-center justify-between px-6">
-              <div className="ml-auto flex items-center space-x-4">
-                <ThemeToggle></ThemeToggle>
-                <Notificaciones>
-                  <button
-                    className="p-2 rounded-full hover:bg-accent"
-                    aria-label="Notificaciones"
-                  >
-                    <Bell size={24} />
-                  </button>
-                </Notificaciones>
-              </div>
-            </header>
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="mt-auto p-2 rounded-full hover:bg-accent"
+            aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
+          >
+            {isExpanded ? (
+              <ChevronLeft size={24} />
+            ) : (
+              <ChevronRight size={24} />
+            )}
+          </button>
+        </aside>
 
-            <AnimatePresence mode="wait">
-              <motion.main
-                key={router.pathname}
-                variants={pageVariants}
-                initial="hidden"
-                animate="enter"
-                exit="exit"
-                className="flex-1 overflow-y-auto p-6"
-              >
-                {children}
-              </motion.main>
-            </AnimatePresence>
-          </div>
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          <header className="h-14 flex items-center justify-between px-6">
+            <div className="ml-auto flex items-center space-x-4">
+              <ThemeToggle />
+              <Notificaciones>
+                <button
+                  className="p-2 rounded-full hover:bg-accent"
+                  aria-label="Notificaciones"
+                >
+                  <Bell size={24} />
+                </button>
+              </Notificaciones>
+            </div>
+          </header>
+
+          <AnimatePresence mode="wait">
+            <motion.main
+              key={router.pathname}
+              variants={pageVariants}
+              initial="hidden"
+              animate="enter"
+              exit="exit"
+              className="flex-1 overflow-y-auto p-6"
+            >
+              {children}
+            </motion.main>
+          </AnimatePresence>
         </div>
       </div>
-    </>
+    </div>
   );
 }
