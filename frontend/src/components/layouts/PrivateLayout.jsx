@@ -86,7 +86,7 @@ export default function PrivateLayout({ children }) {
       >
         {/* Sidebar */}
         <aside
-          className={`fixed left-8 top-8 bottom-8 rounded- ${
+          className={`fixed left-8 top-8 bottom-8 rounded-3xl ${
             isExpanded ? 'w-64' : 'w-24'
           } bg-card p-6 flex flex-col items-center shadow-lg transition-all duration-300`}
         >
