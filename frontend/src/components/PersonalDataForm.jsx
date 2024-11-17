@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { updateProfile } from '@/api/profile';
 import { useAlert } from '@context/alertContext';
+import PhoneInput from '@components/ui/phone-input';
 
 export default function PersonalDataForm({
   name,
@@ -13,13 +14,18 @@ export default function PersonalDataForm({
   rut,
 }) {
   const { showAlert } = useAlert();
+  const [formattedPhone, setFormattedPhone] = useState(phone);
+
+  useEffect(() => {
+    setFormattedPhone(phone);
+  }, [phone]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const profileData = {
         name_user: name,
-        phone_user: phone,
+        phone_user: formattedPhone,
       };
       const response = await updateProfile(profileData);
       showAlert(response.message, 'success');
@@ -49,19 +55,18 @@ export default function PersonalDataForm({
         <Label htmlFor="phone" className="block text-sm text-muted-foreground">
           Teléfono
         </Label>
-        <Input
-          id="phone"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder="Ingresa tu teléfono"
-          required
-        />
+        <PhoneInput value={formattedPhone} onChange={setPhone} />
       </div>
       <div>
         <Label htmlFor="rut" className="block text-sm text-muted-foreground">
           RUT
         </Label>
-        <Input id="rut" value={rut} readOnly className="cursor-not-allowed" />
+        <Input
+          id="rut"
+          value={rut}
+          readOnly
+          className="dark:text-gray-700 text-gray-400 cursor-not-allowed"
+        />
       </div>
       <Button type="submit" className="w-full">
         Guardar Cambios

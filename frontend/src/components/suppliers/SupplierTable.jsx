@@ -13,7 +13,7 @@ import {
 import { getSuppliers, deleteSupplier } from '@api/suppliers';
 import { Card, CardContent } from '@/components/ui/card';
 import ConfirmationDialog from '@components/ConfirmationDialog';
-import AddSupplierDialog from '@/components/AddSupplierDialog';
+import AddSupplierDialog from '@/components/suppliers/AddSupplierDialog';
 
 export default function Component() {
   const [suppliers, setSuppliers] = useState([]);

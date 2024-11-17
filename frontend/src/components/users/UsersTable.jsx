@@ -11,10 +11,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent } from "@/components/ui/card";
-import AddUserDialog from "@/components/AddUserDialog";
-import { useAlert } from "@context/alertContext";
+} from '@/components/ui/table';
+import { Card, CardContent } from '@/components/ui/card';
+import AddUserDialog from '@/components/users/AddUserDialog';
+import { useAlert } from '@context/alertContext';
 import {
   Select,
   SelectItem,

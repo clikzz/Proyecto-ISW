@@ -1,5 +1,5 @@
 import useAuthRedirect from '@hooks/useAuthRedirect';
-import SupplierTable from '@components/SupplierTable';
+import SupplierTable from '@components/suppliers/SupplierTable';
 import { Truck } from 'lucide-react';
 
 export default function SuppliersPage() {
