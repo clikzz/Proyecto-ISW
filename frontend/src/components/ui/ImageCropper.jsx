@@ -18,11 +18,10 @@ export default function ImageCropper({ src, onSave, onCancel }) {
         zoomable: true, // Permitir zoom
         scalable: true, // Permitir escalar
         guides: false, // Ocultar guías para un diseño más limpio
-        background: true, // Mostrar un fondo blanco detrás de la imagen
-        highlight: false, // Eliminar sombreado del cuadro
-        dragMode: 'move', // Permitir arrastrar directamente
-        cropBoxMovable: true, // Mover cuadro de recorte
-        cropBoxResizable: true, // Redimensionar cuadro de recorte
+        background: false, // Desactivar fondo oscuro por defecto
+        highlight: true, // Mantener el cuadro de recorte destacado
+        cropBoxMovable: true, // Permitir mover el cuadro
+        cropBoxResizable: true, // Permitir redimensionar el cuadro
       });
     }
 
@@ -48,23 +47,30 @@ export default function ImageCropper({ src, onSave, onCancel }) {
   };
 
   return (
-    <div
+    <section
       className="fixed inset-0 flex items-center justify-center z-50"
       style={{
-        backgroundColor: 'rgba(0, 0, 0, 0.6)', // Fondo oscuro translúcido
-        backdropFilter: 'blur(4px)', // Efecto de desenfoque
+        backgroundColor: 'rgba(0, 0, 0, 0.6)', 
+        backdropFilter: 'blur(4px)', 
       }}
+      role="dialog"
+      aria-labelledby="cropper-modal-title"
+      aria-modal="true"
     >
       <div
-        className="rounded-lg shadow-lg p-6 w-11/12 max-w-lg"
+        className="bg-white dark:bg-card rounded-lg shadow-lg p-6 w-11/12 max-w-lg z-60"
         style={{
-          backgroundColor: 'var(--card)', // Fondo del modal adaptado al tema
-          color: 'var(--card-foreground)', // Color de texto
+          color: 'var(--card-foreground)', 
         }}
       >
-        <h2 className="text-2xl font-bold text-center mb-4">
-          Recorta tu imagen
-        </h2>
+        <header className="mb-4">
+          <h2
+            id="cropper-modal-title"
+            className="text-2xl font-bold text-center"
+          >
+            Recorta tu imagen
+          </h2>
+        </header>
         <div
           className="border rounded-lg overflow-hidden mb-4"
           style={{ borderColor: 'var(--border)' }}
@@ -76,7 +82,7 @@ export default function ImageCropper({ src, onSave, onCancel }) {
             className="w-full"
           />
         </div>
-        <div className="flex justify-end space-x-4">
+        <footer className="flex justify-end space-x-4">
           <button
             onClick={handleSave}
             className="px-5 py-2 rounded-lg font-medium shadow hover:scale-105 transition"
@@ -97,8 +103,8 @@ export default function ImageCropper({ src, onSave, onCancel }) {
           >
             Cancelar
           </button>
-        </div>
+        </footer>
       </div>
-    </div>
+    </section>
   );
 }

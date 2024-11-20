@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Camera } from 'lucide-react';
-import { uploadProfilePicture, getProfile } from '@api/profile'; // Subida a Cloudinary
-import ImageCropper from './ui/ImageCropper'; // Componente del recortador
+import { uploadProfilePicture, getProfile } from '@api/profile';
+import ImageCropper from './ui/ImageCropper';
 
 export default function ProfilePicture({ profilePicture, setProfilePicture }) {
-  const [showCropper, setShowCropper] = useState(false); // Controlar el recortador
-  const [tempImage, setTempImage] = useState(null); // Imagen temporal para recortar
+  const [showCropper, setShowCropper] = useState(false);
+  const [tempImage, setTempImage] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -20,49 +20,53 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
     fetchProfile();
   }, []);
 
-  // Manejar el cambio de archivo (selección de imagen)
   const handleProfilePictureChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setTempImage(reader.result); // Cargar la imagen como base64
-        setShowCropper(true); // Mostrar el recortador
+        setTempImage(reader.result); // Imagen temporal para mostrar en el recortador
+        setShowCropper(true); // Mostrar el modal de recorte
+        document.body.style.overflow = 'hidden'; // Deshabilitar scroll
       };
-      reader.readAsDataURL(file); // Convertir el archivo a base64
+      reader.readAsDataURL(file);
     }
+
+    // Restablecer el valor del input para permitir seleccionar la misma imagen
+    event.target.value = '';
   };
 
-  // Guardar la imagen recortada
   const handleSaveCroppedImage = async (blob) => {
     try {
-      // Crear un objeto File a partir del blob recortado
       const croppedFile = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
-
-      // Subir la imagen recortada a Cloudinary
       const data = await uploadProfilePicture(croppedFile);
-
-      // Actualizar el estado con la nueva URL
       setProfilePicture(data.profilePicture);
-
-      // Limpiar el estado
       setShowCropper(false);
       setTempImage(null);
+      document.body.style.overflow = 'auto'; // Restaurar scroll
     } catch (error) {
       console.error('Error al guardar la imagen recortada:', error.message);
     }
   };
 
-  // Cancelar el recorte
   const handleCancelCrop = () => {
     setShowCropper(false);
     setTempImage(null);
+    document.body.style.overflow = 'auto'; // Restaurar scroll
+  };
+
+  const handleRemoveProfilePicture = async () => {
+    try {
+      const response = await removeProfilePicture();
+      setProfilePicture(response.profilePicture); // Restaurar imagen por defecto
+    } catch (error) {
+      console.error('Error al eliminar la imagen de perfil:', error.message);
+    }
   };
 
   return (
     <section className="flex flex-col items-center space-y-4">
       <div className="relative">
-        {/* Imagen de perfil */}
         <figure className="w-32 h-32 rounded-full overflow-hidden shadow-md">
           <img
             key={profilePicture}
@@ -71,8 +75,6 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
             className="w-full h-full object-cover"
           />
         </figure>
-
-        {/* Botón para cargar nueva imagen */}
         <label
           htmlFor="profile-picture"
           className="absolute bottom-2 right-2 p-2 bg-primary rounded-full cursor-pointer hover:bg-accent transition-colors flex items-center justify-center"
@@ -88,12 +90,11 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
         </label>
       </div>
 
-      {/* Modal del recortador */}
       {showCropper && tempImage && (
         <ImageCropper
-          src={tempImage} // Imagen seleccionada
-          onSave={handleSaveCroppedImage} // Guardar recorte
-          onCancel={handleCancelCrop} // Cancelar recorte
+          src={tempImage}
+          onSave={handleSaveCroppedImage}
+          onCancel={handleCancelCrop}
         />
       )}
     </section>
