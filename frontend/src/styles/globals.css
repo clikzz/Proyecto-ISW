@@ -1,4 +1,3 @@
-/* Resto del código */
 @import 'animate.css/animate.min.css';
 @import 'aos/dist/aos.css';
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
@@ -106,3 +105,5 @@ html {
 .scale-fade-animation {
   animation: scale-fade 0.3s ease-in-out;
 }
+
+

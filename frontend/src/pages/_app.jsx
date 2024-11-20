@@ -7,6 +7,7 @@ import { AlertProvider } from '@context/alertContext';
 import { ThemeProvider } from 'next-themes';
 import { useEffect, useState } from 'react';
 import '@styles/globals.css';
+import 'cropperjs/dist/cropper.css';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
