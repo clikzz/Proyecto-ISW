@@ -182,7 +182,7 @@ export default function PrivateLayout({ children }) {
               initial="hidden"
               animate="enter"
               exit="exit"
-              className="flex-1 overflow-y-auto p-6"
+              className="flex-1 ml-8 overflow-y-auto p-6"
             >
               {children}
             </motion.main>
