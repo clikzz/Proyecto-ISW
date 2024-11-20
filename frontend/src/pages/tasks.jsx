@@ -1,26 +1,27 @@
-import { useState, useEffect } from 'react';
-import { DragDropContext } from '@hello-pangea/dnd';
-import TaskBoard from '../components/tasks/TaskBoard';
+import { useState, useEffect } from "react";
+import { DragDropContext } from "@hello-pangea/dnd";
+import TaskBoard from "../components/tasks/TaskBoard";
+import { ClipboardCheck } from "lucide-react";
 
 // Simulated data - replace with actual data fetching in your implementation
 const initialTasks = [
   {
-    id: 'task1',
-    content: 'Reparación de cadena',
-    status: 'pendiente',
+    id: "task1",
+    content: "Reparación de cadena",
+    status: "pendiente",
     assignee: null,
   },
   {
-    id: 'task2',
-    content: 'Cambio de neumáticos',
-    status: 'en_progreso',
-    assignee: { name: 'Juan', avatar: '/placeholder.svg?height=32&width=32' },
+    id: "task2",
+    content: "Cambio de neumáticos",
+    status: "en_progreso",
+    assignee: { name: "Juan", avatar: "/placeholder.svg?height=32&width=32" },
   },
   {
-    id: 'task3',
-    content: 'Ajuste de frenos',
-    status: 'completado',
-    assignee: { name: 'María', avatar: '/placeholder.svg?height=32&width=32' },
+    id: "task3",
+    content: "Ajuste de frenos",
+    status: "completado",
+    assignee: { name: "María", avatar: "/placeholder.svg?height=32&width=32" },
   },
 ];
 
@@ -66,10 +67,10 @@ export default function TareasPage() {
           ? {
               ...task,
               assignee: {
-                name: 'Nuevo Usuario',
-                avatar: '/placeholder.svg?height=32&width=32',
+                name: "Nuevo Usuario",
+                avatar: "/placeholder.svg?height=32&width=32",
               },
-              status: 'en_progreso',
+              status: "en_progreso",
             }
           : task
       )
@@ -77,10 +78,11 @@ export default function TareasPage() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4 text-gray-800">
-        Tareas del Taller
-      </h1>
+    <div className="container mx-auto p-4 ">
+      <div className="flex items-center mb-8">
+        <ClipboardCheck size="32" className="mr-2" />
+        <h1 className="text-2xl font-bold">Tareas</h1>
+      </div>
       <DragDropContext onDragEnd={onDragEnd}>
         <TaskBoard tasks={tasks} assignTask={assignTask} />
       </DragDropContext>

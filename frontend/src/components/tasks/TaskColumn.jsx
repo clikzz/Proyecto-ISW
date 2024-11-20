@@ -30,8 +30,8 @@ export default function TaskColumn({ columnId, tasks, assignTask }) {
   }
 
   return (
-    <div className="bg-gray-100 p-4 rounded-lg">
-      <h2 className="text-lg font-semibold mb-4 flex items-center text-gray-700">
+    <div className="p-4 rounded-lg">
+      <h2 className="text-lg font-semibold mb-4 flex items-center">
         {getColumnIcon(columnId)}
         {getColumnTitle(columnId)}
       </h2>
