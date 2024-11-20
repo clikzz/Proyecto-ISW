@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Bike,
   Bell,
@@ -14,14 +14,15 @@ import {
   DollarSign,
   ChevronLeft,
   ChevronRight,
-  Wrench
-} from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useAuth } from '@/context/authContext';
-import Notificaciones from '@/components/Notification';
-import { AnimatePresence, motion } from 'framer-motion';
-import ThemeToggle from '@/components/ThemeToggle';
+  Wrench,
+  ClipboardCheck,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useAuth } from "@/context/authContext";
+import Notificaciones from "@/components/Notification";
+import { AnimatePresence, motion } from "framer-motion";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function PrivateLayout({ children }) {
   const router = useRouter();
@@ -34,19 +35,19 @@ export default function PrivateLayout({ children }) {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { duration: 0.5, ease: 'easeOut' },
+      transition: { duration: 0.5, ease: "easeOut" },
     },
     exit: {
       opacity: 0,
       y: -50,
       scale: 0.95,
-      transition: { duration: 0.5, ease: 'easeIn' },
+      transition: { duration: 0.5, ease: "easeIn" },
     },
   };
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [loading, isAuthenticated, router, role]);
 
@@ -66,12 +67,12 @@ export default function PrivateLayout({ children }) {
         onClick={onClick}
         className={`flex items-center space-x-3 p-3 rounded-full transition-all ${
           isActive
-            ? 'bg-accent text-white hover:bg-accent hover:text-white'
-            : 'hover:bg-accent hover:text-white'
+            ? "bg-accent text-white hover:bg-accent hover:text-white"
+            : "hover:bg-accent hover:text-white"
         }`}
       >
         {React.cloneElement(icon, {
-          className: `${icon.props.className} ${isActive ? 'text-white' : ''}`,
+          className: `${icon.props.className} ${isActive ? "text-white" : ""}`,
         })}
         {isExpanded && <span>{children}</span>}
       </Link>
@@ -82,13 +83,13 @@ export default function PrivateLayout({ children }) {
     <div className="bg-background text-foreground">
       <div
         className={`min-h-screen flex ${
-          isExpanded ? 'ml-64' : 'ml-20'
+          isExpanded ? "ml-64" : "ml-20"
         } transition-all duration-300`}
       >
         {/* Sidebar */}
         <aside
           className={`fixed left-8 top-8 bottom-8 rounded-3xl ${
-            isExpanded ? 'w-64' : 'w-24'
+            isExpanded ? "w-64" : "w-24"
           } bg-card p-6 flex flex-col items-center shadow-lg transition-all duration-300`}
         >
           <Link href="/" className="flex items-center space-x-2 mb-8">
@@ -102,7 +103,7 @@ export default function PrivateLayout({ children }) {
             <NavLink href="/home" icon={<Home className="h-6 w-6" />}>
               Home
             </NavLink>
-            {role === 'admin' && (
+            {role === "admin" && (
               <NavLink
                 href="/overview"
                 icon={<TrendingUp className="h-6 w-6" />}
@@ -116,8 +117,14 @@ export default function PrivateLayout({ children }) {
             <NavLink href="/services" icon={<Wrench className="h-6 w-6" />}>
               Servicios
             </NavLink>
-            {role === 'admin' && (
+            {role === "admin" && (
               <>
+                <NavLink
+                  href="/tasks"
+                  icon={<ClipboardCheck className="h-6 w-6" />}
+                >
+                  Tareas
+                </NavLink>
                 <NavLink href="/users" icon={<Users className="h-6 w-6" />}>
                   Usuarios
                 </NavLink>
@@ -149,7 +156,7 @@ export default function PrivateLayout({ children }) {
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="mt-auto p-2 rounded-full hover:bg-accent"
-            aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
+            aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
           >
             {isExpanded ? (
               <ChevronLeft size={24} />
@@ -182,7 +189,7 @@ export default function PrivateLayout({ children }) {
               initial="hidden"
               animate="enter"
               exit="exit"
-              className="flex-1 overflow-y-auto p-6"
+              className="flex-1 ml-8 overflow-y-auto p-6"
             >
               {children}
             </motion.main>

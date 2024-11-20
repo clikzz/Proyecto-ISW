@@ -36,7 +36,7 @@ export default function PhoneInput({ value, onChange }) {
   const getInitialCountry = () => {
     return (
       latinAmericanCountries.find((country) =>
-        value.startsWith(country.dialCode)
+        value?.startsWith(country.dialCode)
       ) || latinAmericanCountries.find((country) => country.code === 'CL')
     );
   };
@@ -92,7 +92,7 @@ export default function PhoneInput({ value, onChange }) {
         <Input
           type="tel"
           value={
-            value.startsWith(selectedCountry.dialCode)
+            value?.startsWith(selectedCountry.dialCode)
               ? value.slice(selectedCountry.dialCode.length)
               : value
           }
