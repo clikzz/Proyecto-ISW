@@ -14,6 +14,7 @@ import {
   DollarSign,
   ChevronLeft,
   ChevronRight,
+  Wrench
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -111,6 +112,9 @@ export default function PrivateLayout({ children }) {
             )}
             <NavLink href="/inventario" icon={<Package className="h-6 w-6" />}>
               Inventario
+            </NavLink>
+            <NavLink href="/services" icon={<Wrench className="h-6 w-6" />}>
+              Servicios
             </NavLink>
             {role === 'admin' && (
               <>
