@@ -99,29 +99,32 @@ exports.uploadProfilePicture = async (req, res) => {
 
     // Subir el archivo a Cloudinary usando el buffer de memoria
     cloudinary.uploader.upload_stream(
-      { folder: 'profile_pictures' },
-      async (error, result) => {
-        if (error) {
-          console.error('Error al subir a Cloudinary:', error);
-          return res.status(500).json({ message: 'Error al subir la imagen a Cloudinary', error });
+        {
+          folder: 'profile_pictures', // Carpeta en Cloudinary
+          width: 200, // Ancho deseado
+          height: 200, // Alto deseado
+          crop: 'fill', // Recorta al tamaño especificado
+          gravity: 'face', // Focaliza en el rostro (si aplica)
+        },
+        async (error, result) => {
+          if (error) {
+            console.error('Error al subir a Cloudinary:', error);
+            return res.status(500).json({ message: 'Error al subir la imagen', error });
+          }
+          
+          const updates = { profile_picture: result.secure_url };
+          const user = await User.findByRutAndUpdate(req.user.rut, updates);
+
+          if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+          }
+
+          res.status(200).json({
+            message: 'Imagen de perfil actualizada',
+            profilePicture: result.secure_url,
+          });
         }
-
-        // Construye el objeto de actualización para pasar a findByRutAndUpdate
-        const updates = { profile_picture: result.secure_url };
-
-        // Actualiza el perfil del usuario con la URL de la imagen
-        const user = await User.findByRutAndUpdate(req.user.rut, updates);
-
-        if (!user) {
-          return res.status(404).json({ message: 'Usuario no encontrado' });
-        }
-
-        res.status(200).json({
-          message: 'Imagen de perfil actualizada',
-          profilePicture: result.secure_url,
-        });
-      }
-    ).end(req.file.buffer);
+      ).end(req.file.buffer);
   } catch (error) {
     console.error('Error al subir la imagen:', error);
     res.status(500).json({ message: 'Error al subir la imagen', error });
