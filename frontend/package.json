@@ -26,6 +26,7 @@
     "axios": "^1.7.7",
     "chart.js": "^4.4.6",
     "class-variance-authority": "^0.7.0",
+    "cropperjs": "^1.6.2",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.3.1",
     "formik": "^2.4.6",
