@@ -86,7 +86,7 @@ export default function PrivateLayout({ children }) {
       >
         {/* Sidebar */}
         <aside
-          className={`fixed left-8 top-8 bottom-8 rounded- ${
+          className={`fixed left-8 top-8 bottom-8 rounded-3xl ${
             isExpanded ? 'w-64' : 'w-24'
           } bg-card p-6 flex flex-col items-center shadow-lg transition-all duration-300`}
         >
@@ -178,7 +178,7 @@ export default function PrivateLayout({ children }) {
               initial="hidden"
               animate="enter"
               exit="exit"
-              className="flex-1 overflow-y-auto p-6"
+              className="flex-1 ml-8 overflow-y-auto p-6"
             >
               {children}
             </motion.main>
