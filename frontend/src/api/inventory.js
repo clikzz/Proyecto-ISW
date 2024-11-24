@@ -20,6 +20,21 @@ export const getInventoryItems = async () => {
   }
 };
 
+// Obtener un item por su ID
+export const getItemById = async (id) => {
+  try {
+    const response = await api.get(`/items/get/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener el item:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
 // Añadir un nuevo item
 export const addItem = async (newItem) => {
   try {
