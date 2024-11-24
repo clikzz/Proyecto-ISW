@@ -111,7 +111,7 @@ export default function PrivateLayout({ children }) {
                 Overview
               </NavLink>
             )}
-            <NavLink href="/inventario" icon={<Package className="h-6 w-6" />}>
+            <NavLink href="/inventory" icon={<Package className="h-6 w-6" />}>
               Inventario
             </NavLink>
             <NavLink href="/services" icon={<Wrench className="h-6 w-6" />}>

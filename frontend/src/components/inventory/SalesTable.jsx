@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { getInventoryItems } from '@/api/inventory';
+import { getSales } from '@/api/inventory';
 import { Info, Search, ArrowUpDown, Trash } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import AddItemDialog from '@/components/AddItemDialog';
+import { formatDateTime } from '@/helpers/dates';
+import { capitalize } from '@/helpers/capitalize';
 
-const InventoryTable = () => {
-  const [items, setItems] = useState([]);
-  const [filteredItems, setFilteredItems] = useState([]);
+const SalesTable = () => {
+  const [sales, setSales] = useState([]);
+  const [filteredSales, setFilteredSales] = useState([]);
   const [search, setSearch] = useState('');
 
   const [sortConfig, setSortConfig] = useState({
@@ -17,28 +18,28 @@ const InventoryTable = () => {
     direction: 'ascending',
   });
 
-  const fetchItems = async () => {
+  const fetchSales = async () => {
     try {
-      const data = await getInventoryItems();
-      setItems(data);
-      setFilteredItems(data);
+      const data = await getSales();
+      setSales(data);
+      setFilteredSales(data);
     } catch (error) {
-      console.error('Error al cargar items:', error);
+      console.error('Error al cargar ventas:', error);
     }
   };
 
   useEffect(() => {
-    fetchItems();
+    fetchSales();
   }, []);
 
   useEffect(() => {
     const lowercasedSearch = search.toLowerCase();
-    setFilteredItems(
-      items.filter((item) =>
-        item.name_item && item.name_item.toLowerCase().includes(lowercasedSearch)
+    setFilteredSales(
+      sales.filter((sale) =>
+        sale.description && sale.description.toLowerCase().includes(lowercasedSearch)
       )
     );
-  }, [search, items]);
+  }, [search, sales]);
 
   const handleSort = (key) => {
     let direction = 'ascending';
@@ -48,10 +49,10 @@ const InventoryTable = () => {
     setSortConfig({ key, direction });
   };
 
-  const sortedItems = useMemo(() => {
-    const sortableItems = [...filteredItems];
+  const sortedSales = useMemo(() => {
+    const sortableSales = [...filteredSales];
     if (sortConfig.key !== null) {
-      sortableItems.sort((a, b) => {
+      sortableSales.sort((a, b) => {
         if (typeof a[sortConfig.key] === 'string') {
           return sortConfig.direction === 'ascending'
             ? a[sortConfig.key].localeCompare(b[sortConfig.key])
@@ -64,13 +65,13 @@ const InventoryTable = () => {
         return 0;
       });
     }
-    return sortableItems;
-  }, [filteredItems, sortConfig]);
+    return sortableSales;
+  }, [filteredSales, sortConfig]);
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-5">
       <div className="flex items-center mb-4">
-        <h2 className="text-2xl font-bold mr-3">Productos</h2>
+        <h2 className="text-2xl font-bold mr-3">Ventas</h2>
       </div>
 
       <div className="flex justify-between items-center mb-6">
@@ -78,15 +79,14 @@ const InventoryTable = () => {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por nombre..."
+            placeholder="Buscar por descripción..."
             className="max-w-full"
           />
           <Search className="ml-2 h-5 w-5 text-gray-500" />
         </div>
-        <AddItemDialog fetchItems={fetchItems} />
       </div>
 
-      <Card className="border-none">
+      <Card className="border-none pt-4">
         <CardContent>
           <div className="overflow-y-auto relative" style={{ maxHeight: '300px' }}>
             <Table className="min-w-full">
@@ -95,60 +95,50 @@ const InventoryTable = () => {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('name_item')}
+                      onClick={() => handleSort('id_transaction')}
                       className="text-foreground"
                     >
-                      <strong>Nombre</strong>
+                      <strong>ID Transacción</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('category')}
+                      onClick={() => handleSort('amount')}
                       className="text-foreground"
                     >
-                      <strong>Categoría</strong>
+                      <strong>Monto</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('selling_price')}
+                      onClick={() => handleSort('transaction_date')}
                       className="text-foreground"
                     >
-                      <strong>Precio Venta</strong>
+                      <strong>Fecha</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('cost_price')}
+                      onClick={() => handleSort('payment_method')}
                       className="text-foreground"
                     >
-                      <strong>Precio Compra</strong>
+                      <strong>Método de Pago</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('stock')}
+                      onClick={() => handleSort('description')}
                       className="text-foreground"
                     >
-                      <strong>Stock</strong>
-                      <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('created_at')}
-                      className="text-foreground"
-                    >
-                      <strong>Registrado</strong>
+                      <strong>Descripción</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
@@ -158,14 +148,13 @@ const InventoryTable = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sortedItems.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.name_item}</TableCell>
-                    <TableCell>{item.category}</TableCell>
-                    <TableCell>{item.selling_price}</TableCell>
-                    <TableCell>{item.cost_price}</TableCell>
-                    <TableCell>{item.stock}</TableCell>
-                    <TableCell>{item.created_at}</TableCell>
+                {sortedSales.map((sale) => (
+                  <TableRow key={sale.id_transaction}>
+                    <TableCell>{sale.id_transaction}</TableCell>
+                    <TableCell>{sale.amount}</TableCell>
+                    <TableCell>{formatDateTime(sale.transaction_date)}</TableCell>
+                    <TableCell>{capitalize(sale.payment_method)}</TableCell>
+                    <TableCell>{sale.description}</TableCell>
                     <TableCell>
                       <Button className="bg-blue-500 text-white mr-2">
                         <Info />
@@ -187,4 +176,4 @@ const InventoryTable = () => {
   );
 };
 
-export default InventoryTable;
+export default SalesTable;

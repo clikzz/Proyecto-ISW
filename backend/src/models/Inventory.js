@@ -102,14 +102,31 @@ class Inventory {
 
   static async getPurchases() {
     const query = `
-      SELECT t.id_transaction, t.rut, t.transaction_type, t.amount, t.transaction_date, t.payment_method, t.description,
-            ti.id_item, ti.cantidad_item, ti.precio_unitario, ti.id_transaction_item
-      FROM transaction t
-      JOIN transaction_item ti ON t.id_transaction = ti.id_transaction_item
-      WHERE t.transaction_type = 'compra'
-      ORDER BY t.transaction_date DESC;
-    `;
-  
+    SELECT
+      t.id_transaction, 
+      t.rut, 
+      t.transaction_type, 
+      t.amount, 
+      t.transaction_date, 
+      t.payment_method, 
+      t.description,
+      ti.id_item, 
+      ti.cantidad_item, 
+      ti.precio_unitario, 
+      ti.id_transaction_item,
+      i.rut_supplier
+    FROM 
+      transaction t
+    JOIN 
+      transaction_item ti ON t.id_transaction = ti.id_transaction
+    JOIN 
+      item i ON ti.id_item = i.id_item
+    WHERE 
+      t.transaction_type = 'compra'
+    ORDER BY 
+      t.transaction_date DESC;
+  `;
+
     const result = await db.query(query);
     return result.rows;
   }
@@ -119,7 +136,7 @@ class Inventory {
       SELECT t.id_transaction, t.rut, t.transaction_type, t.amount, t.transaction_date, t.payment_method, t.description,
             ti.id_item, ti.cantidad_item, ti.precio_unitario, ti.id_transaction_item
       FROM transaction t
-      JOIN transaction_item ti ON t.id_transaction = ti.id_transaction_item
+      JOIN transaction_item ti ON t.id_transaction = ti.id_transaction
       WHERE t.transaction_type = 'venta'
       ORDER BY t.transaction_date DESC;
     `;
