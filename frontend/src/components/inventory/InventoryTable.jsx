@@ -102,7 +102,7 @@ const InventoryTable = () => {
 
       <Card className="border-none pt-4">
         <CardContent>
-          <div className="overflow-y-auto relative" style={{ maxHeight: '450px' }}>
+          <div className="overflow-y-auto relative" style={{ maxHeight: '420px' }}>
             <Table className="min-w-full">
               <TableHeader>
                 <TableRow>

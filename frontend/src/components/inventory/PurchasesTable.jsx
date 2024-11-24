@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatDateTime } from '@/helpers/dates';
 import { capitalize } from '@/helpers/capitalize';
+import AddPurchaseDialog from '@/components/inventory/dialog/AddPurchaseDialog';
 
 const PurchasesTable = () => {
   const [purchases, setPurchases] = useState([]);
@@ -84,6 +85,7 @@ const PurchasesTable = () => {
           />
           <Search className="ml-2 h-5 w-5 text-gray-500" />
         </div>
+        <AddPurchaseDialog fetchPurchases={fetchPurchases} />
       </div>
 
       <Card className="border-none pt-4">
@@ -95,30 +97,20 @@ const PurchasesTable = () => {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('rut')}
+                      onClick={() => handleSort('name_item')}
                       className="text-foreground"
                     >
-                      <strong>RUT Empleado</strong>
+                      <strong>Producto</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('rut_supplier')}
+                      onClick={() => handleSort('quantity_item')}
                       className="text-foreground"
                     >
-                      <strong>RUT Proveedor</strong>
-                      <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('transaction_date')}
-                      className="text-foreground"
-                    >
-                      <strong>Fecha</strong>
+                      <strong>Cantidad</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
@@ -145,10 +137,20 @@ const PurchasesTable = () => {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('description')}
+                      onClick={() => handleSort('rut_supplier')}
                       className="text-foreground"
                     >
-                      <strong>Descripción</strong>
+                      <strong>Proveedor</strong>
+                      <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort('transaction_date')}
+                      className="text-foreground"
+                    >
+                      <strong>Fecha</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
@@ -160,12 +162,12 @@ const PurchasesTable = () => {
               <TableBody>
                 {sortedPurchases.map((purchase) => (
                   <TableRow key={purchase.id_transaction}>
-                    <TableCell>{purchase.rut}</TableCell>
-                    <TableCell>{purchase.rut_supplier}</TableCell>
-                    <TableCell>{formatDateTime(purchase.transaction_date)}</TableCell>
+                    <TableCell>{purchase.name_item}</TableCell>
+                    <TableCell>{purchase.quantity_item}</TableCell>
                     <TableCell>{purchase.amount}</TableCell>
                     <TableCell>{capitalize(purchase.payment_method)}</TableCell>
-                    <TableCell>{purchase.description}</TableCell>
+                    <TableCell>{purchase.name_supplier}</TableCell>
+                    <TableCell>{formatDateTime(purchase.transaction_date)}</TableCell>
                     <TableCell>
                       <Button className="bg-blue-500 text-white mr-2">
                         <Info />
