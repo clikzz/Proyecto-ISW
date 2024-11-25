@@ -46,7 +46,7 @@ const inventorySchema = Joi.object({
           'number.positive': 'La cantidad debe ser positiva.',
           'any.required': 'La cantidad es obligatoria.',
         }),
-      precio_unitario: Joi.number()
+      unit_price: Joi.number()
         .positive()
         .required()
         .messages({

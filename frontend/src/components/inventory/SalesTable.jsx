@@ -90,15 +90,25 @@ const SalesTable = () => {
         <CardContent>
           <div className="overflow-y-auto relative" style={{ maxHeight: '300px' }}>
             <Table className="min-w-full">
-              <TableHeader>
+            <TableHeader>
                 <TableRow>
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('id_transaction')}
+                      onClick={() => handleSort('name_item')}
                       className="text-foreground"
                     >
-                      <strong>ID Transacción</strong>
+                      <strong>Producto</strong>
+                      <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort('quantity_item')}
+                      className="text-foreground"
+                    >
+                      <strong>Cantidad</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
@@ -115,16 +125,6 @@ const SalesTable = () => {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('transaction_date')}
-                      className="text-foreground"
-                    >
-                      <strong>Fecha</strong>
-                      <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
                       onClick={() => handleSort('payment_method')}
                       className="text-foreground"
                     >
@@ -135,10 +135,10 @@ const SalesTable = () => {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('description')}
+                      onClick={() => handleSort('transaction_date')}
                       className="text-foreground"
                     >
-                      <strong>Descripción</strong>
+                      <strong>Fecha</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
@@ -150,11 +150,11 @@ const SalesTable = () => {
               <TableBody>
                 {sortedSales.map((sale) => (
                   <TableRow key={sale.id_transaction}>
-                    <TableCell>{sale.id_transaction}</TableCell>
+                    <TableCell>{sale.name_item}</TableCell>
+                    <TableCell>{sale.quantity_item}</TableCell>
                     <TableCell>{sale.amount}</TableCell>
-                    <TableCell>{formatDateTime(sale.transaction_date)}</TableCell>
                     <TableCell>{capitalize(sale.payment_method)}</TableCell>
-                    <TableCell>{sale.description}</TableCell>
+                    <TableCell>{formatDateTime(sale.transaction_date)}</TableCell>
                     <TableCell>
                       <Button className="bg-blue-500 text-white mr-2">
                         <Info />
