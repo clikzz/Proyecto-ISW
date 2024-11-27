@@ -53,10 +53,8 @@ class Supplier {
   }
 
   static async delete(id) {
-    console.log('id', id);
-
     const query = `
-      UPDATE supplier
+      UPDATE supplier 
       SET is_deleted = TRUE, updated_at = CURRENT_TIMESTAMP
       WHERE rut_supplier = $1 AND is_deleted = FALSE
       RETURNING *;

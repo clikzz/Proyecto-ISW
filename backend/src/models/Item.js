@@ -16,12 +16,17 @@ class Item {
   }
 
   static async findAll() {
-    const result = await db.query('SELECT * FROM item');
+    const result = await db.query(
+      'SELECT * FROM item WHERE is_deleted = FALSE'
+    );
     return result.rows;
   }
 
   static async findById(id) {
-    const result = await db.query('SELECT * FROM item WHERE id_item = $1', [id]);
+    const result = await db.query(
+      'SELECT * FROM item WHERE id_item = $1 AND is_deleted = FALSE',
+      [id]
+    );
     return result.rows[0];
   }
 
@@ -30,7 +35,7 @@ class Item {
       UPDATE item
       SET rut_supplier = $1, name_item = $2, description = $3, category = $4,
           stock = $5, cost_price = $6, selling_price = $7, updated_at = CURRENT_TIMESTAMP
-      WHERE id_item = $8
+      WHERE id_item = $8 AND is_deleted = FALSE
       RETURNING *;
     `;
     const values = [
@@ -42,7 +47,13 @@ class Item {
   }
 
   static async delete(id) {
-    const result = await db.query('DELETE FROM item WHERE id_item = $1 RETURNING *', [id]);
+    const query = `
+      UPDATE item 
+      SET is_deleted = TRUE, updated_at = CURRENT_TIMESTAMP
+      WHERE id_item = $1 AND is_deleted = FALSE
+      RETURNING *;
+    `;
+    const result = await db.query(query, [id]);
     return result.rows[0];
   }
 }
