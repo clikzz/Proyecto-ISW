@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { X } from 'lucide-react';
+import { motion } from "framer-motion";
 
 const formatoPesoChileno = (valor) => {
   return new Intl.NumberFormat('es-CL', {
@@ -20,10 +21,12 @@ export default function TransactionSummary({ transactions }) {
           <h3 className="text-lg font-semibold mb-4">Resumen de Transacciones</h3>
           <div className="space-y-4">
             {transactions.slice(0, 4).map((t) => (
-              <div
-                key={t.id_transaction}
-                className="flex items-center justify-between rounded-lg p-3 bg-background hover:bg-accent transition-colors"
-              >
+              <motion.div
+              key={t.id_transaction}
+              className="flex items-center justify-between rounded-lg p-3 bg-background hover:bg-accent transition-colors"
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
                 <div>
                   <p className="font-medium">
                     {t.transaction_type === 'ingreso' ? 'Ingreso' : 'Egreso'}: {t.description}
@@ -35,7 +38,7 @@ export default function TransactionSummary({ transactions }) {
                 <div className={`text-lg font-semibold ${t.transaction_type === 'ingreso' ? 'text-green-500' : 'text-red-500'}`}>
                   {t.transaction_type === 'ingreso' ? '+' : '-'}{formatoPesoChileno(t.amount)}
                 </div>
-              </div>
+              </motion.div>
             ))}
             <div className="flex justify-center">
               <button onClick={() => setModalViewMoreOpen(true)} className="hover:underline">

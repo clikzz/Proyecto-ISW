@@ -4,9 +4,13 @@ const router = express.Router();
 const { getAllTransactions, createTransaction, getTransactionsSummary } = require('../controllers/transaction.controller');
 const authMiddleware = require('../middleware/auth.middleware');
 const validateTransaction = require('../middleware/transaction.middleware');
+const authorizationMiddleware = require('../middleware/authorization.middleware');
 
-router.get('/', authMiddleware, getAllTransactions);
-router.post('/', authMiddleware, validateTransaction, createTransaction);
-router.get('/summary', authMiddleware, getTransactionsSummary);
+router.use(authMiddleware);
+router.use(authorizationMiddleware(['admin']));
+
+router.get('/', getAllTransactions);
+router.post('/', validateTransaction, createTransaction);
+router.get('/summary', getTransactionsSummary);
 
 module.exports = router;
