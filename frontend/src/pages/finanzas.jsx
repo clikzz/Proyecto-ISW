@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { getAllTransactions, getTransactionsSummary } from '../api/transaction';
-import BalanceCards from '@/components/BalanceCards';
-import TransactionSummary from '@/components/TransactionSummary';
-import Charts from '@/components/Charts';
-import NewTransactionForm from '@/components/NewTransactionForm';
+import BalanceCards from '@/components/finance/BalanceCards';
+import TransactionSummary from '@/components/finance/TransactionSummary';
+import Charts from '@/components/finance/Charts';
+import NewTransactionForm from '@/components/finance/NewTransactionForm';
 
 export default function BalanceFinanciero() {
   const [transactions, setTransactions] = useState([]);
