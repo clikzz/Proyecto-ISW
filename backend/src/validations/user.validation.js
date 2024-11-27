@@ -56,4 +56,4 @@ const createUserSchema = Joi.object({
     }),
 });
 
-module.exports = createEmployeeSchema;
+module.exports = createUserSchema;

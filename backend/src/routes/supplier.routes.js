@@ -1,10 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const authMiddleware = require('../middleware/auth.middleware');
+const authorizationMiddleware = require('../middleware/authorization.middleware');
 const supplierController = require('../controllers/supplier.controller');
 const {
   validateCreateSupplier,
   validateUpdateSupplier,
 } = require('../middleware/supplier.middleware');
+
+router.use(authMiddleware);
+router.use(authorizationMiddleware(['admin', 'employee']));
 
 router.post(
   '/create',
