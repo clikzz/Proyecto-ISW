@@ -1,54 +1,85 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Wrench, Search, User, Calendar, Clock, DollarSign } from 'lucide-react'
-import ServicesList from '@/components/ServicesList' 
-import ServicesDialog from '@/components/ServicesDialog' 
+import { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Wrench, Search } from 'lucide-react';
+import ServicesList from '@/components/services/ServicesList';
+import ServicesDialog from '@/components/services/ServicesDialog';
 
-export default function ServicesPage() { 
-  const [servicios, setServicios] = useState([
-    {
-      // EJEMPLO PORSIA
-      nombre: "Reparación de Frenos",
-      descripcion: "Ajuste y reemplazo de pastillas de freno",
-      empleado: "Ana Garcia",
-      ingreso: "50",
-      fecha: "2023-11-20",
-      hora: "10:00"
-    },
-  ])
+// Importa las funciones de la API
+import { getServices, createService, deleteService } from '@/api/service';
 
-  const [busqueda, setBusqueda] = useState('')
+export default function ServicesPage() {
+  const [servicios, setServicios] = useState([]); // Estado para manejar los servicios desde el backend
+  const [busqueda, setBusqueda] = useState('');
   const [nuevoServicio, setNuevoServicio] = useState({
     nombre: '',
     descripcion: '',
     empleado: '',
     ingreso: '',
     fecha: '',
-    hora: ''
-  })
+    hora: '',
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setServicios([...servicios, nuevoServicio])
-    setNuevoServicio({
-      nombre: '',
-      descripcion: '',
-      empleado: '',
-      ingreso: '',
-      fecha: '',
-      hora: ''
-    })
-  }
+  // Cargar los servicios al cargar la página
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const data = await getServices(); // Obtén los servicios del backend
+        setServicios(data);
+      } catch (error) {
+        console.error('Error al cargar los servicios:', error);
+      }
+    };
+    fetchServices();
+  }, []);
 
-  const serviciosFiltrados = servicios.filter(servicio =>
-    servicio.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-    servicio.empleado.toLowerCase().includes(busqueda.toLowerCase())
-  )
+  // Manejar la creación de un nuevo servicio
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const newService = {
+        name_service: nuevoServicio.nombre,
+        description_service: nuevoServicio.descripcion,
+        employee: nuevoServicio.empleado,
+        price_service: parseFloat(nuevoServicio.ingreso),
+        date_service: `${nuevoServicio.fecha}T${nuevoServicio.hora}`,
+      };
+
+      const createdService = await createService(newService); // Crear el servicio en el backend
+      setServicios([...servicios, createdService]); // Actualiza el estado local con el nuevo servicio
+      setNuevoServicio({
+        nombre: '',
+        descripcion: '',
+        empleado: '',
+        ingreso: '',
+        fecha: '',
+        hora: '',
+      });
+    } catch (error) {
+      console.error('Error al crear el servicio:', error);
+    }
+  };
+
+  // Manejar la eliminación de un servicio
+  const handleDelete = async (id) => {
+    try {
+      await deleteService(id); // Elimina el servicio en el backend
+      setServicios(servicios.filter((servicio) => servicio.id_service !== id)); // Actualiza el estado local
+    } catch (error) {
+      console.error('Error al eliminar el servicio:', error);
+    }
+  };
+
+  // Filtrar los servicios por búsqueda
+  const serviciosFiltrados = servicios.filter(
+    (servicio) =>
+      servicio.name_service.toLowerCase().includes(busqueda.toLowerCase()) ||
+      servicio.employee.toLowerCase().includes(busqueda.toLowerCase())
+  );
 
   return (
     <main className="min-h-screen p-8">
@@ -64,7 +95,9 @@ export default function ServicesPage() {
         <section aria-labelledby="buscar-servicio" className="mb-6">
           {/* Barra de búsqueda */}
           <form className="flex justify-between items-center" role="search" aria-labelledby="buscar-servicio">
-            <label htmlFor="search" className="sr-only" id="buscar-servicio">Buscar servicios o técnicos</label>
+            <label htmlFor="search" className="sr-only" id="buscar-servicio">
+              Buscar servicios o técnicos
+            </label>
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5" aria-hidden="true" />
               <Input
@@ -78,19 +111,17 @@ export default function ServicesPage() {
             </div>
 
             {/* Formulario para añadir un nuevo servicio */}
-            <ServicesDialog
-              nuevoServicio={nuevoServicio}
-              setNuevoServicio={setNuevoServicio}
-              handleSubmit={handleSubmit}
-            />
+            <ServicesDialog nuevoServicio={nuevoServicio} setNuevoServicio={setNuevoServicio} handleSubmit={handleSubmit} />
           </form>
         </section>
 
         <section aria-labelledby="lista-servicios">
-          <h2 id="lista-servicios" className="sr-only">Lista de Servicios</h2>
-          <ServicesList servicios={serviciosFiltrados} />
+          <h2 id="lista-servicios" className="sr-only">
+            Lista de Servicios
+          </h2>
+          <ServicesList servicios={serviciosFiltrados} onDeleteServicio={handleDelete} />
         </section>
       </section>
     </main>
-  )
+  );
 }

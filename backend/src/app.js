@@ -3,8 +3,10 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth.routes');
 const employeeRoutes = require('./routes/employee.routes');
 const profileRoutes = require('./routes/profile.routes');
-const transactionRoutes = require('./routes/transaction.routes'); // Importa el enrutador de transacciones
+const transactionRoutes = require('./routes/transaction.routes'); 
 const itemRoutes = require('./routes/item.routes');
+const serviceRoutes = require('./routes/service.routes');
+const transactionServiceRoutes = require('./routes/transactionService.routes');
 const supplierRoutes = require('./routes/supplier.routes');
 const inventoryRoutes = require('./routes/inventory.routes');
 const userRoutes = require('./routes/user.routes');
@@ -30,6 +32,8 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/suppliers', supplierRoutes);
 app.use('/api/inventory', inventoryRoutes);
+app.use('/api/services', serviceRoutes);
+app.use('/api/transactions', transactionServiceRoutes);
 
 const HOST = process.env.HOST || '0.0.0.0';
 const PORT = process.env.PORT || 80;
