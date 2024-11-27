@@ -1,9 +1,26 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useEffect, useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { getUsers } from '@/api/user';
 
 export default function ServicioDialog({ nuevoServicio, setNuevoServicio, handleSubmit }) {
+  const [usuarios, setUsuarios] = useState([]);
+
+  useEffect(() => {
+    const fetchUsuarios = async () => {
+      try {
+        const data = await getUsers(); 
+        setUsuarios(data);
+      } catch (error) {
+        console.error('Error al obtener usuarios:', error);
+      }
+    };
+
+    fetchUsuarios();
+  }, []);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -39,13 +56,20 @@ export default function ServicioDialog({ nuevoServicio, setNuevoServicio, handle
             </div>
             <div>
               <Label htmlFor="empleado">Empleado Asignado</Label>
-              <Input
+              <select
                 id="empleado"
-                value={nuevoServicio.empleado}
-                onChange={(e) => setNuevoServicio({ ...nuevoServicio, empleado: e.target.value })}
+                value={nuevoServicio.user_rut || ''} 
+                onChange={(e) => setNuevoServicio({ ...nuevoServicio, user_rut: e.target.value })}
                 required
-                className="bg-input text-card-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary/70"
-              />
+                className="bg-input text-card-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary/70 w-full"
+              >
+                <option value="">Seleccionar un usuario</option>
+                {usuarios.map((usuario) => (
+                  <option key={usuario.rut} value={usuario.rut}>
+                    {usuario.name_user} - {usuario.rut}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <Label htmlFor="ingreso">Ingreso (CLP)</Label>
@@ -91,5 +115,5 @@ export default function ServicioDialog({ nuevoServicio, setNuevoServicio, handle
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
