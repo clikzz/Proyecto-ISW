@@ -47,18 +47,6 @@ export default function HomePage() {
   useEffect(() => {
     fetchProfileData();
     fetchTotalUsers();
-
-    const calcularMeses = () => {
-      const fechaInicio = new Date('2024-10-01');
-      const fechaActual = new Date();
-      const diffAnios = fechaActual.getFullYear() - fechaInicio.getFullYear();
-      const diffMeses = fechaActual.getMonth() - fechaInicio.getMonth();
-      const mesesTotales = diffAnios * 12 + diffMeses;
-
-      setMesesActivos(mesesTotales);
-    };
-
-    calcularMeses();
   }, []);
 
   if (!isAuthorized) {
