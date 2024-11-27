@@ -44,13 +44,13 @@ export default function ServicesPage() {
       const newService = {
         name_service: nuevoServicio.nombre,
         description_service: nuevoServicio.descripcion,
-        employee: nuevoServicio.empleado,
         price_service: parseFloat(nuevoServicio.ingreso),
-        date_service: `${nuevoServicio.fecha}T${nuevoServicio.hora}`,
+        date_service: `${nuevoServicio.fecha}T${nuevoServicio.hora}`, 
+        user_rut: nuevoServicio.user_rut 
       };
 
-      const createdService = await createService(newService); // Crear el servicio en el backend
-      setServicios([...servicios, createdService]); // Actualiza el estado local con el nuevo servicio
+      const createdService = await createService(newService); 
+      setServicios([...servicios, createdService]); 
       setNuevoServicio({
         nombre: '',
         descripcion: '',

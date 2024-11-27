@@ -3,33 +3,45 @@ const router = express.Router();
 const authMiddleware = require('../middleware/auth.middleware');
 const authorizationMiddleware = require('../middleware/authorization.middleware');
 const serviceController = require('../controllers/service.controller');
+const { validateCreateService, validateUpdateService } = require('../middleware/service.middleware');
+
 
 router.use(authMiddleware);
 
+
 router.post(
-    '/create', 
+    '/create',
     authorizationMiddleware(['admin', 'employee']),
-    serviceController.createService);
-
-router.get(
-    '/all', 
-    authorizationMiddleware(['admin', 'employee']),
-    serviceController.getServices);
+    validateCreateService, 
+    serviceController.createService
+);
 
 
 router.get(
-    '/get/:id', 
+    '/all',
     authorizationMiddleware(['admin', 'employee']),
-    serviceController.getServiceById);
+    serviceController.getServices
+);
+
+
+router.get(
+    '/get/:id',
+    authorizationMiddleware(['admin', 'employee']),
+    serviceController.getServiceById
+);
 
 router.put(
-    '/update/:id', 
+    '/update/:id',
     authorizationMiddleware(['admin', 'employee']),
-    serviceController.updateService);
+    validateUpdateService, 
+    serviceController.updateService
+);
+
 
 router.delete(
-    '/delete/:id', 
+    '/delete/:id',
     authorizationMiddleware(['admin']),
-    serviceController.deleteService);
+    serviceController.deleteService
+);
 
 module.exports = router;
