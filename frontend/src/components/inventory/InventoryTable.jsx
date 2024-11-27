@@ -15,7 +15,8 @@ const InventoryTable = () => {
   const [filteredItems, setFilteredItems] = useState([]);
   const [search, setSearch] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
 
   const [sortConfig, setSortConfig] = useState({
@@ -37,7 +38,7 @@ const InventoryTable = () => {
     try {
       const item = await getItemById(id);
       setSelectedItem(item);
-      setIsDialogOpen(true);
+      setIsDetailsDialogOpen(true);
     } catch (error) {
       console.error('Error al obtener el ítem:', error);
     }
@@ -45,12 +46,12 @@ const InventoryTable = () => {
 
   const openConfirmationDialog = (id) => {
     setItemToDelete(id);
-    setIsDialogOpen(true);
+    setIsConfirmationDialogOpen(true);
   };
 
   const closeConfirmationDialog = () => {
     setItemToDelete(null);
-    setIsDialogOpen(false);
+    setIsConfirmationDialogOpen(false);
   };
 
   const handleConfirmDelete = async () => {
@@ -234,13 +235,13 @@ const InventoryTable = () => {
       </Card>
 
       <ItemDetailsDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
+        isOpen={isDetailsDialogOpen}
+        onClose={() => setIsDetailsDialogOpen(false)}
         item={selectedItem}
       />
 
       <ConfirmationDialog
-        open={isDialogOpen}
+        open={isConfirmationDialogOpen}
         handleClose={closeConfirmationDialog}
         handleConfirm={handleConfirmDelete}
       />
