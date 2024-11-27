@@ -1,20 +1,22 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { getInventoryItems, getItemById } from '@/api/inventory';
+import { getInventoryItems, getItemById, deleteItem } from '@/api/inventory';
 import { Info, Search, ArrowUpDown, Trash } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatDateTime } from '@/helpers/dates';
 import AddItemDialog from '@/components/inventory/dialog/AddItemDialog';
 import ItemDetailsDialog from '@/components/inventory/dialog/ItemDetailsDialog';
+import ConfirmationDialog from '@/components/ConfirmationDialog';
 
 const InventoryTable = () => {
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [search, setSearch] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);  
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -38,6 +40,35 @@ const InventoryTable = () => {
       setIsDialogOpen(true);
     } catch (error) {
       console.error('Error al obtener el ítem:', error);
+    }
+  };
+
+  const openConfirmationDialog = (id) => {
+    setItemToDelete(id);
+    setIsDialogOpen(true);
+  };
+
+  const closeConfirmationDialog = () => {
+    setItemToDelete(null);
+    setIsDialogOpen(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (itemToDelete) {
+      try {
+        await deleteItem(itemToDelete);
+        setItems((prevItems) =>
+          prevItems.filter((item) => item.id_item !== itemToDelete)
+        );
+        setFilteredItems((prevItems) =>
+          prevItems.filter((item) => item.id_item !== itemToDelete)
+        );
+      } catch (error) {
+        console.error('Error al eliminar el item:', error);
+        alert('No se pudo eliminar el item.');
+      } finally {
+        closeConfirmationDialog();
+      }
     }
   };
 
@@ -189,6 +220,7 @@ const InventoryTable = () => {
                       </Button>
                       <Button
                         className="bg-red-500 hover:bg-red-600"
+                        onClick={() => openConfirmationDialog(item.id_item)}
                       >
                         <Trash />
                       </Button>
@@ -205,6 +237,12 @@ const InventoryTable = () => {
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         item={selectedItem}
+      />
+
+      <ConfirmationDialog
+        open={isDialogOpen}
+        handleClose={closeConfirmationDialog}
+        handleConfirm={handleConfirmDelete}
       />
     </div>
   );
