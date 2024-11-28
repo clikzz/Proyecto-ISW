@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -6,8 +6,8 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@components/ui/dialog';
-import { Button } from '@components/ui/button';
+} from "@components/ui/dialog";
+import { Button } from "@components/ui/button";
 
 const ConfirmationDialog = ({ open, handleClose, handleConfirm }) => {
   return (
@@ -21,7 +21,7 @@ const ConfirmationDialog = ({ open, handleClose, handleConfirm }) => {
           <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button variant="primary" onClick={handleConfirm}>
+          <Button variant="destructive" onClick={handleConfirm}>
             Confirmar
           </Button>
         </DialogFooter>
