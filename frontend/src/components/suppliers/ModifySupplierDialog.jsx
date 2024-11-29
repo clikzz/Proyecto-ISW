@@ -22,19 +22,13 @@ export default function ModifySupplierDialog({
 }) {
   const { showAlert } = useAlert();
 
-  const handleSubmit = async (
-    values,
-    { setSubmitting, resetForm, setErrors }
-  ) => {
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
-      if (!modifySupplierValidation) {
-        throw new Error('Validation schema is not defined');
-      }
-      await modifySupplierValidation.validate(values, { abortEarly: false });
       await updateSupplier(values.rut_supplier, values);
       onClose();
       resetForm();
       fetchSuppliers();
+      showAlert('Proveedor modificado correctamente', 'success');
     } catch (error) {
       showAlert(error.response?.data.errors, 'error');
     } finally {
@@ -116,7 +110,6 @@ export default function ModifySupplierDialog({
                   name="email_supplier"
                   type="email"
                   value={values.email_supplier}
-                  readOnly
                 />
                 <ErrorMessage
                   name="email_supplier"

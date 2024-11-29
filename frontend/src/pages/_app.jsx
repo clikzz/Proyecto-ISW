@@ -6,8 +6,10 @@ import { useRouter } from 'next/router';
 import { AlertProvider } from '@context/alertContext';
 import { ThemeProvider } from 'next-themes';
 import { useEffect, useState } from 'react';
+import { Metadata } from 'next';
 import '@styles/globals.css';
 import 'cropperjs/dist/cropper.css';
+import Head from 'next/head';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -16,9 +18,13 @@ const montserrat = Montserrat({
   variable: '--font-sans',
 });
 
+export const metadata = {
+  title: 'bikefy',
+  description: 'Gracias por usar bikefy!',
+};
+
 export default function MyApp({ Component, pageProps }) {
   const router = useRouter();
-
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -42,6 +48,10 @@ export default function MyApp({ Component, pageProps }) {
 
   return (
     <ThemeProvider attribute="class" defaultTheme="light">
+      <Head>
+        <title>{metadata.title}</title>
+        <meta name="description" content={metadata.description} />
+      </Head>
       <AlertProvider>
         <AuthProvider>
           <LayoutComponent

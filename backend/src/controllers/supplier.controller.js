@@ -48,10 +48,8 @@ exports.updateSupplier = async (req, res) => {
   if (error) return res.status(400).json({ message: error.details[0].message });
 
   try {
-    console.log(req.body);
-
     const updatedSupplier = await supplierService.updateSupplier(
-      req.params.id,
+      req.params.rut,
       req.body
     );
     res.json(updatedSupplier);
