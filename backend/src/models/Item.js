@@ -30,6 +30,15 @@ class Item {
     return result.rows[0];
   }
 
+  static async findByName(name) {
+    const query = `
+      SELECT * FROM item
+      WHERE name_item ILIKE $1 AND is_deleted = FALSE;
+    `;
+    const result = await db.query(query, [name]);
+    return result.rows[0];
+  }
+
   static async update(id, data) {
     const query = `
       UPDATE item
@@ -43,6 +52,20 @@ class Item {
       data.stock, data.cost_price, data.selling_price, id,
     ];
     const result = await db.query(query, values);
+    return result.rows[0];
+  }
+
+  static async updateStock(id, quantity, operation) {
+    const query = `
+      UPDATE item
+      SET stock = stock ${operation === 'add' ? '+' : '-'} $1, updated_at = CURRENT_TIMESTAMP
+      WHERE id_item = $2 AND is_deleted = FALSE
+      RETURNING *;
+    `;
+    const result = await db.query(query, [quantity, id]);
+    if (result.rowCount === 0) {
+      throw new Error(`Stock insuficiente o ítem no encontrado para el ID ${id}`);
+    }
     return result.rows[0];
   }
 

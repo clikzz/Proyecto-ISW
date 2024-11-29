@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatDateTime } from '@/helpers/dates';
 import { capitalize } from '@/helpers/capitalize';
+import SellItemDialog from '@/components/inventory/dialog/SellItemDialog';
 
 const SalesTable = () => {
   const [sales, setSales] = useState([]);
@@ -84,6 +85,7 @@ const SalesTable = () => {
           />
           <Search className="ml-2 h-5 w-5 text-gray-500" />
         </div>
+        <SellItemDialog fetchSales={fetchSales} />
       </div>
 
       <Card className="border-none pt-4">
