@@ -7,23 +7,23 @@ const columnConfig = {
   pendiente: {
     icon: Clipboard,
     title: 'Pendientes',
-    color: 'bg-violet-50 dark:bg-violet-950',
-    borderColor: 'border-violet-200 dark:border-violet-800',
-    hoverColor: 'hover:bg-violet-50 dark:hover:bg-violet-900',
+    color: 'bg-violet-50 dark:bg-violet-950/40',
+    borderColor: 'border-violet-200 dark:border-violet-800/40',
+    hoverColor: 'hover:bg-violet-50 dark:hover:bg-violet-900/40',
   },
   en_progreso: {
     icon: Clock,
     title: 'En Progreso',
-    color: 'bg-blue-50 dark:bg-blue-950',
-    borderColor: 'border-blue-200 dark:border-blue-800',
-    hoverColor: 'hover:bg-blue-50 dark:hover:bg-blue-900',
+    color: 'bg-blue-50 dark:bg-blue-950/40',
+    borderColor: 'border-blue-200 dark:border-blue-800/40',
+    hoverColor: 'hover:bg-blue-50 dark:hover:bg-blue-900/40',
   },
   completado: {
     icon: ClipboardCheck,
     title: 'Completados',
-    color: 'bg-green-50 dark:bg-green-950',
-    borderColor: 'border-green-200 dark:border-green-800',
-    hoverColor: 'hover:bg-green-50 dark:hover:bg-green-900',
+    color: 'bg-green-50 dark:bg-green-950/30',
+    borderColor: 'border-green-200 dark:border-green-800/40',
+    hoverColor: 'hover:bg-green-50 dark:hover:bg-green-900/40',
   },
 };
 
