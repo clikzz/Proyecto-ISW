@@ -25,10 +25,10 @@ export default function ServicesList({ servicios, onDeleteServicio }) {
             {/* Información del empleado */}
             <section className="flex items-center text-sm">
               <User className="w-4 h-4 mr-2" aria-hidden="true" />
-              <span>{servicio.employee || 'No asignado'}</span>
+              <span>{servicio.employee_name || 'No asignado'}</span>
             </section>
           </article>
-
+          
           {/* Detalles secundarios: Dinero, Fecha y Hora */}
           <aside className="text-right">
             <div>
@@ -41,14 +41,22 @@ export default function ServicesList({ servicios, onDeleteServicio }) {
             <section className="flex items-center justify-end mt-2 text-sm space-x-4">
               <div className="flex items-center">
                 <Calendar className="w-4 h-4 mr-1" aria-hidden="true" />
-                <time dateTime={servicio.date_service}>{new Date(servicio.date_service).toLocaleDateString()}</time>
+                <time dateTime={servicio.date_service}>
+                  {new Date(servicio.date_service).toLocaleDateString()}
+                </time>
               </div>
               <div className="flex items-center">
                 <Clock className="w-4 h-4 mr-1" aria-hidden="true" />
-                <time>{new Date(servicio.date_service).toLocaleTimeString()}</time>
+                <time>
+                  {new Date(servicio.date_service).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </time>
               </div>
             </section>
           </aside>
+
 
           {/* Botón de eliminar */}
           <Button

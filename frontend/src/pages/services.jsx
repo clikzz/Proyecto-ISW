@@ -44,13 +44,13 @@ export default function ServicesPage() {
       const newService = {
         name_service: nuevoServicio.nombre,
         description_service: nuevoServicio.descripcion,
-        employee: nuevoServicio.empleado,
         price_service: parseFloat(nuevoServicio.ingreso),
-        date_service: `${nuevoServicio.fecha}T${nuevoServicio.hora}`,
+        date_service: `${nuevoServicio.fecha}T${nuevoServicio.hora}`, 
+        user_rut: nuevoServicio.user_rut 
       };
 
-      const createdService = await createService(newService); // Crear el servicio en el backend
-      setServicios([...servicios, createdService]); // Actualiza el estado local con el nuevo servicio
+      const createdService = await createService(newService); 
+      setServicios([...servicios, createdService]); 
       setNuevoServicio({
         nombre: '',
         descripcion: '',
@@ -81,11 +81,12 @@ export default function ServicesPage() {
       servicio.employee.toLowerCase().includes(busqueda.toLowerCase())
   );
 
+
   return (
-    <main className="min-h-screen p-8">
-      <section className="max-w-7xl mx-auto">
+    <main className="container mx-auto">
+      <section className="container mx-auto">
         {/* Encabezado principal */}
-        <header className="flex items-center justify-between mb-8">
+        <header className="flex items-center mb-6">
           <div className="flex items-center gap-2">
             <Wrench className="w-8 h-8" aria-hidden="true" />
             <h1 className="text-2xl font-bold">Servicios</h1>

@@ -88,7 +88,7 @@ const SalesTable = () => {
 
       <Card className="border-none pt-4">
         <CardContent>
-          <div className="overflow-y-auto relative" style={{ maxHeight: '300px' }}>
+          <div className="overflow-y-auto relative" style={{ maxHeight: '520px' }}>
             <Table className="min-w-full">
             <TableHeader>
                 <TableRow>
