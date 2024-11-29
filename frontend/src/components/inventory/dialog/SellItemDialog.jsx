@@ -24,7 +24,6 @@ export default function SellItemDialog({ fetchSales }) {
   const [paymentMethod, setPaymentMethod] = useState('');
   const { showAlert } = useAlert();
 
-  // Fetch inventory items when dialog is opened
   useEffect(() => {
     if (isDialogOpen) {
       const fetchItems = async () => {
@@ -39,7 +38,6 @@ export default function SellItemDialog({ fetchSales }) {
     }
   }, [isDialogOpen]);
 
-  // Update total when selected item or quantity changes
   useEffect(() => {
     if (selectedItem) {
       setTotal(selectedItem.selling_price * quantity);
@@ -61,7 +59,7 @@ export default function SellItemDialog({ fetchSales }) {
           unit_price: selectedItem.selling_price,
         },
       ], {
-        rut: '12345678-9', // RUT del cliente
+        rut: '12345678-9',
         type: 'venta',
         amount: total,
         payment_method: paymentMethod,
@@ -74,7 +72,7 @@ export default function SellItemDialog({ fetchSales }) {
       setQuantity(1);
       setTotal(0);
       setPaymentMethod('');
-      fetchSales(); // Refresh sales table
+      fetchSales();
     } catch (error) {
       console.error('Error al registrar la venta:', error);
       showAlert('Error al registrar la venta', 'error');
