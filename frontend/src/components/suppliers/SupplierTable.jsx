@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ArrowUpDown, Search, Trash } from 'lucide-react'; // Ensure Trash is imported
+import { ArrowUpDown, Search, Trash, Edit } from 'lucide-react'; // Ensure Trash is imported
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -14,6 +14,7 @@ import { getSuppliers, deleteSupplier } from '@api/suppliers';
 import { Card, CardContent } from '@/components/ui/card';
 import ConfirmationDialog from '@components/ConfirmationDialog';
 import AddSupplierDialog from '@/components/suppliers/AddSupplierDialog';
+import ModifySupplierDialog from '@/components/suppliers/ModifySupplierDialog';
 
 export default function Component() {
   const [suppliers, setSuppliers] = useState([]);
@@ -24,15 +25,18 @@ export default function Component() {
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [DialogOpen, setDialogOpen] = useState(false);
+  const [ModDialogOpen, setModDialogOpen] = useState(false);
+  const [supplierToModify, setSupplierToModify] = useState(null);
   const [supplierToDelete, setSupplierToDelete] = useState(null);
-
-  const handleAddSupplier = () => {
-    setIsDialogOpen(true);
-  };
 
   const handleDeleteClick = (rut) => {
     setSupplierToDelete(rut);
     setDialogOpen(true);
+  };
+
+  const handleModifyClick = (supplier) => {
+    setSupplierToModify(supplier);
+    setModDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
@@ -146,21 +150,21 @@ export default function Component() {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('email_supplier')}
-                      className="text-foreground"
-                    >
-                      <strong>Correo</strong>
-                      <ArrowUpDown className="ml-2 h-4 w-4 " />
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
                       onClick={() => handleSort('phone_supplier')}
                       className="text-foreground"
                     >
                       <strong>Teléfono</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort('email_supplier')}
+                      className="text-foreground"
+                    >
+                      <strong>Correo</strong>
+                      <ArrowUpDown className="ml-2 h-4 w-4 " />
                     </Button>
                   </TableHead>
                   <TableHead>
@@ -183,12 +187,15 @@ export default function Component() {
                   <TableRow key={supplier.rut_supplier}>
                     <TableCell>{supplier.rut_supplier}</TableCell>
                     <TableCell>{supplier.name_supplier}</TableCell>
-                    <TableCell>{supplier.email_supplier}</TableCell>
                     <TableCell>{supplier.phone_supplier}</TableCell>
+                    <TableCell>{supplier.email_supplier}</TableCell>
                     <TableCell>{supplier.address_supplier}</TableCell>
                     <TableCell>
+                      <Button onClick={() => handleModifyClick(supplier)}>
+                        <Edit />
+                      </Button>
                       <Button
-                        className="bg-red-500 hover:bg-red-600 p-1"
+                        className="ml-2 bg-red-500 hover:bg-red-600 p-1"
                         onClick={() => handleDeleteClick(supplier.rut_supplier)}
                       >
                         <Trash />
@@ -205,6 +212,14 @@ export default function Component() {
         <div className="absolute inset-0 flex items-center justify-center">
           <AddSupplierDialog onClose={handleCloseDialog} />
         </div>
+      )}
+      {ModDialogOpen && (
+        <ModifySupplierDialog
+          isOpen={ModDialogOpen}
+          onClose={() => setModDialogOpen(false)}
+          supplier={supplierToModify}
+          fetchSuppliers={fetchSuppliers}
+        />
       )}
       <ConfirmationDialog
         open={DialogOpen}

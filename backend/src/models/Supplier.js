@@ -37,7 +37,7 @@ class Supplier {
     const query = `
       UPDATE supplier
       SET rut_supplier = $1, name_supplier = $2, email_supplier = $3, phone_supplier = $4, address_supplier = $5, updated_at = CURRENT_TIMESTAMP
-      WHERE id = $6 AND is_deleted = FALSE
+      WHERE rut_supplier = $6 AND is_deleted = FALSE
       RETURNING *;
     `;
     const values = [
