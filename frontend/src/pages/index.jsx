@@ -149,7 +149,7 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 { name: "Johanna Olivares", role: "Dueña de Taller", content: "bikefy ha transformado completamente la forma en que gestionamos nuestro taller." },
-                { name: "Nicole Ibieta", role: "Gerente de Tienda", content: "La programación inteligente de bikefy nos ha permitido optimizar nuestro tiempo y recursos." },
+                { name: "Nicole Ibieta", role: "Gerente de Tienda", content: "bikefy nos ha permitido optimizar nuestro tiempo y recursos." },
                 { name: "Cristina Betancurt", role: "Técnica de Bicicletas", content: "Los análisis y reportes de bikefy me han ayudado a identificar áreas de mejora en mi trabajo." }
               ].map((testimonial, index) => (
                 <motion.div
