@@ -7,11 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import ThemeToggle from '@/components/ThemeToggle';
-import { useAuth } from '@/context/authContext';
 
 export default function LandingPage() {
-  const { isAuthenticated, logout } = useAuth();
-
   const pageVariants = {
     hidden: { opacity: 0, y: 50, scale: 0.95 },
     enter: {
@@ -42,20 +39,9 @@ export default function LandingPage() {
           <Link href="#testimonials" className="hidden md:inline-block hover:text-primary transition-colors">
             Testimonios
           </Link>
-          {isAuthenticated ? (
-            <>
-              <Link href="/home">
-                <Button className="rounded-xl">Home</Button>
-              </Link>
-              <Button className="rounded-xl" onClick={logout}>
-                Cerrar Sesión
-              </Button>
-            </>
-          ) : (
-            <Link href="/login">
-              <Button className="rounded-xl">Inicia Sesión</Button>
-            </Link>
-          )}
+          <Link href="/login">
+            <Button className="rounded-xl">Inicia Sesión</Button>
+          </Link>
           <ThemeToggle />
         </nav>
       </header>
@@ -115,11 +101,19 @@ export default function LandingPage() {
               Características Principales
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                { icon: Wrench, title: "Gestión de Reparaciones", description: "Organiza y realiza un seguimiento de todas las reparaciones de manera eficiente." },
-                { icon: Calendar, title: "Programación Inteligente", description: "Optimiza tu calendario de trabajo y reduce los tiempos de espera." },
-                { icon: BarChart, title: "Análisis y Reportes", description: "Obtén insights valiosos sobre el rendimiento de tu taller." }
-              ].map((feature, index) => (
+              {[{
+                icon: Wrench, 
+                title: "Gestión de Reparaciones", 
+                description: "Organiza y realiza un seguimiento de todas las reparaciones de manera eficiente."
+              }, {
+                icon: Calendar, 
+                title: "Programación Inteligente", 
+                description: "Optimiza tu calendario de trabajo y reduce los tiempos de espera."
+              }, {
+                icon: BarChart, 
+                title: "Análisis y Reportes", 
+                description: "Obtén insights valiosos sobre el rendimiento de tu taller."
+              }].map((feature, index) => (
                 <motion.div 
                   key={index}
                   initial={{ opacity: 0, y: 50 }}
@@ -147,11 +141,19 @@ export default function LandingPage() {
               Lo que Dicen Nuestros Clientes
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                { name: "Johanna Olivares", role: "Dueña de Taller", content: "bikefy ha transformado completamente la forma en que gestionamos nuestro taller." },
-                { name: "Nicole Ibieta", role: "Gerente de Tienda", content: "bikefy nos ha permitido optimizar nuestro tiempo y recursos." },
-                { name: "Cristina Betancurt", role: "Técnica de Bicicletas", content: "Los análisis y reportes de bikefy me han ayudado a identificar áreas de mejora en mi trabajo." }
-              ].map((testimonial, index) => (
+              {[{
+                name: "Johanna Olivares", 
+                role: "Dueña de Taller", 
+                content: "bikefy ha transformado completamente la forma en que gestionamos nuestro taller."
+              }, {
+                name: "Nicole Ibieta", 
+                role: "Gerente de Tienda", 
+                content: "bikefy nos ha permitido optimizar nuestro tiempo y recursos."
+              }, {
+                name: "Cristina Betancurt", 
+                role: "Técnica de Bicicletas", 
+                content: "Los análisis y reportes de bikefy me han ayudado a identificar áreas de mejora en mi trabajo."
+              }].map((testimonial, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -183,29 +185,6 @@ export default function LandingPage() {
                   </Card>
                 </motion.div>
               ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                ¿Listo para Revolucionar tu Taller?
-              </h2>
-              <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Únete a los cientos de talleres que ya están optimizando su negocio con bikefy.
-              </p>
-              <div className="w-full max-w-sm space-y-2">
-                <form className="flex space-x-2">
-                  <input
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1"
-                    placeholder="Ingresa tu email"
-                    type="email"
-                  />
-                  <Button className="rounded-xl bg-primary text-primary-foreground hover:bg-primary/90">Suscribirse</Button>
-                </form>
-              </div>
             </div>
           </div>
         </section>
@@ -241,4 +220,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
