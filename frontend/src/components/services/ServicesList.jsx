@@ -1,76 +1,79 @@
-import { User, Calendar, Clock, Trash } from 'lucide-react';
+import { Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function ServicesList({ servicios, onDeleteServicio }) {
   return (
-    <ul className="space-y-4">
-      {servicios.map((servicio) => (
-        <li
-          key={servicio.id_service} // Clave única para cada servicio
-          className="flex justify-between items-center p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-card text-card-foreground"
-          aria-labelledby={`servicio-${servicio.id_service}-nombre`}
-        >
-          {/* Información principal del servicio */}
-          <article className="flex-1">
-            {/* Encabezado del servicio */}
-            <header>
-              <h2 id={`servicio-${servicio.id_service}-nombre`} className="text-lg font-semibold mb-2">
-                {servicio.name_service}
-              </h2>
-            </header>
-
-            {/* Descripción del servicio */}
-            <p className="text-sm mb-4">{servicio.description_service}</p>
-
-            {/* Información del empleado */}
-            <section className="flex items-center text-sm">
-              <User className="w-4 h-4 mr-2" aria-hidden="true" />
-              <span>{servicio.employee_name || 'No asignado'}</span>
-            </section>
-          </article>
-          
-          {/* Detalles secundarios: Dinero, Fecha y Hora */}
-          <aside className="text-right">
-            <div>
-              <strong className="text-xl font-bold text-green-500" aria-label="Ingreso">
-                ${servicio.price_service}
-              </strong>
-            </div>
-
-            {/* Fecha y Hora */}
-            <section className="flex items-center justify-end mt-2 text-sm space-x-4">
-              <div className="flex items-center">
-                <Calendar className="w-4 h-4 mr-1" aria-hidden="true" />
-                <time dateTime={servicio.date_service}>
-                  {new Date(servicio.date_service).toLocaleDateString()}
-                </time>
-              </div>
-              <div className="flex items-center">
-                <Clock className="w-4 h-4 mr-1" aria-hidden="true" />
-                <time>
-                  {new Date(servicio.date_service).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </time>
-              </div>
-            </section>
-          </aside>
-
-
-          {/* Botón de eliminar */}
-          <Button
-            variant="ghost" // Botón transparente
-            size="icon"
-            className="ml-4"
-            onClick={() => onDeleteServicio(servicio.id_service)}
-            aria-label={`Eliminar servicio ${servicio.name_service}`}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-        </li>
-      ))}
-    </ul>
+    <Card className="border-none shadow-md rounded-lg">
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>
+                <strong>Nombre</strong>
+              </TableHead>
+              <TableHead>
+                <strong>Usuario Asignado</strong>
+              </TableHead>
+              <TableHead>
+                <strong>Descripción</strong>
+              </TableHead>
+              <TableHead>
+                <strong>Categoría</strong>
+              </TableHead>
+              <TableHead>
+                <strong>Precio (CLP)</strong>
+              </TableHead>
+              <TableHead>
+                <strong>Acciones</strong>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {servicios.length > 0 ? (
+              servicios.map((servicio) => (
+                <TableRow key={servicio.id_service} className="hover:bg-muted">
+                  <TableCell>{servicio.name_service}</TableCell>
+                  <TableCell>
+                    {servicio.employee_name || "No asignado"}
+                  </TableCell>
+                  <TableCell>{servicio.description_service}</TableCell>
+                  <TableCell className="capitalize">
+                    {servicio.category || "Sin categoría"}
+                  </TableCell>
+                  <TableCell>
+                    ${servicio.price_service?.toLocaleString("es-CL") || "0"}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onDeleteServicio(servicio.id_service)}
+                      aria-label={`Eliminar servicio ${servicio.name_service}`}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan="6" className="text-center text-muted-foreground">
+                  No hay servicios disponibles.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 }
-

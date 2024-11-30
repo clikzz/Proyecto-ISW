@@ -1,26 +1,10 @@
-import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { getUsers } from '@/api/user';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function ServicioDialog({ nuevoServicio, setNuevoServicio, handleSubmit }) {
-  const [usuarios, setUsuarios] = useState([]);
-
-  useEffect(() => {
-    const fetchUsuarios = async () => {
-      try {
-        const data = await getUsers(); 
-        setUsuarios(data);
-      } catch (error) {
-        console.error('Error al obtener usuarios:', error);
-      }
-    };
-
-    fetchUsuarios();
-  }, []);
-
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -38,7 +22,7 @@ export default function ServicioDialog({ nuevoServicio, setNuevoServicio, handle
               <Label htmlFor="nombre">Nombre del Servicio</Label>
               <Input
                 id="nombre"
-                value={nuevoServicio.nombre}
+                value={nuevoServicio?.nombre || ''}
                 onChange={(e) => setNuevoServicio({ ...nuevoServicio, nombre: e.target.value })}
                 required
                 className="bg-input text-card-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary/70"
@@ -48,63 +32,38 @@ export default function ServicioDialog({ nuevoServicio, setNuevoServicio, handle
               <Label htmlFor="descripcion">Descripción</Label>
               <Input
                 id="descripcion"
-                value={nuevoServicio.descripcion}
+                value={nuevoServicio?.descripcion || ''} 
                 onChange={(e) => setNuevoServicio({ ...nuevoServicio, descripcion: e.target.value })}
                 required
                 className="bg-input text-card-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary/70"
               />
             </div>
             <div>
-              <Label htmlFor="empleado">Empleado Asignado</Label>
-              <select
-                id="empleado"
-                value={nuevoServicio.user_rut || ''} 
-                onChange={(e) => setNuevoServicio({ ...nuevoServicio, user_rut: e.target.value })}
-                required
-                className="bg-input text-card-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary/70 w-full"
+              <Label htmlFor="categoria">Categoría</Label>
+              <Select
+                value={nuevoServicio?.nombre || ''}
+                onValueChange={(value) => setNuevoServicio({ ...nuevoServicio, categoria: value })}
               >
-                <option value="">Seleccionar un usuario</option>
-                {usuarios.map((usuario) => (
-                  <option key={usuario.rut} value={usuario.rut}>
-                    {usuario.name_user} - {usuario.rut}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="bg-input text-card-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary/70 w-full">
+                  <SelectValue placeholder="Seleccionar una categoría" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="repair">Reparación</SelectItem>
+                  <SelectItem value="maintenance">Mantenimiento</SelectItem>
+                  <SelectItem value="customization">Personalización</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <Label htmlFor="ingreso">Ingreso (CLP)</Label>
+              <Label htmlFor="ingreso">Precio (CLP)</Label>
               <Input
                 id="ingreso"
                 type="number"
-                value={nuevoServicio.ingreso}
+                value={nuevoServicio?.ingreso || ''}
                 onChange={(e) => setNuevoServicio({ ...nuevoServicio, ingreso: e.target.value })}
                 required
                 className="bg-input text-card-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary/70"
               />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="fecha">Fecha</Label>
-                <Input
-                  id="fecha"
-                  type="date"
-                  value={nuevoServicio.fecha}
-                  onChange={(e) => setNuevoServicio({ ...nuevoServicio, fecha: e.target.value })}
-                  required
-                  className="bg-input text-card-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary/70"
-                />
-              </div>
-              <div>
-                <Label htmlFor="hora">Hora</Label>
-                <Input
-                  id="hora"
-                  type="time"
-                  value={nuevoServicio.hora}
-                  onChange={(e) => setNuevoServicio({ ...nuevoServicio, hora: e.target.value })}
-                  required
-                  className="bg-input text-card-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary/70"
-                />
-              </div>
             </div>
           </fieldset>
 
