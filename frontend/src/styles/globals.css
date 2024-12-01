@@ -15,47 +15,45 @@
 
 @layer base {
   :root {
-    /* Modo claro (actualizado con cards azules y mejor contraste) */
     --background: 210 50% 98%;
     --foreground: 210 80% 15%;
-    --card: 210 70% 95%; /* Card color más azul */
+    --card: 210 70% 95%; 
     --card-foreground: 210 80% 20%;
-    --primary: 210 70% 40%;
+    --primary: 210 100% 50%;
     --primary-foreground: 0 0% 100%;
     --secondary: 25 100% 50%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 210 40% 90%;
+    --muted: 210 40% 96%;
     --muted-foreground: 210 40% 40%;
     --accent: 210 60% 50%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 100% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 210 40% 85%;
+    --border: 210 40% 90%;
     --input: 210 40% 96%;
-    --ring: 210 70% 40%;
+    --ring: 210 100% 50%;
     --radius: 0.5rem;
     --font-sans: 'Montserrat', sans-serif;
   }
 
   .dark {
-    /* Modo oscuro (ajustado para mantener consistencia) */
-    --background: 211 44% 8%;
-    --foreground: 220 8% 88%;
-    --card: 213 30% 20%; /* Card color más oscuro para modo oscuro */
-    --card-foreground: 220 8% 98%; /* Texto más claro para mejor contraste */
-    --primary: 210 25% 55%;
+    --background: 220 20% 10%;
+    --foreground: 220 20% 90%;
+    --card: 220 20% 15%;
+    --card-foreground: 220 20% 95%;
+    --primary: 210 90% 60%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 25 70% 45%;
+    --secondary: 25 90% 60%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 213 30% 20%;
-    --muted-foreground: 220 8% 70%;
-    --accent: 210 20% 40%;
-    --accent-foreground: 0 0% 100%;
+    --muted: 220 20% 20%;
+    --muted-foreground: 220 20% 70%;
+    --accent: 220 20% 20%;
+    --accent-foreground: 220 20% 95%;
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 210 15% 55%;
-    --input: 213 30% 15%;
-    --ring: 220 8% 88%;
+    --border: 220 20% 25%;
+    --input: 220 20% 20%;
+    --ring: 210 90% 60%;
   }
 }
 
