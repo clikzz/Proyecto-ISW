@@ -3,8 +3,8 @@ const db = require('../config/db');
 class Service {
   static async create(data) {
     const query = `
-      INSERT INTO service (name_service, description_service, price_service, date_service, user_rut)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO service (name_service, description_service, price_service, date_service, category, user_rut)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
     `;
     const values = [
@@ -12,6 +12,7 @@ class Service {
       data.description_service, 
       data.price_service, 
       data.date_service,
+      data.category,
       data.user_rut];
     const result = await db.query(query, values);
     return result.rows[0];
@@ -25,6 +26,7 @@ class Service {
         s.description_service,
         s.price_service,
         s.date_service,
+        s.category,
         s.user_rut,
         u.name_user AS employee_name,
         s.is_deleted
