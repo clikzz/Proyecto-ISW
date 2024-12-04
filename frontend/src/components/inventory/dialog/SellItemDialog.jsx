@@ -13,7 +13,6 @@ import { ShoppingCart } from 'lucide-react';
 import { recordTransaction } from '@/api/inventory';
 import { useAlert } from '@/context/alertContext';
 import { getInventoryItems } from '@/api/inventory';
-import { set } from 'date-fns';
 
 export default function SellItemDialog({ fetchSales }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -50,22 +49,25 @@ export default function SellItemDialog({ fetchSales }) {
       showAlert('Selecciona un producto válido y una cantidad mayor a 0', 'error');
       return;
     }
-
-    try {
-      await recordTransaction('venta', [
+  
+    const transaction = {
+      type: 'venta',
+      items: [
         {
           id_item: selectedItem.id_item,
           quantity,
           unit_price: selectedItem.selling_price,
         },
-      ], {
-        rut: '12345678-9',
-        type: 'venta',
+      ],
+      details: {
         amount: total,
-        payment_method: paymentMethod,
-        description: `Venta de ${selectedItem.name_item}`,
-      });
-
+        payment_method: paymentMethod.toLowerCase(),
+        description: `Venta de ${quantity} unidades de ${selectedItem.name_item}`,
+      },
+    };
+  
+    try {
+      await recordTransaction(transaction);
       showAlert('Venta registrada exitosamente', 'success');
       setIsDialogOpen(false);
       setSelectedItem(null);

@@ -7,7 +7,13 @@ class Inventory {
       VALUES ($1, $2, $3, NOW(), $4, $5)
       RETURNING id_transaction;
     `;
-    const values = [details.rut, details.type, details.amount, details.payment_method, details.description];
+    const values = [
+      details.rut,
+      details.type,
+      details.amount,
+      details.payment_method,
+      details.description
+    ];
     const result = await db.query(query, values);
     return result.rows[0].id_transaction;
   }
@@ -18,6 +24,18 @@ class Inventory {
       VALUES ($1, $2, $3, $4);
     `;
     await db.query(query, [transactionId, item.id_item, item.quantity, item.unit_price]);
+  }
+
+  static async validateStock(itemId, quantity) {
+    const query = `
+      SELECT stock FROM item
+      WHERE id_item = $1 AND is_deleted = FALSE;
+    `;
+    const result = await db.query(query, [itemId]);
+    if (result.rowCount === 0 || result.rows[0].stock < quantity) {
+      throw new Error(`Stock insuficiente para el ítem con ID ${itemId}`);
+    }
+    return true;
   }
 
   static async getPurchases() {
