@@ -1,4 +1,3 @@
-//api/transaction.js
 import axios from 'axios';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -7,7 +6,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token'); // Asumiendo que el token se almacena en localStorage
+  const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -16,47 +15,19 @@ api.interceptors.request.use((config) => {
 
 export const getAllTransactions = async () => {
   try {
-    console.log('Fetching transactions from:', `${API_URL}/transactions`);
     const response = await api.get('/');
-    console.log('Response:', response);
     return response.data;
   } catch (error) {
-    if (error.response) {
-      console.error('Error response:', error.response.data);
-      console.error('Error status:', error.response.status);
-      console.error('Error headers:', error.response.headers);
-      if (error.response.status === 404) {
-        console.error('Resource not found (404)');
-        return { message: 'Resource not found (404)' }; // Return a user-friendly message
-      }
-    } else if (error.request) {
-      console.error('Error request:', error.request);
-    } else {
-      console.error('Error message:', error.message);
-    }
-    console.error('Error config:', error.config);
-    throw error; // Re-throw the error to be handled by the calling function if needed
+    handleApiError(error);
   }
 };
 
 export const createTransaction = async (transactionData) => {
   try {
-    console.log("Enviando datos de transacción:", transactionData);
     const response = await api.post('/', transactionData);
     return response.data;
   } catch (error) {
-    if (error.response) {
-      console.error('Error en la respuesta:', error.response.data);
-      console.error('Estado del error:', error.response.status);
-      console.error('Cabeceras del error:', error.response.headers);
-      throw error.response.data; // Lanzar los datos del error para ser capturados en el componente
-    } else if (error.request) {
-      console.error('Error en la solicitud:', error.request);
-    } else {
-      console.error('Mensaje de error:', error.message);
-    }
-    console.error('Configuración del error:', error.config);
-    throw error;
+    handleApiError(error);
   }
 };
 
@@ -65,8 +36,7 @@ export const getTransactionById = async (id) => {
     const response = await api.get(`/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Error al obtener la transacción:', error);
-    throw error;
+    handleApiError(error);
   }
 };
 
@@ -75,8 +45,7 @@ export const updateTransaction = async (id, updateData) => {
     const response = await api.put(`/${id}`, updateData);
     return response.data;
   } catch (error) {
-    console.error('Error al actualizar la transacción:', error);
-    throw error;
+    handleApiError(error);
   }
 };
 
@@ -85,8 +54,7 @@ export const deleteTransaction = async (id) => {
     const response = await api.delete(`/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Error al eliminar la transacción:', error);
-    throw error;
+    handleApiError(error);
   }
 };
 
@@ -95,22 +63,26 @@ export const getTransactionsSummary = async () => {
     const response = await api.get('/summary');
     return response.data;
   } catch (error) {
-    if (error.response) {
-      console.error('Error response:', error.response.data);
-      console.error('Error status:', error.response.status);
-      console.error('Error headers:', error.response.headers);
-      if (error.response.status === 404) {
-        console.error('Resource not found (404)');
-        return { message: 'Resource not found (404)' };
-      }
-    } else if (error.request) {
-      console.error('Error request:', error.request);
-    } else {
-      console.error('Error message:', error.message);
-    }
-    console.error('Error config:', error.config);
-    throw error;
+    handleApiError(error);
   }
+};
+
+const handleApiError = (error) => {
+  if (error.response) {
+    console.error('Error response:', error.response.data);
+    console.error('Error status:', error.response.status);
+    console.error('Error headers:', error.response.headers);
+    if (error.response.status === 404) {
+      console.error('Resource not found (404)');
+      return { message: 'Resource not found (404)' };
+    }
+  } else if (error.request) {
+    console.error('Error request:', error.request);
+  } else {
+    console.error('Error message:', error.message);
+  }
+  console.error('Error config:', error.config);
+  throw error;
 };
 
 export default {
