@@ -6,14 +6,17 @@ import BalanceCards from '@/components/finance/BalanceCards';
 import TransactionSummary from '@/components/finance/TransactionSummary';
 import Charts from '@/components/finance/Charts';
 import NewTransactionForm from '@/components/finance/NewTransactionForm';
+import AllTransactions from '@/components/finance/AllTransactions';
 
-export default function BalanceFinanciero() {
+export default function Finanzas() {
   const [transactions, setTransactions] = useState([]);
   const [summary, setSummary] = useState({
     ingresos: 0,
     egresos: 0,
     balance: 0,
   });
+  const [isNewTransactionFormOpen, setIsNewTransactionFormOpen] = useState(false);
+  const [isAllTransactionsOpen, setIsAllTransactionsOpen] = useState(false);
 
   const fetchTransactions = async () => {
     try {
@@ -38,9 +41,10 @@ export default function BalanceFinanciero() {
     fetchSummary();
   }, []);
 
-  useEffect(() => {
+  const handleTransactionUpdated = () => {
+    fetchTransactions();
     fetchSummary();
-  }, [transactions]);
+  };
 
   return (
     <div className="container mx-auto flex flex-col gap-6 relative">
@@ -51,19 +55,35 @@ export default function BalanceFinanciero() {
           </h1>
           <p className="text-3xl font-semibold">Taller de Bicicletas</p>
         </div>
-        <NewTransactionForm
-          onTransactionAdded={() => {
-            fetchTransactions();
-            fetchSummary();
-          }}
-        />
+        <button
+          className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90"
+          onClick={() => setIsNewTransactionFormOpen(true)}
+        >
+          Agregar Movimiento
+        </button>
       </div>
 
       <BalanceCards transactions={transactions} />
       <div className="grid gap-6 md:grid-cols-2">
-        <TransactionSummary transactions={transactions} />
+        <TransactionSummary
+          transactions={transactions}
+          onTransactionUpdated={handleTransactionUpdated}
+        />
         <Charts summary={summary} transactions={transactions} />
       </div>
+
+      <NewTransactionForm
+        isOpen={isNewTransactionFormOpen}
+        onClose={() => setIsNewTransactionFormOpen(false)}
+        onTransactionAdded={handleTransactionUpdated}
+      />
+
+      <AllTransactions
+        isOpen={isAllTransactionsOpen}
+        onClose={() => setIsAllTransactionsOpen(false)}
+        transactions={transactions}
+        onTransactionUpdated={handleTransactionUpdated}
+      />
     </div>
   );
 }

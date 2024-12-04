@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { X } from 'lucide-react';
 import { motion } from "framer-motion";
+import { Edit, Trash2 } from 'lucide-react';
+import AllTransactions from './AllTransactions';
+import { deleteTransaction } from '@/api/transaction';
+import NewTransactionForm from './NewTransactionForm';
+import { useAlert } from '@context/alertContext';
 
 const formatoPesoChileno = (valor) => {
   return new Intl.NumberFormat('es-CL', {
@@ -11,8 +15,48 @@ const formatoPesoChileno = (valor) => {
   }).format(valor);
 };
 
-export default function TransactionSummary({ transactions }) {
+export default function TransactionSummary({ transactions, onTransactionUpdated }) {
   const [modalViewMoreOpen, setModalViewMoreOpen] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState(null);
+  const { showAlert } = useAlert();
+
+  const handleDelete = async (id, transaction_type) => {
+    console.log('Attempting to delete transaction:', { id, transaction_type });
+
+    if (transaction_type !== 'ingreso' && transaction_type !== 'egreso') {
+      showAlert('Solo se pueden eliminar transacciones de tipo ingreso o egreso, las compras/ventas o servicios deben tratarse en sus secciones correspondientes.', 'warning');
+      return;
+    }
+
+    if (window.confirm('¿Estás seguro de que quieres eliminar esta transacción?')) {
+      try {
+        await deleteTransaction(id);
+        onTransactionUpdated();
+        showAlert('Transacción eliminada con éxito', 'success');
+      } catch (error) {
+        console.error('Error al eliminar la transacción:', error);
+        showAlert('Error al eliminar la transacción', 'error');
+      }
+    }
+  };
+
+  const handleEdit = (transaction) => {
+    console.log('Attempting to edit transaction:', transaction);
+    if (transaction.transaction_type !== 'ingreso' && transaction.transaction_type !== 'egreso') {
+      showAlert('Solo se pueden modificar transacciones de tipo ingreso o egreso, las compras/ventas o servicios deben tratarse en sus secciones correspondientes.', 'warning');
+      return;
+    }
+    setEditingTransaction(transaction);
+  };
+
+  const getTransactionColor = (type) => {
+    if (['ingreso', 'venta', 'servicio'].includes(type)) {
+      return 'text-green-500';
+    } else if (['egreso', 'compra'].includes(type)) {
+      return 'text-red-500';
+    }
+    return 'text-gray-500'; // default color for unknown types
+  };
 
   return (
     <>
@@ -22,21 +66,30 @@ export default function TransactionSummary({ transactions }) {
           <div className="space-y-4">
             {transactions.slice(0, 4).map((t) => (
               <motion.div
-              key={t.id_transaction}
-              className="flex items-center justify-between rounded-lg p-3 bg-background hover:bg-accent transition-colors"
-              whileHover={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
+                key={t.id_transaction}
+                className="flex items-center justify-between rounded-lg p-3 bg-background hover:bg-accent transition-colors"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
                 <div>
                   <p className="font-medium">
-                    {t.transaction_type === 'ingreso' ? 'Ingreso' : 'Egreso'}: {t.description}
+                    {t.description}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {new Date(t.transaction_date).toLocaleDateString()} - {t.payment_method === 'efectivo' ? 'Efectivo' : 'Transferencia'}
+                    {new Date(t.transaction_date).toLocaleDateString()} - {t.transaction_type}
                   </p>
                 </div>
-                <div className={`text-lg font-semibold ${t.transaction_type === 'ingreso' ? 'text-green-500' : 'text-red-500'}`}>
-                  {t.transaction_type === 'ingreso' ? '+' : '-'}{formatoPesoChileno(t.amount)}
+                <div className="flex items-center gap-4">
+                  <div className={`text-lg font-semibold ${getTransactionColor(t.transaction_type)}`}>
+                    {['ingreso', 'venta', 'servicio'].includes(t.transaction_type) ? '+' : '-'}
+                    {formatoPesoChileno(t.amount)}
+                  </div>
+                  <button onClick={() => handleEdit(t)} className="text-blue-500 hover:text-blue-700">
+                    <Edit className="h-5 w-5" />
+                  </button>
+                  <button onClick={() => handleDelete(t.id_transaction, t.transaction_type)} className="text-red-500 hover:text-red-700">
+                    <Trash2 className="h-5 w-5" />
+                  </button>
                 </div>
               </motion.div>
             ))}
@@ -49,54 +102,20 @@ export default function TransactionSummary({ transactions }) {
         </div>
       </Card>
 
-      {modalViewMoreOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-3xl">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Todas las Transacciones</h3>
-              <button
-                onClick={() => setModalViewMoreOpen(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            <div className="space-y-4 max-h-[35rem] overflow-y-auto">
-              {transactions.map((t) => (
-                <div
-                  key={t.id_transaction}
-                  className="flex items-center justify-between rounded-lg p-3 bg-background hover:bg-accent transition-colors"
-                >
-                  <div>
-                    <p className="font-medium">
-                      {t.transaction_type === 'ingreso' ? 'Ingreso' : 'Egreso'}:{' '}
-                      {t.description}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(t.transaction_date).toLocaleDateString()} -{' '}
-                      {t.payment_method === 'efectivo'
-                        ? 'Efectivo'
-                        : 'Transferencia'}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      RUT: {t.rut}
-                    </p>
-                  </div>
-                  <div
-                    className={`mr-8 text-lg font-semibold ${
-                      t.transaction_type === 'ingreso'
-                        ? 'text-green-500'
-                        : 'text-red-500'
-                    }`}
-                  >
-                    {t.transaction_type === 'ingreso' ? '+' : '-'}
-                    {formatoPesoChileno(t.amount)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+      <AllTransactions
+        isOpen={modalViewMoreOpen}
+        onClose={() => setModalViewMoreOpen(false)}
+        transactions={transactions}
+        onTransactionUpdated={onTransactionUpdated}
+      />
+
+      {editingTransaction && (
+        <NewTransactionForm
+          isOpen={true}
+          onClose={() => setEditingTransaction(null)}
+          onTransactionAdded={onTransactionUpdated}
+          editingTransaction={editingTransaction}
+        />
       )}
     </>
   );

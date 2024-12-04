@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 import { getTransactionsSummary } from '@/api/transaction';
+import { getSales } from '@/api/inventory';
+import { getServices } from '@/api/service';
 
 const formatoPesoChileno = (valor) => {
   return new Intl.NumberFormat('es-CL', {
@@ -12,14 +14,31 @@ const formatoPesoChileno = (valor) => {
 };
 
 export default function BalanceCards({ transactions }) {
-  const [summary, setSummary] = useState({ ingresos: 0, egresos: 0, balance: 0 });
+  const [summary, setSummary] = useState({ ingresos: 0, egresos: 0, ventas: 0, compras: 0, servicios: 0 });
 
   const fetchSummary = async () => {
     try {
-      const data = await getTransactionsSummary();
-      setSummary(data);
+      const [transactionData, salesData, servicesData] = await Promise.all([
+        getTransactionsSummary(),
+        getSales(),
+        getServices()
+      ]);
+
+      const ventasTotal = salesData.reduce((total, sale) => total + Number(sale.amount || 0), 0);
+      const comprasTotal = salesData.filter(sale => sale.type === 'compra').reduce((total, purchase) => total + Number(purchase.amount || 0), 0);
+      const serviciosTotal = servicesData.reduce((total, service) => total + Number(service.price_service || 0), 0);
+
+      const ingresosTotales = Number(transactionData.ingresos || 0) + ventasTotal + serviciosTotal;
+      const egresosTotales = Number(transactionData.egresos || 0) + comprasTotal;
+
+      setSummary({
+        ingresos: ingresosTotales,
+        egresos: egresosTotales,
+        balance: ingresosTotales - egresosTotales
+      });
     } catch (error) {
       console.error('Error al obtener el resumen:', error);
+      setSummary({ ingresos: 0, egresos: 0, balance: 0 });
     }
   };
 
