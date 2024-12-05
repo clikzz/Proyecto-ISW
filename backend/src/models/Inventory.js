@@ -60,7 +60,8 @@ class Inventory {
         ti.quantity_item, 
         ti.unit_price, 
         ti.id_transaction_item,
-        s.name_supplier
+        s.name_supplier,
+        i.name_item
       FROM 
         transaction t
       JOIN 
@@ -69,6 +70,8 @@ class Inventory {
         item_supplier isup ON ti.id_item = isup.id_item
       LEFT JOIN 
         supplier s ON isup.rut_supplier = s.rut_supplier
+      LEFT JOIN
+        item i ON ti.id_item = i.id_item
       WHERE 
         t.transaction_type = 'compra'
       ORDER BY 
