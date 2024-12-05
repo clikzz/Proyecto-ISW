@@ -209,7 +209,19 @@ const InventoryTable = () => {
                     <TableCell>{item.name_item}</TableCell>
                     <TableCell>{item.category}</TableCell>
                     <TableCell>{item.selling_price}</TableCell>
-                    <TableCell>{item.name_supplier || 'Desconocido'}</TableCell>
+                    <TableCell>
+                      {item.suppliers && item.suppliers.length > 0 ? (
+                        <>
+                          {item.suppliers[0] || 'Desconocido'}
+                          {item.suppliers.length > 1 && (
+                            <span className="inline-block ml-1.5 px-2 py-1 bg-blue-100 text-blue-400 text-xs font-semibold rounded">
+                              +{item.suppliers.length - 1}
+                            </span>
+                          )}
+                        </>
+                        )
+                        : 'Desconocido'}
+                    </TableCell>
                     <TableCell>{item.stock}</TableCell>
                     <TableCell>{formatDateTime(item.created_at)}</TableCell>
                     <TableCell>

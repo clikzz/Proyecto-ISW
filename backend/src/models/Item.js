@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const ItemSupplier = require('./ItemSupplier');
 
 class Item {
   static async create(data) {
@@ -12,23 +13,42 @@ class Item {
       data.stock, data.selling_price,
     ];
     const result = await db.query(query, values);
+
+    if (data.rut_supplier) {
+      await ItemSupplier.addItemSupplier({
+        id_item: result.rows[0].id_item,
+        rut_supplier: data.rut_supplier,
+        purchase_price: data.purchase_price || 0,
+        purchase_date: new Date(),
+      });
+    }
+
     return result.rows[0];
   }
 
   static async findAll() {
     const query = `
       SELECT 
-        i.*, 
-        s.rut_supplier, 
-        s.name_supplier
+        i.id_item,
+        i.name_item,
+        i.description,
+        i.category,
+        i.stock,
+        i.selling_price,
+        i.created_at,
+        i.updated_at,
+        i.is_deleted,
+        ARRAY_AGG(s.name_supplier) AS suppliers
       FROM 
         item i
       LEFT JOIN 
-        supplier s 
-      ON 
-        i.rut_supplier = s.rut_supplier
+        item_supplier isup ON i.id_item = isup.id_item
+      LEFT JOIN 
+        supplier s ON isup.rut_supplier = s.rut_supplier
       WHERE 
         i.is_deleted = FALSE
+      GROUP BY 
+        i.id_item
     `;
     const result = await db.query(query);
     return result.rows;
@@ -38,16 +58,24 @@ class Item {
     const query = `
       SELECT 
         i.*, 
-        s.name_supplier, 
-        s.rut_supplier 
+        JSON_AGG(
+          JSON_BUILD_OBJECT(
+            'rut_supplier', s.rut_supplier,
+            'name_supplier', s.name_supplier,
+            'purchase_price', isup.purchase_price,
+            'purchase_date', isup.purchase_date
+          )
+        ) AS suppliers
       FROM 
         item i
       LEFT JOIN 
-        supplier s 
-      ON 
-        i.rut_supplier = s.rut_supplier
+        item_supplier isup ON i.id_item = isup.id_item
+      LEFT JOIN 
+        supplier s ON isup.rut_supplier = s.rut_supplier
       WHERE 
-        i.id_item = $1 AND i.is_deleted = FALSE;
+        i.id_item = $1 AND i.is_deleted = FALSE
+      GROUP BY 
+        i.id_item;
     `;
     const result = await db.query(query, [id]);
     return result.rows[0];
