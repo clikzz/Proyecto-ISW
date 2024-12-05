@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const ItemSupplier = require('./ItemSupplier');
 
 class Inventory {
   static async createTransaction(details) {
@@ -24,6 +25,13 @@ class Inventory {
       VALUES ($1, $2, $3, $4);
     `;
     await db.query(query, [transactionId, item.id_item, item.quantity, item.unit_price]);
+
+    await ItemSupplier.addItemSupplier({
+      id_item: item.id_item,
+      rut_supplier: item.rut_supplier,
+      purchase_price: item.unit_price,
+      purchase_date: new Date(),
+    });
   }
 
   static async validateStock(itemId, quantity) {
@@ -52,17 +60,15 @@ class Inventory {
         ti.quantity_item, 
         ti.unit_price, 
         ti.id_transaction_item,
-        i.rut_supplier,
-        s.name_supplier,
-        i.name_item
+        s.name_supplier
       FROM 
         transaction t
       JOIN 
         transaction_item ti ON t.id_transaction = ti.id_transaction
       JOIN 
-        item i ON ti.id_item = i.id_item
-      LEFT JOIN
-        supplier s ON i.rut_supplier = s.rut_supplier
+        item_supplier isup ON ti.id_item = isup.id_item
+      LEFT JOIN 
+        supplier s ON isup.rut_supplier = s.rut_supplier
       WHERE 
         t.transaction_type = 'compra'
       ORDER BY 

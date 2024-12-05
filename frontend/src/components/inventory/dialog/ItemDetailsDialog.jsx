@@ -36,7 +36,17 @@ const ItemDetailsDialog = ({ isOpen, onClose, item }) => {
             <strong>Descripción:</strong> {item.description || ''}
           </p>
           <p>
-            <strong>Proveedor:</strong> {item.name_supplier || 'Desconocido'}
+            <strong>Proveedores:</strong>{' '}
+            {Array.isArray(item.suppliers) && item.suppliers.length > 0 ? (
+              item.suppliers.map((supplier, index) => (
+                <span key={index}>
+                  {supplier || 'Desconocido'}
+                  {index < item.suppliers.length - 1 && ', '}
+                </span>
+              ))
+            ) : (
+              'Desconocido'
+            )}
           </p>
           <p>
             <strong>Registrado:</strong> {formatDateTime(item.created_at)}

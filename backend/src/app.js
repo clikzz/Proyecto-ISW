@@ -9,6 +9,7 @@ const transactionServiceRoutes = require('./routes/transactionService.routes');
 const supplierRoutes = require('./routes/supplier.routes');
 const inventoryRoutes = require('./routes/inventory.routes');
 const userRoutes = require('./routes/user.routes');
+const itemSupplierRoutes = require('./routes/itemSupplier.routes');
 const pool = require('./config/db');
 require('dotenv').config();
 
@@ -33,6 +34,7 @@ app.use('/api/suppliers', supplierRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/transactions', transactionServiceRoutes);
+app.use('/api/itemsupp', itemSupplierRoutes);
 
 const HOST = process.env.HOST || '0.0.0.0';
 const PORT = process.env.PORT || 80;
