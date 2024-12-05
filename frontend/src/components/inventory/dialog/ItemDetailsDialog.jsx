@@ -33,13 +33,10 @@ const ItemDetailsDialog = ({ isOpen, onClose, item }) => {
             <strong>Precio Venta:</strong> {item.selling_price}
           </p>
           <p>
-            <strong>Precio Compra:</strong> {item.cost_price}
+            <strong>Descripción:</strong> {item.description || ''}
           </p>
           <p>
-            <strong>Descripción:</strong> {item.description || 'N/A'}
-          </p>
-          <p>
-            <strong>Proveedor:</strong> {item.rut_supplier || 'N/A'}
+            <strong>Proveedor:</strong> {item.name_supplier || 'Desconocido'}
           </p>
           <p>
             <strong>Registrado:</strong> {formatDateTime(item.created_at)}

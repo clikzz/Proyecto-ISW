@@ -34,13 +34,6 @@ const createItem = Joi.object({
     'number.base': 'El stock debe ser un número entero.',
     'number.min': 'El stock no puede ser negativo.',
   }),
-  cost_price: Joi.number()
-  .positive()
-  .required()
-  .messages({
-    'number.base': 'El precio de costo debe ser un número.',
-    'number.positive': 'El precio de costo debe ser positivo.',
-  }),
   selling_price: Joi.number()
   .positive()
   .required()
@@ -81,13 +74,6 @@ const updateItem = Joi.object({
     .messages({
       'number.base': 'El stock debe ser un número entero.',
       'number.min': 'El stock no puede ser negativo.',
-    }),
-  cost_price: Joi.number()
-    .positive()
-    .optional()
-    .messages({
-      'number.base': 'El precio de costo debe ser un número.',
-      'number.positive': 'El precio de costo debe ser positivo.',
     }),
   selling_price: Joi.number()
     .positive()

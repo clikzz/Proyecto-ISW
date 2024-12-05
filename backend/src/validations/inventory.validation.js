@@ -13,10 +13,31 @@ const inventorySchema = Joi.object({
       Joi.object({
         id_item: Joi.number()
           .integer()
-          .required()
           .messages({
             'number.base': 'El ID del ítem debe ser un número.',
-            'any.required': 'El ID del ítem es obligatorio.',
+          }),
+        name_item: Joi.string()
+          .when('id_item', {
+            is: Joi.exist(),
+            then: Joi.forbidden(),
+            otherwise: Joi.required(),
+          })
+          .messages({
+            'any.required': 'El nombre del ítem es obligatorio para nuevos productos.',
+          }),
+        category: Joi.string()
+          .when('id_item', {
+            is: Joi.exist(),
+            then: Joi.forbidden(),
+            otherwise: Joi.required(),
+          })
+          .messages({
+            'any.required': 'La categoría es obligatoria para nuevos productos.',
+          }),
+        description: Joi.string()
+          .allow('')
+          .messages({
+            'string.base': 'La descripción debe ser texto.',
           }),
         quantity: Joi.number()
           .integer()
@@ -34,6 +55,25 @@ const inventorySchema = Joi.object({
             'number.base': 'El precio unitario debe ser un número.',
             'number.positive': 'El precio unitario debe ser mayor a 0.',
             'any.required': 'El precio unitario es obligatorio.',
+          }),
+        selling_price: Joi.number()
+          .positive()
+          .when('id_item', {
+            is: Joi.exist(),
+            then: Joi.forbidden(),
+            otherwise: Joi.required(),
+          })
+          .messages({
+            'any.required': 'El precio de venta es obligatorio para nuevos productos.',
+          }),
+        rut_supplier: Joi.string()
+          .when('id_item', {
+            is: Joi.exist(),
+            then: Joi.forbidden(),
+            otherwise: Joi.required(),
+          })
+          .messages({
+            'any.required': 'El RUT del proveedor es obligatorio para nuevos productos.',
           }),
       })
     )

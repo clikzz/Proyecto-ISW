@@ -40,34 +40,34 @@ class Inventory {
 
   static async getPurchases() {
     const query = `
-    SELECT
-      t.id_transaction, 
-      t.rut, 
-      t.transaction_type, 
-      t.amount, 
-      t.transaction_date, 
-      t.payment_method, 
-      t.description,
-      ti.id_item, 
-      ti.quantity_item, 
-      ti.unit_price, 
-      ti.id_transaction_item,
-      s.rut_supplier,
-      s.name_supplier,
-      i.name_item
-    FROM 
-      transaction t
-    JOIN 
-      transaction_item ti ON t.id_transaction = ti.id_transaction
-    JOIN 
-      item i ON ti.id_item = i.id_item
-    JOIN
-      supplier s ON i.rut_supplier = s.rut_supplier
-    WHERE 
-      t.transaction_type = 'compra'
-    ORDER BY 
-      t.transaction_date DESC;
-  `;
+      SELECT
+        t.id_transaction, 
+        t.rut, 
+        t.transaction_type, 
+        t.amount, 
+        t.transaction_date, 
+        t.payment_method, 
+        COALESCE(t.description, '') AS description,
+        ti.id_item, 
+        ti.quantity_item, 
+        ti.unit_price, 
+        ti.id_transaction_item,
+        i.rut_supplier,
+        s.name_supplier,
+        i.name_item
+      FROM 
+        transaction t
+      JOIN 
+        transaction_item ti ON t.id_transaction = ti.id_transaction
+      JOIN 
+        item i ON ti.id_item = i.id_item
+      LEFT JOIN
+        supplier s ON i.rut_supplier = s.rut_supplier
+      WHERE 
+        t.transaction_type = 'compra'
+      ORDER BY 
+        t.transaction_date DESC;
+    `;
 
     const result = await db.query(query);
     return result.rows;

@@ -46,7 +46,6 @@ exports.updateItem = async (req, res) => {
       description: req.body.description || currentItem.description,
       category: req.body.category || currentItem.category,
       stock: req.body.stock !== undefined ? req.body.stock : currentItem.stock,
-      cost_price: req.body.cost_price || currentItem.cost_price,
       selling_price: req.body.selling_price || currentItem.selling_price,
     };
 

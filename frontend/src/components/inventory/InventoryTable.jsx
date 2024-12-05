@@ -171,10 +171,10 @@ const InventoryTable = () => {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('cost_price')}
+                      onClick={() => handleSort('rut_supplier')}
                       className="text-foreground"
                     >
-                      <strong>Precio Compra</strong>
+                      <strong>Proveedor</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
@@ -209,7 +209,7 @@ const InventoryTable = () => {
                     <TableCell>{item.name_item}</TableCell>
                     <TableCell>{item.category}</TableCell>
                     <TableCell>{item.selling_price}</TableCell>
-                    <TableCell>{item.cost_price}</TableCell>
+                    <TableCell>{item.name_supplier || 'Desconocido'}</TableCell>
                     <TableCell>{item.stock}</TableCell>
                     <TableCell>{formatDateTime(item.created_at)}</TableCell>
                     <TableCell>
