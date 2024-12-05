@@ -8,6 +8,23 @@ exports.createTransaction = async (req, res) => {
       return res.status(400).json({ message: 'Tipo de transacción inválido' });
     }
 
+    for (const item of items) {
+      if (!item.id_item) {
+        if (
+          !item.name_item ||
+          !item.category ||
+          !item.description ||
+          !item.unit_price ||
+          !item.selling_price ||
+          !item.rut_supplier
+        ) {
+          return res.status(400).json({
+            message: 'Faltan datos para crear un nuevo producto',
+          });
+        }
+      }
+    }
+
     const transactionDetails = {
       ...details,
       rut: req.user.rut,

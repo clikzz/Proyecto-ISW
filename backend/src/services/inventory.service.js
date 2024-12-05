@@ -11,6 +11,22 @@ const createTransaction = async (type, items, details) => {
     if (type === 'venta') {
       await Inventory.validateStock(item.id_item, item.quantity);
       await Item.updateStock(item.id_item, item.quantity, 'subtract');
+    } else if (type === 'compra') {
+      let existingItem = await Item.findById(item.id_item);
+
+      if (existingItem) {
+        await Item.updateStock(item.id_item, item.quantity, 'add');
+      } else {
+        const newItem = await Item.create({
+          rut_supplier: item.rut_supplier,
+          name_item: item.name_item,
+          description: item.description || 'Ítem creado mediante compra',
+          category: item.category || 'General',
+          stock: item.quantity,
+          selling_price: item.selling_price || 0,
+        });
+        item.id_item = newItem.id_item;
+      }
     }
 
     await Inventory.createTransactionDetails(transactionId, {
