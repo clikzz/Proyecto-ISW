@@ -1,76 +1,124 @@
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Wrench } from 'lucide-react';
+import { createService } from '@/api/service';
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from '@/components/ui/select';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 
-export default function ServicioDialog({ nuevoServicio, setNuevoServicio, handleSubmit }) {
+export default function AddServiceDialog({ onAddService }) {
+  const [formData, setFormData] = useState({
+    name_service: '',
+    description_service: '',
+    price_service: '',
+    category: '',
+    payment_method_service: '',
+  });
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const newService = await createService(formData);
+      setFormData({
+        name_service: '',
+        description_service: '',
+        price_service: '',
+        category: '',
+        payment_method_service: '',
+      });
+      onAddService(newService);
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Error al agregar servicio:', error);
+    }
+  };
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition">
+        <Button className="flex items-center">
+          <Wrench className="mr-2 h-4 w-4" />
           Añadir Servicio
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-card text-card-foreground shadow-lg rounded-lg outline-none">
+      <DialogContent className="border-none text-foreground">
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">Añadir Nuevo Servicio</DialogTitle>
+          <DialogTitle>Agregar Nuevo Servicio</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <fieldset className="space-y-4">
-            <div>
-              <Label htmlFor="nombre">Nombre del Servicio</Label>
-              <Input
-                id="nombre"
-                value={nuevoServicio?.nombre || ''}
-                onChange={(e) => setNuevoServicio({ ...nuevoServicio, nombre: e.target.value })}
-                required
-                className="bg-input text-card-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary/70"
-              />
-            </div>
-            <div>
-              <Label htmlFor="descripcion">Descripción</Label>
-              <Input
-                id="descripcion"
-                value={nuevoServicio?.descripcion || ''} 
-                onChange={(e) => setNuevoServicio({ ...nuevoServicio, descripcion: e.target.value })}
-                required
-                className="bg-input text-card-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary/70"
-              />
-            </div>
-            <div>
-              <Label htmlFor="categoria">Categoría</Label>
-              <Select
-                value={nuevoServicio?.nombre || ''}
-                onValueChange={(value) => setNuevoServicio({ ...nuevoServicio, categoria: value })}
-              >
-                <SelectTrigger className="bg-input text-card-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary/70 w-full">
-                  <SelectValue placeholder="Seleccionar una categoría" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="repair">Reparación</SelectItem>
-                  <SelectItem value="maintenance">Mantenimiento</SelectItem>
-                  <SelectItem value="customization">Personalización</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="ingreso">Precio (CLP)</Label>
-              <Input
-                id="ingreso"
-                type="number"
-                value={nuevoServicio?.ingreso || ''}
-                onChange={(e) => setNuevoServicio({ ...nuevoServicio, ingreso: e.target.value })}
-                required
-                className="bg-input text-card-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary/70"
-              />
-            </div>
-          </fieldset>
+          <div>
+            <Label htmlFor="name_service">Nombre</Label>
+            <Input
+              id="name_service"
+              value={formData.name_service}
+              onChange={(e) => setFormData({ ...formData, name_service: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="description_service">Descripción</Label>
+            <Input
+              id="description_service"
+              value={formData.description_service}
+              onChange={(e) => setFormData({ ...formData, description_service: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="category">Categoría</Label>
+            <Select
+              value={formData.category}
+              onValueChange={(value) => setFormData({ ...formData, category: value.toLowerCase() })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar categoría" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="reparación">Reparación</SelectItem>
+                <SelectItem value="mantenimiento">Mantenimiento</SelectItem>
+                <SelectItem value="personalización">Personalización</SelectItem>
+                <SelectItem value="otro">Otro</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="price_service">Precio</Label>
+            <Input
+              id="price_service"
+              type="number"
+              value={formData.price_service}
+              onChange={(e) => setFormData({ ...formData, price_service: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="payment_method_service">Método de Pago</Label>
+            <Select
+              value={formData.payment_method_service}
+              onValueChange={(value) => setFormData({ ...formData, payment_method_service: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar método de pago" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="efectivo">Efectivo</SelectItem>
+                <SelectItem value="tarjeta">Tarjeta</SelectItem>
+                <SelectItem value="transferencia">Transferencia</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-          {/* Botón de acción */}
-          <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition">
-            Guardar Servicio
-          </Button>
+          {/* Botón Guardar */}
+          <Button type="submit">Guardar</Button>
         </form>
       </DialogContent>
     </Dialog>

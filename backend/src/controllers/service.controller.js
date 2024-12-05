@@ -11,7 +11,7 @@ exports.createService = async (req, res) => {
       return res.status(400).json({ message: error.details[0].message });
     }
 
-    const validCategories = ['repair', 'maintenance', 'customization'];
+    const validCategories = ['reparación', 'mantenimiento', 'personalización', 'otro'];
     if (!validCategories.includes(req.body.category)) {
       console.error('Categoría no válida:', req.body.category);
       return res.status(400).json({ message: `La categoría debe ser una de las siguientes: ${validCategories.join(', ')}` });
