@@ -1,14 +1,14 @@
 const Service = require('../models/Service');
 
 const createService = async (data) => {
-  if (!['reparación', 'mantención', 'personalización'].includes(data.category)) {
+  if (!['reparación', 'mantenimiento', 'personalización', 'otro'].includes(data.category)) {
     throw new Error('La categoría proporcionada no es válida.');
   }
   return await Service.create(data);
 };
 
 const getAllServices = async (category) => {
-  if (category && !['reparación', 'mantención', 'personalización'].includes(category)) {
+  if (category && !['reparación', 'mantenimiento', 'personalización', 'otro'].includes(category)) {
     throw new Error('La categoría proporcionada no es válida.');
   }
   return category
