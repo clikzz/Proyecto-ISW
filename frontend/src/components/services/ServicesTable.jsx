@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import AddServiceDialog from '@/components/services/ServicesDialog';
 import { getServices, deleteService } from '@/api/service';
 import { capitalize } from '@/helpers/capitalize';
+import ExportButtons from '@/components/services/ExportButtons';
 
 export default function ServicesTable() {
   const [services, setServices] = useState([]);
@@ -99,7 +100,7 @@ export default function ServicesTable() {
             </SelectContent>
           </Select>
         </div>
-        <AddServiceDialog onAddService={handleAddService} />
+        <ExportButtons servicios={filteredServices} />
       </div>
 
       {/* Tabla de servicios */}
