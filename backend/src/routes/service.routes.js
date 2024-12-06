@@ -18,7 +18,7 @@ router.post(
 
 
 router.get(
-    '/all',
+    '/all:category?',
     authorizationMiddleware(['admin', 'employee']),
     serviceController.getServices
 );

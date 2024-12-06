@@ -35,11 +35,11 @@ const PurchasesTable = () => {
 
   useEffect(() => {
     const lowercasedSearch = search.toLowerCase();
-    setFilteredPurchases(
-      purchases.filter((purchase) =>
-        purchase.description && purchase.description.toLowerCase().includes(lowercasedSearch)
-      )
-    );
+    const filtered = purchases.filter((purchase) => {
+      const description = purchase.name_item || '';
+      return description.toLowerCase().includes(lowercasedSearch);
+    });
+    setFilteredPurchases(filtered);
   }, [search, purchases]);
 
   const handleSort = (key) => {
@@ -70,7 +70,7 @@ const PurchasesTable = () => {
   }, [filteredPurchases, sortConfig]);
 
   return (
-    <div className="container mx-auto py-5">
+    <div className="container mx-auto py-4">
       <div className="flex items-center mb-4">
         <h2 className="text-2xl font-bold mr-3">Compras</h2>
       </div>
@@ -80,7 +80,7 @@ const PurchasesTable = () => {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por descripción..."
+            placeholder="Buscar por producto..."
             className="max-w-full"
           />
           <Search className="ml-2 h-5 w-5 text-gray-500" />
@@ -166,7 +166,7 @@ const PurchasesTable = () => {
                     <TableCell>{purchase.quantity_item}</TableCell>
                     <TableCell>{purchase.amount}</TableCell>
                     <TableCell>{capitalize(purchase.payment_method)}</TableCell>
-                    <TableCell>{purchase.name_supplier}</TableCell>
+                    <TableCell>{purchase.name_supplier || 'Desconocido'}</TableCell>
                     <TableCell>{formatDateTime(purchase.transaction_date)}</TableCell>
                     <TableCell>
                       <Button className="bg-blue-500 text-white mr-2">

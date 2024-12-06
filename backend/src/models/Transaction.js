@@ -25,6 +25,47 @@ class Transaction {
     return result.rows[0];
   }
 
+  static async getById(id_transaction) {
+    const query = 'SELECT * FROM transaction WHERE id_transaction = ?';
+    const [rows] = await pool.execute(query, [id_transaction]);
+    return rows[0];
+  }
+
+  static async update(id_transaction, transactionData) {
+    const query = 'UPDATE transaction SET transaction_type = ?, amount = ?, transaction_date = ?, payment_method = ?, description = ? WHERE id_transaction = ?';
+    const [result] = await pool.execute(query, [
+      transactionData.transaction_type,
+      transactionData.amount,
+      transactionData.transaction_date,
+      transactionData.payment_method,
+      transactionData.description,
+      id_transaction,
+    ]);
+    return result;
+  }
+
+  static async update(id_transaction, transactionData) {
+    const { transaction_type, amount, payment_method, description } = transactionData;
+    const query = `
+      UPDATE transaction
+      SET transaction_type = $1, amount = $2, payment_method = $3, description = $4
+      WHERE id_transaction = $5
+      RETURNING *
+    `;
+    const values = [transaction_type, amount, payment_method, description, id_transaction];
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  }
+
+  static async delete(id_transaction) {
+    const query = `
+      DELETE FROM transaction
+      WHERE id_transaction = $1 AND (transaction_type = 'ingreso' OR transaction_type = 'egreso')
+    `;
+    const result = await pool.query(query, [id_transaction]);
+    return result;
+  }
+
   static async getSummary() {
     const query = `
       SELECT

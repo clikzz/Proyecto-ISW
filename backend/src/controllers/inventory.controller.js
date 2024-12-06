@@ -4,10 +4,37 @@ exports.createTransaction = async (req, res) => {
   const { type, items, details } = req.body;
 
   try {
-    const transactionId = await inventoryService.createTransaction(type, items, details);
-    res.status(201).json({ message: 'Transacción creada exitosamente', transactionId });
+    if (type !== 'venta' && type !== 'compra') {
+      return res.status(400).json({ message: 'Tipo de transacción inválido' });
+    }
+
+    for (const item of items) {
+      if (!item.id_item) {
+        if (
+          !item.name_item ||
+          !item.category ||
+          !item.description ||
+          !item.unit_price ||
+          !item.selling_price ||
+          !item.rut_supplier
+        ) {
+          return res.status(400).json({
+            message: 'Faltan datos para crear un nuevo producto',
+          });
+        }
+      }
+    }
+
+    const transactionDetails = {
+      ...details,
+      rut: req.user.rut,
+      type,
+    };
+
+    const transactionId = await inventoryService.createTransaction(type, items, transactionDetails);
+    res.status(201).json({ message: 'Transacción registrada exitosamente', transactionId });
   } catch (error) {
-    res.status(500).json({ message: 'Error al crear la transacción', error: error.message });
+    res.status(500).json({ message: 'Error al registrar la transacción', error: error.message });
   }
 };
 

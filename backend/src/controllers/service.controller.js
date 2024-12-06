@@ -7,8 +7,14 @@ exports.createService = async (req, res) => {
 
     const { error } = createServiceSchema.validate(req.body);
     if (error) {
-      console.error('Error de validación:', error.details[0].message); 
+      console.error('Error de validación:', error.details[0].message);
       return res.status(400).json({ message: error.details[0].message });
+    }
+
+    const validCategories = ['reparación', 'mantenimiento', 'personalización', 'otro'];
+    if (!validCategories.includes(req.body.category)) {
+      console.error('Categoría no válida:', req.body.category);
+      return res.status(400).json({ message: `La categoría debe ser una de las siguientes: ${validCategories.join(', ')}` });
     }
 
     const newService = await serviceService.createService(req.body);
@@ -21,9 +27,11 @@ exports.createService = async (req, res) => {
 
 exports.getServices = async (req, res) => {
   try {
-    const services = await serviceService.getAllServices();
-    res.json(services);
+    const { category } = req.params; 
+    const services = await serviceService.getAllServices(category);
+    res.status(200).json(services);
   } catch (err) {
+    console.error('Error al obtener los servicios:', err.message);
     res.status(500).json({ message: 'Error al obtener los servicios', error: err.message });
   }
 };
