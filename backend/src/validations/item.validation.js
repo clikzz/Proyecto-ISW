@@ -1,5 +1,17 @@
 const Joi = require('joi');
 
+const allowedCategories = [
+  'accesorios',
+  'bicicletas',
+  'componentes',
+  'equipamiento',
+  'electrónica',
+  'herramientas',
+  'limpieza',
+  'repuestos',
+  'otros',
+]
+
 const createItem = Joi.object({
   rut_supplier: Joi.string()
     .max(12)
@@ -21,11 +33,11 @@ const createItem = Joi.object({
     'string.base': 'La descripción debe ser de tipo texto.',
   }),
   category: Joi.string()
-  .max(50)
+  .valid(...allowedCategories)
   .required()
   .messages({
-    'string.empty': 'La categoría no puede estar vacía.',
-    'string.max': 'La categoría no puede exceder los 50 caracteres.',
+    'any.only': 'La categoría no es válida. Debe ser una de las siguientes: ' + allowedCategories.join(', ') + '.',
+    'any.required': 'La categoría es obligatoria.',
   }),
   stock: Joi.number().integer()
   .min(0)

@@ -6,13 +6,14 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { formatDateTime } from '@/helpers/dates';
+import { capitalize } from '@/helpers/capitalize';
 
 const ItemDetailsDialog = ({ isOpen, onClose, item }) => {
   if (!item) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <DialogContent className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <DialogHeader className="flex justify-between items-center">
           <DialogTitle className="text-xl font-bold text-gray-800">
             Detalles del Producto
@@ -25,13 +26,13 @@ const ItemDetailsDialog = ({ isOpen, onClose, item }) => {
               <label className="block text-sm font-semibold text-gray-700">
                 Nombre
               </label>
-              <p className="p-2 bg-gray-100 rounded-md">{item.name_item}</p>
+              <p className="p-2 bg-gray-100 rounded-md">{capitalize(item.name_item)}</p>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700">
                 Categoría
               </label>
-              <p className="p-2 bg-gray-100 rounded-md">{item.category}</p>
+              <p className="p-2 bg-gray-100 rounded-md">{capitalize(item.category)}</p>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700">

@@ -22,7 +22,6 @@ const PurchasesTable = () => {
   const fetchPurchases = async () => {
     try {
       const data = await getPurchases();
-      console.log('Compras actualizadas: ', data);
       setPurchases(data);
       setFilteredPurchases(data);
     } catch (error) {
@@ -40,7 +39,6 @@ const PurchasesTable = () => {
       const description = purchase.name_item || '';
       return description.toLowerCase().includes(lowercasedSearch);
     });
-    console.log('Compras después del filtro:', filtered);
     setFilteredPurchases(filtered);
   }, [search, purchases]);
 
@@ -68,12 +66,11 @@ const PurchasesTable = () => {
         return 0;
       });
     }
-    console.log('Compras ordenadas para renderizar:', sortablePurchases);
     return sortablePurchases;
   }, [filteredPurchases, sortConfig]);
 
   return (
-    <div className="container mx-auto py-5">
+    <div className="container mx-auto py-4">
       <div className="flex items-center mb-4">
         <h2 className="text-2xl font-bold mr-3">Compras</h2>
       </div>

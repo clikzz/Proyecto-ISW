@@ -14,6 +14,7 @@ import { ShoppingCart } from 'lucide-react';
 import { addItem } from '@api/inventory';
 import { getSuppliers } from '@/api/suppliers';
 import { useAlert } from '@context/alertContext';
+import { capitalize } from '@/helpers/capitalize';
 
 export default function AddItemDialog({ fetchItems }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -69,7 +70,7 @@ export default function AddItemDialog({ fetchItems }) {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2 bg-blue-500 text-white">
+        <Button className="items-center gap-2 bg-blue-500 text-white">
           <ShoppingCart size="16" />
           Añadir Item
         </Button>
@@ -91,15 +92,31 @@ export default function AddItemDialog({ fetchItems }) {
             />
           </div>
           <div>
-            <Label htmlFor="category">Categoría</Label>
-            <Input
-              id="category"
-              name="category"
-              value={newItem.category}
-              onChange={handleInputChange}
-              placeholder="Categoría"
-              required
-            />
+          <Select
+            value={newItem.category}
+            onValueChange={(value) => setNewItem((prev) => ({ ...prev, category: value }))}
+          >
+            <SelectTrigger>
+              {capitalize(newItem.category) || 'Seleccionar categoría'}
+            </SelectTrigger>
+            <SelectContent>
+              {[
+                'Accesorios',
+                'Bicicletas',
+                'Componentes',
+                'Equipamiento',
+                'Electrónica',
+                'Herramientas',
+                'Limpieza',
+                'Repuestos',
+                'Otros',
+              ].map((category) => (
+                <SelectItem key={category} value={category.toLowerCase()}>
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           </div>
           <div>
             <Label htmlFor="selling_price">Precio Venta</Label>
@@ -145,7 +162,9 @@ export default function AddItemDialog({ fetchItems }) {
               </SelectContent>
             </Select>
           </div>
-          <Button type="submit">Guardar</Button>
+          <div className="flex justify-center">
+            <Button type="submit">Guardar</Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
