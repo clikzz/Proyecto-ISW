@@ -77,7 +77,7 @@ export default function AddItemDialog({ fetchItems }) {
       </DialogTrigger>
       <DialogContent className="border-none text-foreground">
         <DialogHeader>
-          <DialogTitle>Formulario de nuevo ítem</DialogTitle>
+          <DialogTitle>Añadir nuevo producto</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

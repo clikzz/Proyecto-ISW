@@ -100,7 +100,7 @@ class Item {
     `;
     const values = [
       data.rut_supplier, data.name_item, data.description, data.category,
-      data.stock, data.cost_price, data.selling_price, id,
+      data.stock, data.selling_price, id,
     ];
     const result = await db.query(query, values);
     return result.rows[0];

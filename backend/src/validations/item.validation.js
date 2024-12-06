@@ -75,10 +75,10 @@ const updateItem = Joi.object({
       'string.base': 'La descripción debe ser de tipo texto.',
     }),
   category: Joi.string()
-    .max(50)
+    .valid(...allowedCategories)
     .optional()
     .messages({
-      'string.max': 'La categoría no puede exceder los 50 caracteres.',
+      'any.only': 'La categoría no es válida. Debe ser una de las siguientes: ' + allowedCategories.join(', ') + '.',
     }),
   stock: Joi.number().integer()
     .min(0)

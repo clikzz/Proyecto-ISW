@@ -76,6 +76,14 @@ const InventoryTable = () => {
     }
   };
 
+  const handleUpdateItem = (updatedItem) => {
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id_item === updatedItem.id_item ? updatedItem : item
+      )
+    );
+  };
+
   useEffect(() => {
     fetchItems();
   }, []);
@@ -271,6 +279,7 @@ const InventoryTable = () => {
         isOpen={isDetailsDialogOpen}
         onClose={() => setIsDetailsDialogOpen(false)}
         item={selectedItem}
+        onUpdateItem={handleUpdateItem}
       />
 
       <ConfirmationDialog
