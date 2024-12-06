@@ -70,7 +70,7 @@ const SalesTable = () => {
   }, [filteredSales, sortConfig]);
 
   return (
-    <div className="container mx-auto py-5">
+    <div className="container mx-auto py-4">
       <div className="flex items-center mb-4">
         <h2 className="text-2xl font-bold mr-3">Ventas</h2>
       </div>
