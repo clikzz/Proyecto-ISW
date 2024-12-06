@@ -19,6 +19,9 @@ export default function NewTransactionForm({ isOpen, onClose, onTransactionAdded
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (editingTransaction && !window.confirm('¿Estás seguro de guardar estas modificaciones?')) {
+      return;
+    }
     try {
       const transactionData = { transaction_type, amount, payment_method, description };
       if (editingTransaction) {
@@ -105,7 +108,7 @@ export default function NewTransactionForm({ isOpen, onClose, onTransactionAdded
             type="submit"
             className="w-full bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90"
           >
-            Agregar Movimiento
+            {editingTransaction ? 'Actualizar Movimiento' : 'Agregar Movimiento'}
           </button>
         </form>
       </div>

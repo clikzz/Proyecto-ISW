@@ -29,30 +29,32 @@ export default function AllTransactions({ isOpen, onClose, transactions, onTrans
         const purchases = await getPurchases();
         const services = await getServices();
 
-        const formattedTransactions = transactions.map(transaction => ({
-          ...transaction,
-          type: transaction.transaction_type
-        }));
+        const formattedTransactions = transactions
+          .filter(transaction => transaction.transaction_type === 'ingreso' || transaction.transaction_type === 'egreso')
+          .map(transaction => ({
+            ...transaction,
+            type: transaction.transaction_type
+          }));
 
         const formattedSales = sales.map(sale => ({
           ...sale,
-          transaction_type: 'ingreso', // Cambiado de 'venta' a 'ingreso'
-          description: `Venta: ${sale.item_name}`,
-          type: 'venta'
+          transaction_type: 'venta', // Cambiado de 'venta' a 'ingreso'
+          description: `${sale.name_item}`
         }));
 
         const formattedPurchases = purchases.map(purchase => ({
           ...purchase,
-          transaction_type: 'egreso',
-          description: `Compra: ${purchase.item_name}`,
-          type: 'compra'
+          transaction_type: 'compra',
+          description: `${purchase.name_item}`,
         }));
 
         const formattedServices = services.map(service => ({
           ...service,
-          transaction_type: 'ingreso',
-          description: `Servicio: ${service.service_name}`,
-          type: 'servicio'
+          transaction_type: 'servicio',
+          description: `${service.name_service}`,
+          type: 'servicio',
+          amount: service.price_service,
+          payment_method: service.payment_method_service
         }));
 
         setAllTransactions([
@@ -167,42 +169,40 @@ export default function AllTransactions({ isOpen, onClose, transactions, onTrans
           </div>
         </div>
         <div className="space-y-4 max-h-[35rem] overflow-y-auto">
-          {allTransactions.map((t) => (
-            <div
-              key={t.id_transaction || t.id}
-              className="flex items-center justify-between rounded-lg p-3 bg-background hover:bg-accent transition-colors"
-              whileHover={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <div>
-                <p className="font-medium">
-                  {t.description}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {new Date(t.transaction_date).toLocaleDateString()} - {t.transaction_type}
-                </p>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className={`text-lg font-semibold ${t.transaction_type === 'ingreso' || t.type === 'venta' ? 'text-green-500' : 'text-red-500'}`}>
-                  {t.transaction_type === 'ingreso' || t.type === 'venta' ? '+' : '-'}
-                  {formatoPesoChileno(t.amount)}
+          {allTransactions
+            .sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date))
+            .map((t) => (
+              <div
+                key={t.id_transaction || t.id}
+                className="flex items-center justify-between rounded-lg p-3 bg-background hover:bg-accent transition-colors"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <div>
+                  <p className="font-medium">
+                    {t.description}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(t.transaction_date).toLocaleDateString()} - {t.transaction_type} - {t.payment_method}
+                  </p>
                 </div>
-                {(t.transaction_type === 'ingreso' || t.transaction_type === 'egreso' || t.type === 'venta') && (
-                  <>
-                    <button onClick={() => handleEdit(t)} className="text-blue-500 hover:text-blue-700">
-                      <Edit className="h-5 w-5" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(t.id_transaction || t.id, t.transaction_type)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 className="h-5 w-5" />
-                    </button>
-                  </>
-                )}
+                <div className="flex items-center gap-4">
+                  <div className={`text-lg font-semibold ${t.transaction_type === 'ingreso' || t.transaction_type === 'venta' || t.transaction_type === 'servicio' ? 'text-green-500' : 'text-red-500'}`}>
+                    {t.transaction_type === 'ingreso' || t.type === 'venta' ? '+' : '-'}
+                    {formatoPesoChileno(t.amount)}
+                  </div>
+                  <button onClick={() => handleEdit(t)} className="text-blue-500 hover:text-blue-700">
+                    <Edit className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(t.id_transaction || t.id, t.transaction_type)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
       {editingTransaction && (
