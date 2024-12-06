@@ -7,10 +7,11 @@ import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/u
 import { getInventoryItems, recordTransaction } from '@/api/inventory';
 import { getSuppliers } from '@/api/suppliers';
 import { useAlert } from '@/context/alertContext';
+import { capitalize } from '@/helpers/capitalize';
 
 export default function AddPurchaseDialog({ fetchPurchases }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [section, setSection] = useState('existing'); // 'existing' o 'new'
+  const [section, setSection] = useState('existing');
   const [suppliers, setSuppliers] = useState([]);
   const [items, setItems] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState('');
@@ -18,7 +19,7 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
     type: 'compra',
     items: [{ id_item: '', quantity: '', unit_price: '' }],
     details: {
-      payment_method: '', // Nuevo campo para método de pago
+      payment_method: '',
       amount: '',
       description: '',
     },
@@ -71,7 +72,6 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
         transaction.items = [{ ...newItem }];
       }
 
-      // Calcular el monto total automáticamente
       transaction.details.amount = transaction.items.reduce(
         (total, item) => total + item.quantity * item.unit_price,
         0
@@ -164,7 +164,7 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
                 }
               >
                 <SelectTrigger>
-                  {purchaseDetails.details.payment_method || 'Seleccionar método de pago'}
+                  {capitalize(purchaseDetails.details.payment_method) || 'Seleccionar método de pago'}
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="efectivo">Efectivo</SelectItem>
@@ -186,6 +186,7 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
                     items: [{ ...prev.items[0], quantity: parseInt(e.target.value, 10) }],
                   }))
                 }
+                placeholder="Cantidad comprada"
                 required
               />
             </div>
@@ -202,6 +203,7 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
                     items: [{ ...prev.items[0], unit_price: parseFloat(e.target.value) }],
                   }))
                 }
+                placeholder="Precio unitario de compra"
                 required
               />
             </div>
@@ -211,12 +213,13 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
         {section === 'new' && (
           <form onSubmit={handlePurchaseSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="name_item">Nombre del Producto</Label>
+              <Label htmlFor="name_item">Nombre</Label>
               <Input
                 id="name_item"
                 name="name_item"
                 value={newItem.name_item}
                 onChange={(e) => setNewItem((prev) => ({ ...prev, name_item: e.target.value }))}
+                placeholder="Nombre del producto"
                 required
               />
             </div>
@@ -237,6 +240,7 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
                 name="description"
                 value={newItem.description}
                 onChange={(e) => setNewItem((prev) => ({ ...prev, description: e.target.value }))}
+                placeholder="Descripción del producto"
               />
             </div>
             <div>
@@ -247,6 +251,7 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
                 type="number"
                 value={newItem.quantity}
                 onChange={(e) => setNewItem((prev) => ({ ...prev, quantity: parseInt(e.target.value, 10) }))}
+                placeholder="Cantidad comprada"
                 required
               />
             </div>
@@ -258,6 +263,7 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
                 type="number"
                 value={newItem.unit_price}
                 onChange={(e) => setNewItem((prev) => ({ ...prev, unit_price: parseFloat(e.target.value) }))}
+                placeholder="Precio unitario de compra"
                 required
               />
             </div>
@@ -269,6 +275,7 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
                 type="number"
                 value={newItem.selling_price}
                 onChange={(e) => setNewItem((prev) => ({ ...prev, selling_price: parseFloat(e.target.value) }))}
+                placeholder="Establecer precio de venta"
                 required
               />
             </div>
