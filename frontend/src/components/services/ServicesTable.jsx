@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Trash, Filter } from 'lucide-react';
+import { Search, Filter, EllipsisVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -16,6 +16,12 @@ import AddServiceDialog from '@/components/services/ServicesDialog';
 import { getServices, deleteService } from '@/api/service';
 import { capitalize } from '@/helpers/capitalize';
 import ExportButtons from '@/components/services/ExportButtons';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function ServicesTable() {
   const [services, setServices] = useState([]);
@@ -43,32 +49,25 @@ export default function ServicesTable() {
     }
   };
 
+  const handleView = (service) => {
+    console.log('Ver información:', service);
+  };
+
   const handleEdit = (service) => {
-    setEditingService(service); 
+    console.log('Editar servicio:', service);
   };
 
   const handleAddService = (newService) => {
     setServices((prevServices) => [...prevServices, newService]);
   };
 
-  const handleUpdateService = (updatedService) => {
-    setServices((prevServices) =>
-      prevServices.map((service) =>
-        service.id_service === updatedService.id_service ? updatedService : service
-      )
-    );
-    setEditingService(null); 
-  };
-
   const filteredServices = services.filter((service) => {
     const matchesSearch =
-      service.name_service.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      service.description_service.toLowerCase().includes(searchTerm.toLowerCase());
-    
+      service.name_service.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory =
       selectedCategory === 'todas' ||
       service.category === selectedCategory;
-  
+
     return matchesSearch && matchesCategory;
   });
 
@@ -100,7 +99,9 @@ export default function ServicesTable() {
             </SelectContent>
           </Select>
         </div>
-        <ExportButtons servicios={filteredServices} />
+        <div className="flex gap-2">
+          <ExportButtons servicios={filteredServices} />
+        </div>
       </div>
 
       {/* Tabla de servicios */}
@@ -110,9 +111,10 @@ export default function ServicesTable() {
             <TableHeader>
               <TableRow>
                 <TableHead>Nombre</TableHead>
-                <TableHead>Descripción</TableHead>
                 <TableHead>Categoría</TableHead>
                 <TableHead>Precio</TableHead>
+                <TableHead>Método de Pago</TableHead>
+                <TableHead>Empleado</TableHead>
                 <TableHead>Acciones</TableHead>
               </TableRow>
             </TableHeader>
@@ -121,23 +123,48 @@ export default function ServicesTable() {
                 filteredServices.map((service) => (
                   <TableRow key={service.id_service}>
                     <TableCell>{capitalize(service.name_service)}</TableCell>
-                    <TableCell>{capitalize(service.description_service)}</TableCell>
                     <TableCell>{capitalize(service.category)}</TableCell>
                     <TableCell>${service.price_service?.toLocaleString('es-CL')}</TableCell>
+                    <TableCell>{capitalize(service.payment_method_service || 'Sin definir')}</TableCell>
+                    <TableCell>Sin asignar</TableCell>
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(service.id_service)}
-                      >
-                        <Trash className="h-4 w-4" />              
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+                          >
+                            <EllipsisVertical className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 w-48">
+                          <DropdownMenuItem
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 cursor-pointer text-gray-700 dark:text-gray-300"
+                            onClick={() => handleView(service)}
+                          >
+                            Ver información
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 cursor-pointer text-gray-700 dark:text-gray-300"
+                            onClick={() => handleEdit(service)}
+                          >
+                            Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="hover:bg-red-100 dark:hover:bg-red-700 px-4 py-2 cursor-pointer text-red-600 dark:text-red-400"
+                            onClick={() => handleDelete(service.id_service)}
+                          >
+                            Eliminar
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground">
                     No hay servicios disponibles.
                   </TableCell>
                 </TableRow>
