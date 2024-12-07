@@ -8,35 +8,38 @@ class Service {
       RETURNING *;
     `;
     const values = [
-      data.name_service, 
-      data.description_service, 
+      data.name_service,
+      data.description_service,
       data.price_service,
       data.category,
-      data.payment_method_service];
+      data.payment_method_service,
+    ];
     const result = await db.query(query, values);
     return result.rows[0];
   }
 
   static async findAll() {
     const query = `
-      SELECT 
+      SELECT
         s.id_service,
         s.name_service,
         s.description_service,
         s.price_service,
         s.category,
-        s.payment_method_service
+        s.payment_method_service,
+        s.rut_user,
+        s.status_service
+
       FROM service s
       WHERE s.is_deleted = FALSE;
     `;
     const result = await db.query(query);
     return result.rows;
   }
-  
 
   static async findById(id) {
     const query = `
-      SELECT 
+      SELECT
         s.id_service,
         s.name_service,
         s.description_service,
@@ -57,7 +60,14 @@ class Service {
       WHERE id_service = $6 AND is_deleted = FALSE
       RETURNING *;
     `;
-    const values = [data.name_service, data.description_service, data.price_service, data.category, data.payment_method_service, id];
+    const values = [
+      data.name_service,
+      data.description_service,
+      data.price_service,
+      data.category,
+      data.payment_method_service,
+      id,
+    ];
     const result = await db.query(query, values);
     return result.rows[0];
   }

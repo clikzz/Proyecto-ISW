@@ -4,21 +4,21 @@ import { Clipboard, ClipboardCheck, Clock } from 'lucide-react';
 import TaskCard from './TaskCard';
 
 const columnConfig = {
-  pendiente: {
+  unassigned: {
     icon: Clipboard,
-    title: 'Pendientes',
+    title: 'Sin Asignar',
     color: 'bg-violet-50 dark:bg-violet-950/40',
     borderColor: 'border-violet-200 dark:border-violet-800/40',
     hoverColor: 'hover:bg-violet-50 dark:hover:bg-violet-900/40',
   },
-  en_progreso: {
+  in_progress: {
     icon: Clock,
     title: 'En Progreso',
     color: 'bg-blue-50 dark:bg-blue-950/40',
     borderColor: 'border-blue-200 dark:border-blue-800/40',
     hoverColor: 'hover:bg-blue-50 dark:hover:bg-blue-900/40',
   },
-  completado: {
+  done: {
     icon: ClipboardCheck,
     title: 'Completados',
     color: 'bg-green-50 dark:bg-green-950/30',
@@ -29,6 +29,10 @@ const columnConfig = {
 
 export default function TaskColumn({ columnId, tasks, assignTask }) {
   const config = columnConfig[columnId];
+  if (!config) {
+    console.error(`Invalid columnId: ${columnId}`);
+    return null;
+  }
   const Icon = config.icon;
 
   return (
@@ -42,7 +46,7 @@ export default function TaskColumn({ columnId, tasks, assignTask }) {
         <Icon className="mr-2 h-5 w-5" />
         {config.title}
       </h2>
-      <Droppable droppableId={columnId}>
+      <Droppable droppableId={columnId} key={columnId}>
         {(provided, snapshot) => (
           <div
             {...provided.droppableProps}
@@ -55,7 +59,7 @@ export default function TaskColumn({ columnId, tasks, assignTask }) {
           >
             {tasks.map((task, index) => (
               <TaskCard
-                key={task.id}
+                key={task.id_service}
                 task={task}
                 index={index}
                 assignTask={assignTask}

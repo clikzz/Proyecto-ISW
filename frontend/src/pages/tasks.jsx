@@ -3,34 +3,22 @@ import { DragDropContext } from '@hello-pangea/dnd';
 import { motion } from 'framer-motion';
 import TaskBoard from '../components/tasks/TaskBoard';
 import { ClipboardCheck } from 'lucide-react';
-
-const initialTasks = [
-  {
-    id: 'task1',
-    content: 'Reparación de cadena',
-    status: 'pendiente',
-    assignee: null,
-  },
-  {
-    id: 'task2',
-    content: 'Cambio de neumáticos',
-    status: 'en_progreso',
-    assignee: { name: 'Juan', avatar: '/placeholder.svg?height=32&width=32' },
-  },
-  {
-    id: 'task3',
-    content: 'Ajuste de frenos',
-    status: 'completado',
-    assignee: { name: 'María', avatar: '/placeholder.svg?height=32&width=32' },
-  },
-];
+import { getServices } from '../api/service';
 
 export default function TareasPage() {
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    // Here you would fetch tasks from your API
-    // setTasks(tasksFromAPI)
+    try {
+      const fetchServices = async () => {
+        const tasks = await getServices();
+        setTasks(tasks);
+      };
+
+      fetchServices();
+    } catch (error) {
+      console.error('Error al obtener los servicios:', error);
+    }
   }, []);
 
   const onDragEnd = (result) => {
@@ -57,14 +45,16 @@ export default function TareasPage() {
 
     // Encontrar todas las tareas en la columna de destino
     const tasksInDestination = newTasks.filter(
-      (task) => task.status === destination.droppableId
+      (task) => task.service_status === destination.droppableId
     );
 
     // Insertar la tarea en la posición correcta
     const updatedTasks = [
-      ...newTasks.filter((task) => task.status !== destination.droppableId),
+      ...newTasks.filter(
+        (task) => task.service_status !== destination.droppableId
+      ),
       ...tasksInDestination.slice(0, destination.index),
-      { ...taskToMove, status: destination.droppableId },
+      { ...taskToMove, service_status: destination.droppableId },
       ...tasksInDestination.slice(destination.index),
     ];
 
@@ -81,7 +71,7 @@ export default function TareasPage() {
                 name: 'Nuevo Usuario',
                 avatar: '/placeholder.svg?height=32&width=32',
               },
-              status: 'en_progreso',
+              service_status: 'in_progress',
             }
           : task
       )

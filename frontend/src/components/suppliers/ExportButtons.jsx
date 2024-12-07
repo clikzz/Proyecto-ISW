@@ -16,7 +16,7 @@ export default function ExportButtons({ suppliers }) {
     <div className="flex gap-2">
       <Button
         onClick={handleExportExcel}
-        className="bg-green-600 hover:bg-green-700"
+        variant="excel"
         title="Exportar a Excel"
       >
         <FileSpreadsheet className="mr-2 h-4 w-4" />
@@ -24,7 +24,7 @@ export default function ExportButtons({ suppliers }) {
       </Button>
       <Button
         onClick={handleExportPDF}
-        className="bg-red-600 hover:bg-red-700"
+        variant="pdf"
         title="Exportar a PDF"
       >
         <FileText className="mr-2 h-4 w-4" />
