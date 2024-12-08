@@ -12,10 +12,10 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import AddServiceDialog from '@/components/services/ServicesDialog';
 import { getServices, deleteService } from '@/api/service';
 import { capitalize } from '@/helpers/capitalize';
 import ExportButtons from '@/components/services/ExportButtons';
+import ServiceDetailsDialog from '@/components/services/ServiceDetailsDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +27,8 @@ export default function ServicesTable() {
   const [services, setServices] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('todas');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState(null); 
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -50,11 +52,24 @@ export default function ServicesTable() {
   };
 
   const handleView = (service) => {
+    setSelectedService(service);
+    setIsDialogOpen(true);
     console.log('Ver información:', service);
   };
 
+
   const handleEdit = (service) => {
+    setSelectedService(service);
+    setIsDialogOpen(true);
     console.log('Editar servicio:', service);
+  };
+
+  const handleUpdateService = (updatedService) => {
+    setServices((prev) =>
+      prev.map((service) =>
+        service.id_service === updatedService.id_service ? updatedService : service
+      )
+    );
   };
 
   const handleAddService = (newService) => {
@@ -173,6 +188,14 @@ export default function ServicesTable() {
           </Table>
         </CardContent>
       </Card>
+      
+    {/* Dialog para ver/editar detalles del servicio */}
+    <ServiceDetailsDialog
+      isOpen={isDialogOpen}
+      onClose={() => setIsDialogOpen(false)}
+      service={selectedService}
+      onUpdateService={handleUpdateService}
+    />
     </div>
   );
 }
