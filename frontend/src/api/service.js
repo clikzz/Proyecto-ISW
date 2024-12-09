@@ -6,9 +6,10 @@ const api = axios.create({
 });
 
 // Obtener todos los servicios
-export const getServices = async () => {
+export const getServices = async (category = '') => {
   try {
-    const response = await api.get('/all', {
+    const url = category ? `/all/${category}` : '/all';
+    const response = await api.get(url, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },

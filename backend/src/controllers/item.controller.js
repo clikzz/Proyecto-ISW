@@ -33,6 +33,8 @@ exports.getItemById = async (req, res) => {
 };
 
 exports.updateItem = async (req, res) => {
+  console.log('Datos recibidos para actualizar:', req.body);
+
   const { error } = updateItem.validate(req.body);
   if (error) return res.status(400).json({ message: error.details[0].message });
 
@@ -46,7 +48,6 @@ exports.updateItem = async (req, res) => {
       description: req.body.description || currentItem.description,
       category: req.body.category || currentItem.category,
       stock: req.body.stock !== undefined ? req.body.stock : currentItem.stock,
-      cost_price: req.body.cost_price || currentItem.cost_price,
       selling_price: req.body.selling_price || currentItem.selling_price,
     };
 

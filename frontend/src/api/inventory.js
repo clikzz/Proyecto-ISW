@@ -83,6 +83,7 @@ export const deleteItem = async (id) => {
 // Registrar una transacción (compra o venta)
 export const recordTransaction = async (transaction) => {
   try {
+    console.log('Datos enviados:', transaction);
     const response = await api.post('/inventory/create', transaction, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,

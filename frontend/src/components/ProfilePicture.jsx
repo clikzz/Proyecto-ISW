@@ -25,14 +25,14 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setTempImage(reader.result); // Imagen temporal para mostrar en el recortador
-        setShowCropper(true); // Mostrar el modal de recorte
-        document.body.style.overflow = 'hidden'; // Deshabilitar scroll
+        setTempImage(reader.result); 
+        setShowCropper(true); 
+        document.body.style.overflow = 'hidden'; 
       };
       reader.readAsDataURL(file);
     }
 
-    // Restablecer el valor del input para permitir seleccionar la misma imagen
+    
     event.target.value = '';
   };
 
@@ -43,7 +43,7 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
       setProfilePicture(data.profilePicture);
       setShowCropper(false);
       setTempImage(null);
-      document.body.style.overflow = 'auto'; // Restaurar scroll
+      document.body.style.overflow = 'auto'; 
     } catch (error) {
       console.error('Error al guardar la imagen recortada:', error.message);
     }
@@ -52,13 +52,13 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
   const handleCancelCrop = () => {
     setShowCropper(false);
     setTempImage(null);
-    document.body.style.overflow = 'auto'; // Restaurar scroll
+    document.body.style.overflow = 'auto'; 
   };
 
   const handleRemoveProfilePicture = async () => {
     try {
       const response = await removeProfilePicture();
-      setProfilePicture(response.profilePicture); // Restaurar imagen por defecto
+      setProfilePicture(response.profilePicture); 
     } catch (error) {
       console.error('Error al eliminar la imagen de perfil:', error.message);
     }
