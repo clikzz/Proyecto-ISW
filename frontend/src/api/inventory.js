@@ -141,3 +141,18 @@ export const getSales = async () => {
     throw error;
   }
 };
+
+// Actualizar una venta
+export const updateSale = async (id, updatedFields) => {
+  try {
+    const response = await api.put(`inventory/sales/update/${id}`, updatedFields, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar la venta:', error.response?.data || error.message);
+    throw error;
+  }
+};

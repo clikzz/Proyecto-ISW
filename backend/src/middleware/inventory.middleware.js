@@ -1,4 +1,4 @@
-const { purchaseSchema, saleSchema } = require('../validations/inventory.validation');
+const { purchaseSchema, saleSchema, editSaleSchema } = require('../validations/inventory.validation');
 
 const validatePurchase = (req, res, next) => {
   const { error } = purchaseSchema.validate(req.body, { abortEarly: false });
@@ -18,4 +18,13 @@ const validateSale = (req, res, next) => {
   next();
 };
 
-module.exports = { validatePurchase, validateSale };
+const validateEditSale = (req, res, next) => {
+  const { error } = editSaleSchema.validate(req.body, { abortEarly: false });
+  if (error) {
+    const messages = error.details.map((err) => err.message);
+    return res.status(400).json({ message: 'Errores de validación', errors: messages });
+  }
+  next();
+};
+
+module.exports = { validatePurchase, validateSale, validateEditSale };
