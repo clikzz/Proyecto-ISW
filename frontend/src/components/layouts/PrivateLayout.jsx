@@ -145,6 +145,7 @@ export default function PrivateLayout({ children }) {
             <NavLink
               href="#"
               onClick={(e) => {
+                e.preventDefault();
                 logout();
               }}
               icon={<LogOut className="h-6 w-6" />}

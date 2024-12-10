@@ -100,8 +100,8 @@ export default function TaskCard({ task, index, assignTask }) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
-                      <FileText className="mr-2 h-4 w-4" />
+                    <DropdownMenuItem className="bg-background text-foreground cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
+                      <FileText />
                       <span>Ver detalles</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
