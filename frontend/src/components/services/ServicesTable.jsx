@@ -31,6 +31,7 @@ export default function ServicesTable() {
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null); 
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -46,14 +47,16 @@ export default function ServicesTable() {
 
   const handleAddService = (newService) => {
     setServices((prev) => [...prev, newService]);
+    showAlert('Servicio agregado correctamente', 'success');
   };
 
   const handleDelete = async (id) => {
     try {
       await deleteService(id);
       setServices((prev) => prev.filter((service) => service.id_service !== id));
+      showAlert('Servicio eliminado correctamente', 'success');
     } catch (error) {
-      console.error('Error al eliminar el servicio:', error);
+      showAlert('Error al eliminar el servicio', 'error');
     }
   };
 
