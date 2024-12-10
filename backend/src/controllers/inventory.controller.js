@@ -36,6 +36,19 @@ exports.createSale = async (req, res) => {
   }
 };
 
+exports.updateSale = async (req, res) => {
+  const { id_transaction } = req.params;
+  const { items, details } = req.body;
+
+  try {
+    const updatedSale = await inventoryService.updateSale(id_transaction, items, details);
+    res.status(200).json({ message: 'Venta actualizada exitosamente', updatedSale });
+  } catch (error) {
+    console.error('Error al actualizar la venta:', error);
+    res.status(500).json({ message: 'Error al actualizar la venta', error: error.message });
+  }
+};
+
 exports.getPurchases = async (req, res) => {
   try {
     const purchases = await inventoryService.getPurchases();

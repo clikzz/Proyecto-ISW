@@ -71,6 +71,68 @@ class Inventory {
     }
   }
 
+  static async updateTransactionDetails(transactionId, updatedDetails) {
+    const query = `
+      UPDATE transaction
+      SET amount = $1, payment_method = $2, description = $3, updated_at = NOW()
+      WHERE id_transaction = $4
+      RETURNING *;
+    `;
+    const values = [
+      updatedDetails.amount,
+      updatedDetails.payment_method,
+      updatedDetails.description,
+      transactionId,
+    ];
+    const result = await db.query(query, values);
+    return result.rows[0];
+  }
+
+  static async updateTransactionItem(transactionItemId, updatedItem) {
+    const query = `
+      UPDATE transaction_item
+      SET quantity_item = $1, unit_price = $2, updated_at = NOW()
+      WHERE id_transaction_item = $3
+      RETURNING *;
+    `;
+    const values = [
+      updatedItem.quantity_item,
+      updatedItem.unit_price,
+      transactionItemId,
+    ];
+    const result = await db.query(query, values);
+    return result.rows[0];
+  }
+
+  static async getTransactionItemById(id_transaction_item) {
+    const query = `
+      SELECT 
+        ti.id_transaction_item, 
+        ti.id_item, 
+        ti.quantity_item, 
+        ti.unit_price,
+        i.name_item,
+        t.amount
+      FROM 
+        transaction_item ti
+      JOIN 
+        item i 
+      ON 
+        ti.id_item = i.id_item
+      JOIN 
+        transaction t
+      ON 
+        ti.id_transaction = t.id_transaction
+      WHERE 
+        ti.id_transaction_item = $1;
+    `;
+    const result = await db.query(query, [id_transaction_item]);
+    if (result.rows.length === 0) {
+      throw new Error(`No se encontró el ítem con id_transaction_item ${id_transaction_item}`);
+    }
+    return result.rows[0];
+  }
+
   static async getPurchases() {
     const query = `
       SELECT
@@ -114,7 +176,8 @@ class Inventory {
         ti.quantity_item, 
         ti.unit_price, 
         ti.id_transaction_item,
-        i.name_item
+        i.name_item,
+        t.updated_at
       FROM 
         transaction t
       JOIN 

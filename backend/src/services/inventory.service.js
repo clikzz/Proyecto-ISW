@@ -1,5 +1,6 @@
 const Inventory = require('../models/Inventory');
 const Item = require('../models/Item');
+const Transaction = require('../models/Transaction');
 
 const createPurchase = async (items, details) => {
   const transactionId = await Inventory.createTransaction({
@@ -59,6 +60,30 @@ const createSale = async (items, details) => {
   return transactionId;
 };
 
+const updateSale = async (transactionId, updatedItems, updatedDetails) => {
+  if (updatedDetails) {
+    await Inventory.updateTransactionDetails(transactionId, updatedDetails);
+  }
+
+  if (updatedItems && updatedItems.length > 0) {
+    for (const item of updatedItems) {
+      const existingItem = await Inventory.getTransactionItemById(item.id_transaction_item);
+
+      // Si cambia la cantidad, ajustar el stock
+      if (item.quantity_item !== existingItem.quantity_item) {
+        const difference = item.quantity_item - existingItem.quantity_item;
+        const operation = difference > 0 ? 'subtract' : 'add';
+        await Item.updateStock(existingItem.id_item, Math.abs(difference), operation);
+      }
+
+      // Actualizar los detalles del ítem
+      await Inventory.updateTransactionItem(item.id_transaction_item, item);
+    }
+  }
+
+  return await Inventory.getSales(transactionId); // Retorna los datos actualizados
+};
+
 const getPurchases = async () => {
   return await Inventory.getPurchases();
 };
@@ -70,6 +95,7 @@ const getSales = async () => {
 module.exports = {
   createPurchase,
   createSale,
+  updateSale,
   getPurchases,
   getSales,
 };
