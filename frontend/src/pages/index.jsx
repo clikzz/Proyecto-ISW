@@ -1,14 +1,46 @@
 'use client';
 
-import { Bike, Wrench, Truck, Package, DollarSign } from 'lucide-react';
+import { useState } from 'react';
+import {
+  Bike,
+  Wrench,
+  BarChart2,
+  Package,
+  Users,
+  ChevronDown,
+} from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { motion } from 'framer-motion';
-import ThemeToggle from '@/components/ThemeToggle';
+import { motion, AnimatePresence } from 'framer-motion';
+
+
+const features = [
+  {
+    icon: Wrench,
+    title: 'Gestión de Servicios',
+    description: 'Organiza reparaciones y mantenimientos de forma eficiente.',
+  },
+  {
+    icon: BarChart2,
+    title: 'Análisis Financiero',
+    description: 'Visualiza ingresos, gastos y ganancias en tiempo real.',
+  },
+  {
+    icon: Package,
+    title: 'Control de Inventario',
+    description: 'Gestiona piezas y accesorios con facilidad.',
+  },
+  {
+    icon: Users,
+    title: 'Gestión de Proveedores',
+    description:
+      'Mantén un registro detallado de tus proveedores y sus productos.',
+  },
+];
 
 export default function LandingPage() {
+  const [activeFeature, setActiveFeature] = useState(0);
+
   const pageVariants = {
     hidden: { opacity: 0, y: 50, scale: 0.95 },
     enter: {
@@ -52,7 +84,8 @@ export default function LandingPage() {
                   Optimiza tu negocio, aumenta la satisfacción de tus clientes y
                   pedalea hacia el éxito con nuestra solución integral.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4"></div>
+                <div className="flex flex-col sm:flex-row gap-4">
+                </div>
               </motion.div>
               <motion.div
                 className="flex items-center justify-center"
@@ -71,10 +104,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section
-          id="features"
-          className="w-full py-12 md:py-24 lg:py-32 bg-muted"
-        >
+        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
               Características Principales
@@ -83,28 +113,24 @@ export default function LandingPage() {
               {[
                 {
                   icon: Wrench,
-                  title: 'Gestión de Servicios',
-                  description:
-                    'Administra tus servicios, precios y categorías de manera eficiente.',
+                  title: "Gestión de Servicios",
+                  description: "Administra tus servicios, precios y categorías de manera eficiente."
                 },
                 {
                   icon: DollarSign,
-                  title: 'Balance Financiero',
-                  description:
-                    'Visualiza tus ingresos, egresos y ganancias en un solo lugar.',
+                  title: "Balance Financiero",
+                  description: "Visualiza tus ingresos, egresos y ganancias en un solo lugar."
                 },
                 {
                   icon: Package,
-                  title: 'Gestión de Inventario',
-                  description:
-                    'Administra tus productos, compras y ventas de manera sencilla.',
+                  title: "Gestión de Inventario",
+                  description: "Administra tus productos, compras y ventas de manera sencilla."
                 },
                 {
                   icon: Truck,
-                  title: 'Proveedores',
-                  description:
-                    'Administra tus proveedores y mantén un registro de tus compras.',
-                },
+                  title: "Proveedores",
+                  description: "Administra tus proveedores y mantén un registro de tus compras."
+                }
               ].map((feature, index) => (
                 <motion.div
                   key={index}
@@ -115,14 +141,10 @@ export default function LandingPage() {
                   <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300 scale-fade-animation">
                     <CardHeader>
                       <feature.icon className="w-12 h-12 mb-4 text-primary" />
-                      <CardTitle className="text-xl font-semibold">
-                        {feature.title}
-                      </CardTitle>
+                      <CardTitle className="text-xl font-semibold">{feature.title}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-muted-foreground">
-                        {feature.description}
-                      </p>
+                      <p className="text-muted-foreground">{feature.description}</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -130,6 +152,7 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
       </motion.main>
 
       <footer className="w-full py-6 bg-background border-t border-border">

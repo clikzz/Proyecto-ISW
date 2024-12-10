@@ -8,6 +8,7 @@ import NewTransactionForm from './NewTransactionForm';
 import { useAlert } from '@context/alertContext';
 import { getSales, getPurchases } from '@/api/inventory';
 import { getServices } from '@/api/service';
+import { formatDate } from '@/helpers/dates';
 
 const formatoPesoChileno = (valor) => {
   return new Intl.NumberFormat('es-CL', {
@@ -133,7 +134,7 @@ export default function TransactionSummary({ transactions, onTransactionUpdated 
                     {t.description}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {new Date(t.transaction_date).toLocaleDateString()} - {t.transaction_type} - {t.payment_method}
+                    {formatDate(t.transaction_date)} - {t.transaction_type} - {t.payment_method}
                   </p>
                 </div>
                 <div className="flex items-center gap-4">

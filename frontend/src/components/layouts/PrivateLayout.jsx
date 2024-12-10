@@ -124,7 +124,7 @@ export default function PrivateLayout({ children }) {
                   Usuarios
                 </NavLink>
                 <NavLink
-                  href="/finanzas"
+                  href="/finance"
                   icon={<DollarSign className="h-6 w-6" />}
                 >
                   Finanzas
