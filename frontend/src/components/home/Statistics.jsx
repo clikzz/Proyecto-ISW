@@ -2,13 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardTitle } from "@/components/ui/card";
-import { Package, Clock, Users, ShoppingCart } from 'lucide-react';
+import { Package, Wrench, Users, ShoppingCart } from 'lucide-react';
 import { getInventoryItems, getSales } from '@/api/inventory';
+import { getServices } from '@/api/service';
+import { getUsers } from "@/api/user";
 
 export function Statistics() {
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalSales, setTotalSales] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [totalServices, setTotalServices] = useState(0);
+  const [totalEmployees, setTotalEmployees] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,6 +35,12 @@ export function Statistics() {
         );
 
         setTotalSales(totalQuantity);
+
+        const services = await getServices();
+        setTotalServices(services.length);
+
+        const users = await getUsers();
+        setTotalEmployees(users.length);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -48,9 +58,9 @@ export function Statistics() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <StatCard title="Total Productos" value={totalProducts} icon={Package} />
-      <StatCard title="Ventas Mensuales" value={totalSales} icon={ShoppingCart} subtext="Último mes" />
-      <StatCard title="Total Empleados" value={5} icon={Users} />
-      <StatCard title="Actividad del Taller" value="2 meses" icon={Clock} subtext="Activo desde Oct 2024" />
+      <StatCard title="Ventas Totales" value={totalSales} icon={ShoppingCart} />
+      <StatCard title="Total Empleados" value={totalEmployees} icon={Users} />
+      <StatCard title="Total Servicios" value={totalServices} icon={Wrench} />
     </div>
   );
 }
