@@ -18,16 +18,27 @@ import { capitalize } from '@/helpers/capitalize';
 
 const ServiceDetailsDialog = ({ isOpen, onClose, service, onUpdateService }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedService, setEditedService] = useState(service);
+  const [editedService, setEditedService] = useState({
+    name_service: '',
+    description_service: '',
+    price_service: '',
+    category: '',
+    payment_method_service: '',
+  });
+  
 
   useEffect(() => {
     if (service) {
       setEditedService({ ...service });
-      setIsEditing(false);
     }
   }, [service]);
+  
 
-  if (!service) return null;
+  // en caso de q no estén disponibles los datos del servicio
+  if (!service) {
+    return null;
+  }
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -41,19 +52,24 @@ const ServiceDetailsDialog = ({ isOpen, onClose, service, onUpdateService }) => 
         category: editedService.category.toLowerCase(),
         payment_method_service: editedService.payment_method_service || 'Sin definir',
       };
-
+  
+      console.log('Datos enviados:', updatedService);
+  
       const response = await updateService(service.id_service, updatedService);
-
+  
       if (response) {
-        onUpdateService(response);
+        console.log('Respuesta del servidor:', response);
+        onUpdateService(response); 
       }
-
+  
       setIsEditing(false);
-      onClose();
+      onClose(); 
     } catch (error) {
       console.error('Error al actualizar el servicio:', error.response?.data || error.message);
     }
   };
+  
+  
 
   const handleCancel = () => {
     setEditedService(service);
@@ -73,26 +89,26 @@ const ServiceDetailsDialog = ({ isOpen, onClose, service, onUpdateService }) => 
               label="Nombre"
               isEditing={isEditing}
               name="name_service"
-              value={editedService.name_service}
+              value={editedService?.name_service || ''}
               onChange={handleInputChange}
-              displayValue={capitalize(service.name_service)}
+              displayValue={capitalize(editedService?.name_service || 'Sin nombre')}
             />
             <FormSelect
               label="Categoría"
               isEditing={isEditing}
-              value={editedService.category}
+              value={editedService?.category || ''}
               options={['Reparación', 'Mantenimiento', 'Personalización', 'Otro']}
               onSelect={(value) => setEditedService((prev) => ({ ...prev, category: value }))}
-              displayValue={capitalize(service.category)}
+              displayValue={capitalize(editedService?.category || 'Sin categoría')}
             />
             <FormField
               label="Precio"
               isEditing={isEditing}
               name="price_service"
-              value={editedService.price_service}
+              value={editedService?.price_service || ''}
               type="number"
               onChange={handleInputChange}
-              displayValue={`$${service.price_service}`}
+              displayValue={`$${editedService?.price_service || 0}`}
             />
           </div>
           {/* Columna derecha */}
@@ -100,21 +116,21 @@ const ServiceDetailsDialog = ({ isOpen, onClose, service, onUpdateService }) => 
             <FormSelect
               label="Método de Pago"
               isEditing={isEditing}
-              value={editedService.payment_method_service}
+              value={editedService?.payment_method_service || ''}
               options={['Efectivo', 'Tarjeta', 'Transferencia']}
               onSelect={(value) =>
-                setEditedService((prev) => ({ ...prev, payment_method_service: value }))
+              setEditedService((prev) => ({ ...prev, payment_method_service: value }))
               }
-              displayValue={capitalize(service.payment_method_service || 'Sin definir')}
+              displayValue={capitalize(editedService?.payment_method_service || 'Sin definir')}
             />
             <FormField
               label="Descripción"
               isEditing={isEditing}
               name="description_service"
-              value={editedService.description_service}
+              value={editedService?.description_service || ''}
               type="textarea"
               onChange={handleInputChange}
-              displayValue={service.description_service || 'Sin descripción'}
+              displayValue={editedService?.description_service || 'Sin descripción'}
             />
           </div>
         </div>

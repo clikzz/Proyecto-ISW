@@ -34,20 +34,8 @@ const updateService = async (id, data) => {
   }
 };
 
-const deleteService = async (id) => {
-  try {
-    const service = await Service.findByPk(id);
-    if (!service) {
-      throw new Error('Servicio no encontrado.');
-    }
+const deleteService = async (id) => await Service.delete(id);
 
-    await service.destroy();
-    return { message: 'Servicio eliminado correctamente.' };
-  } catch (error) {
-    console.error('Error al eliminar el servicio:', error.message);
-    throw error;
-  }
-};
 
 module.exports = {
   createService,

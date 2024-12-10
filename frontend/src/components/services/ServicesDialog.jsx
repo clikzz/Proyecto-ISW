@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { Wrench } from 'lucide-react';
 import { createService } from '@/api/service';
 import {
@@ -12,34 +13,24 @@ import {
   SelectItem,
   SelectValue,
 } from '@/components/ui/select';
+import { useAlert } from '@/context/alertContext';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-
+import { newServiceValidation } from '@/validations/newService';
 
 export default function AddServiceDialog({ onAddService }) {
-  const [formData, setFormData] = useState({
-    name_service: '',
-    description_service: '',
-    price_service: '',
-    category: '',
-    payment_method_service: '',
-  });
   const [isOpen, setIsOpen] = useState(false);
+  const { showAlert } = useAlert();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values, { resetForm }) => {
     try {
-      const newService = await createService(formData);
-      setFormData({
-        name_service: '',
-        description_service: '',
-        price_service: '',
-        category: '',
-        payment_method_service: '',
-      });
+      const newService = await createService(values);
+      resetForm();
       onAddService(newService);
       setIsOpen(false);
+      showAlert('Servicio agregado exitosamente', 'success');
     } catch (error) {
-      console.error('Error al agregar servicio:', error);
+      console.error('Error al agregar servicio:', error.response?.data || error.message);
+      showAlert('Ocurrió un error al agregar el servicio', 'error');
     }
   };
 
@@ -55,72 +46,113 @@ export default function AddServiceDialog({ onAddService }) {
         <DialogHeader>
           <DialogTitle>Agregar Nuevo Servicio</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="name_service">Nombre</Label>
-            <Input
-              id="name_service"
-              value={formData.name_service}
-              onChange={(e) => setFormData({ ...formData, name_service: e.target.value })}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="description_service">Descripción</Label>
-            <Input
-              id="description_service"
-              value={formData.description_service}
-              onChange={(e) => setFormData({ ...formData, description_service: e.target.value })}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="category">Categoría</Label>
-            <Select
-              value={formData.category}
-              onValueChange={(value) => setFormData({ ...formData, category: value.toLowerCase() })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar categoría" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="reparación">Reparación</SelectItem>
-                <SelectItem value="mantenimiento">Mantenimiento</SelectItem>
-                <SelectItem value="personalización">Personalización</SelectItem>
-                <SelectItem value="otro">Otro</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="price_service">Precio</Label>
-            <Input
-              id="price_service"
-              type="number"
-              value={formData.price_service}
-              onChange={(e) => setFormData({ ...formData, price_service: e.target.value })}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="payment_method_service">Método de Pago</Label>
-            <Select
-              value={formData.payment_method_service}
-              onValueChange={(value) => setFormData({ ...formData, payment_method_service: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar método de pago" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="efectivo">Efectivo</SelectItem>
-                <SelectItem value="tarjeta">Tarjeta</SelectItem>
-                <SelectItem value="transferencia">Transferencia</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <Formik
+          initialValues={{
+            name_service: '',
+            description_service: '',
+            price_service: '',
+            category: '',
+            payment_method_service: '',
+          }}
+          validationSchema={newServiceValidation}
+          onSubmit={handleSubmit}
+        >
+          {({ values, setFieldValue }) => (
+            <Form className="space-y-4">
+              <div>
+                <Label htmlFor="name_service">Nombre</Label>
+                <Field
+                  as={Input}
+                  id="name_service"
+                  name="name_service"
+                  placeholder="Nombre del servicio"
+                />
+                <ErrorMessage
+                  name="name_service"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="description_service">Descripción</Label>
+                <Field
+                  as={Textarea}
+                  id="description_service"
+                  name="description_service"
+                  placeholder="Descripción del servicio"
+                />
+                <ErrorMessage
+                  name="description_service"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="category">Categoría</Label>
+                <Select
+                  value={values.category}
+                  onValueChange={(value) => setFieldValue('category', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar categoría" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="reparación">Reparación</SelectItem>
+                    <SelectItem value="mantenimiento">Mantenimiento</SelectItem>
+                    <SelectItem value="personalización">Personalización</SelectItem>
+                    <SelectItem value="otro">Otro</SelectItem>
+                  </SelectContent>
+                </Select>
+                <ErrorMessage
+                  name="category"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="price_service">Precio</Label>
+                <Field
+                  as={Input}
+                  id="price_service"
+                  name="price_service"
+                  type="number"
+                  placeholder="Precio del servicio"
+                />
+                <ErrorMessage
+                  name="price_service"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="payment_method_service">Método de Pago</Label>
+                <Select
+                  value={values.payment_method_service}
+                  onValueChange={(value) =>
+                    setFieldValue('payment_method_service', value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar método de pago" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="efectivo">Efectivo</SelectItem>
+                    <SelectItem value="tarjeta">Tarjeta</SelectItem>
+                    <SelectItem value="transferencia">Transferencia</SelectItem>
+                  </SelectContent>
+                </Select>
+                <ErrorMessage
+                  name="payment_method_service"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
 
-          {/* Botón Guardar */}
-          <Button type="submit">Guardar</Button>
-        </form>
+              {/* Botón Guardar */}
+              <Button type="submit">Guardar</Button>
+            </Form>
+          )}
+        </Formik>
       </DialogContent>
     </Dialog>
   );

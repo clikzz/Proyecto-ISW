@@ -3,8 +3,8 @@ const db = require('../config/db');
 class Service {
   static async create(data) {
     const query = `
-      INSERT INTO service (name_service, description_service, price_service, category, payment_method_service, user_rut)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO service (name_service, description_service, price_service, category, payment_method_service)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING *;
     `;
 
@@ -13,8 +13,7 @@ class Service {
       data.description_service, 
       data.price_service,
       data.category,
-      data.payment_method_service,
-      data.user_rut];
+      data.payment_method_service];
     const result = await db.query(query, values);
     return result.rows[0];
   }
@@ -27,16 +26,20 @@ class Service {
         s.description_service,
         s.price_service,
         s.category,
-        s.payment_method_service
-        s.user_rut
+        s.payment_method_service,
+        s.rut_user, 
+        s.created_at,
+        s.updated_at, 
+        s.is_deleted,
         u.name_user AS employee_name
       FROM service s
-      LEFT JOIN users u ON s.user_rut = u.rut
+      LEFT JOIN users u ON s.rut_user = u.rut 
       WHERE s.is_deleted = FALSE;
     `;
     const result = await db.query(query);
     return result.rows;
   }
+  
   
 
   static async findById(id) {
@@ -47,8 +50,7 @@ class Service {
         s.description_service,
         s.price_service,
         s.category,
-        s.payment_method_service,
-        s.user_rut
+        s.payment_method_service
       FROM service s
       WHERE s.id_service = $1 AND s.is_deleted = FALSE;
     `;
@@ -66,9 +68,8 @@ class Service {
         price_service = $3, 
         category = $4, 
         payment_method_service = $5, 
-        user_rut = $6,
         updated_at = CURRENT_TIMESTAMP
-      WHERE id_service = $7 AND is_deleted = FALSE
+      WHERE id_service = $6 AND is_deleted = FALSE
       RETURNING *;
     `;
     const values = [
@@ -77,7 +78,6 @@ class Service {
       data.price_service, 
       data.category, 
       data.payment_method_service, 
-      data.user_rut,  
       id              
     ];
     const result = await db.query(query, values);

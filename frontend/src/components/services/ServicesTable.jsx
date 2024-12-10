@@ -22,6 +22,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import AddServiceDialog from '@/components/services/ServicesDialog';
+import { useAlert } from '@/context/alertContext';
 
 export default function ServicesTable() {
   const [services, setServices] = useState([]);
@@ -41,6 +43,10 @@ export default function ServicesTable() {
     };
     fetchServices();
   }, []);
+
+  const handleAddService = (newService) => {
+    setServices((prev) => [...prev, newService]);
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -64,17 +70,16 @@ export default function ServicesTable() {
     console.log('Editar servicio:', service);
   };
 
+
   const handleUpdateService = (updatedService) => {
-    setServices((prev) =>
-      prev.map((service) =>
+    setServices((prevServices) =>
+      prevServices.map((service) =>
         service.id_service === updatedService.id_service ? updatedService : service
       )
     );
+    setEditingService(null); 
   };
 
-  const handleAddService = (newService) => {
-    setServices((prevServices) => [...prevServices, newService]);
-  };
 
   const filteredServices = services.filter((service) => {
     const matchesSearch =
@@ -86,6 +91,7 @@ export default function ServicesTable() {
     return matchesSearch && matchesCategory;
   });
 
+  
   return (
     <div className="container mx-auto py-4">
       <div className="mb-4 flex flex-col md:flex-row gap-4 items-center">
@@ -116,6 +122,7 @@ export default function ServicesTable() {
         </div>
         <div className="flex gap-2">
           <ExportButtons servicios={filteredServices} />
+          <AddServiceDialog onAddService={handleAddService} />
         </div>
       </div>
 
