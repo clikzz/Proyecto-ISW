@@ -2,9 +2,8 @@ import React from 'react';
 import { FileSpreadsheet, FileText, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { exportToExcel, exportToPDF } from '@/helpers/exportServices';
-import ServicesDialog from './ServicesDialog'; 
 
-export default function ExportButtons({ servicios, nuevoServicio, setNuevoServicio, handleSubmit }) {
+export default function ExportButtons({ servicios }) {
   const handleExportExcel = () => {
     exportToExcel(servicios);
   };
@@ -31,12 +30,6 @@ export default function ExportButtons({ servicios, nuevoServicio, setNuevoServic
         <FileText className="mr-2 h-4 w-4" />
         PDF
       </Button>
-      {/* Botón de agregar servicio */}
-      <ServicesDialog
-        nuevoServicio={nuevoServicio}
-        setNuevoServicio={setNuevoServicio}
-        handleSubmit={handleSubmit}
-      />
     </div>
   );
 }
