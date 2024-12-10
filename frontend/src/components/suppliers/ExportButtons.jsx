@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileSpreadsheet, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { exportToExcel, exportToPDF } from '@/utils/exportSuppliers';
+import { exportToExcel, exportToPDF } from '@/helpers/exportSuppliers';
 
 export default function ExportButtons({ suppliers }) {
   const handleExportExcel = () => {
@@ -22,11 +22,7 @@ export default function ExportButtons({ suppliers }) {
         <FileSpreadsheet className="mr-2 h-4 w-4" />
         Excel
       </Button>
-      <Button
-        onClick={handleExportPDF}
-        variant="pdf"
-        title="Exportar a PDF"
-      >
+      <Button onClick={handleExportPDF} variant="pdf" title="Exportar a PDF">
         <FileText className="mr-2 h-4 w-4" />
         PDF
       </Button>
