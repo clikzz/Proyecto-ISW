@@ -36,9 +36,9 @@ export default function Layout({ children }) {
   return (
     <>
       <div className="overflow-hidden min-h-screen bg-background text-foreground ${className}">
-        <header className="fixed px-4 lg:px-6 h-14 flex items-center w-full z-10">
+        <header className="fixed px-4 lg:px-6 h-14 flex items-center w-full z-10 bg-background/80 backdrop-blur-sm">
           <Link className="flex items-center justify-center" href="/">
-            <Bike className="h-6 w-6" />
+            <Bike className="h-6 w-6 text-primary" />
             <span className="ml-2 text-lg font-bold">bikefy</span>
           </Link>
           <nav className="ml-auto flex gap-4">

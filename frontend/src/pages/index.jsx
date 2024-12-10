@@ -27,22 +27,6 @@ export default function LandingPage() {
 
   return (
     <div className="overflow-hidden min-h-screen bg-background text-foreground">
-      <header className="fixed px-4 lg:px-6 h-14 flex items-center w-full z-10 bg-background/80 backdrop-blur-sm">
-        <Link className="flex items-center justify-center" href="/">
-          <Bike className="h-6 w-6 text-primary" />
-          <span className="ml-2 text-lg font-bold">bikefy</span>
-        </Link>
-        <nav className="ml-auto flex gap-4 items-center">
-          <Link href="#features" className="hidden md:inline-block hover:text-primary transition-colors">
-            Características
-          </Link>
-          <Link href="/login">
-            <Button className="rounded-xl">Inicia Sesión</Button>
-          </Link>
-          <ThemeToggle />
-        </nav>
-      </header>
-
       <motion.main
         variants={pageVariants}
         initial="hidden"
@@ -95,7 +79,7 @@ export default function LandingPage() {
               {[
                 {
                   icon: Wrench,
-                  title: "Gestión de Servicios",
+                  title: "Servicios",
                   description: "Administra tus servicios, precios y categorías de manera eficiente."
                 },
                 {
@@ -105,7 +89,7 @@ export default function LandingPage() {
                 },
                 {
                   icon: Package,
-                  title: "Gestión de Inventario",
+                  title: "Inventario",
                   description: "Administra tus productos, compras y ventas de manera sencilla."
                 },
                 {
