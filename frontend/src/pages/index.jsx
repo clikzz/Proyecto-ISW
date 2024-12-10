@@ -12,6 +12,18 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+
+const Star = ({ className }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="currentColor"
+    viewBox="0 0 24 24"
+    className={className}
+  >
+    <path d="M12 .587l3.668 7.431L24 9.751l-6 5.851 1.417 8.333L12 18.771l-7.417 3.964L6 15.602 0 9.751l8.332-1.733z" />
+  </svg>
+);
 
 
 const features = [
@@ -92,7 +104,7 @@ export default function LandingPage() {
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
                 <Image
-                  src="/placeholder.svg?height=400&width=400"
+                  src="/bodoque.gif"
                   width={400}
                   height={400}
                   className="rounded-full animate-float"
@@ -112,16 +124,88 @@ export default function LandingPage() {
         </motion.div>
       </motion.main>
 
+
+      <section
+        id="testimonials"
+        className="w-full py-12 md:py-24 lg:py-32"
+      >
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
+            Lo que Dicen Nuestros Clientes
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Johanna Olivares",
+                role: "Dueña de Taller",
+                content:
+                  "<strong>bikefy</strong> ha transformado completamente la forma en que gestionamos nuestro taller.",
+                image: "/johanna.png",
+              },
+              {
+                name: "Nicole Ibieta",
+                role: "Gerente de Tienda",
+                content:
+                  "<strong>bikefy</strong> nos ha permitido optimizar nuestro tiempo y recursos.",
+                image: "/nicole.png",
+              },
+              {
+                name: "Cristina Betancurt",
+                role: "Técnica de Bicicletas",
+                content:
+                  "Los análisis y reportes de <strong>bikefy</strong> me han ayudado a identificar áreas de mejora en mi trabajo.",
+                image: "/cristina.png",
+              },
+            ].map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="text-yellow-400 w-5 h-5 " />
+                      ))}
+                    </div>
+                    <p
+                      className="text-muted-foreground mb-4 italic"
+                      dangerouslySetInnerHTML={{ __html: testimonial.content }}
+                    />
+                    <div className="flex items-center">
+                      <Image
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        width={40}
+                        height={40}
+                        className="rounded-full mr-4"
+                      />
+                      <div>
+                        <p className="font-semibold">{testimonial.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {testimonial.role}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+
       <section
         id="características"
         className="py-20"
         style={{ backgroundColor: "hsl(var(--muted))" }}
       >
         <div className="container mx-auto px-4">
-          <h2
-            className="text-3xl font-bold text-center mb-16"
-            style={{ color: "hsl(var(--foreground))" }}
-          >
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
             Características Principales
           </h2>
           <div className="grid md:grid-cols-2 gap-12 items-center">
