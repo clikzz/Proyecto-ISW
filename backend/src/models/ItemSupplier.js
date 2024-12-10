@@ -5,16 +5,20 @@ class ItemSupplier {
     const query = `
       INSERT INTO item_supplier (id_item, rut_supplier, purchase_price, purchase_date)
       VALUES ($1, $2, $3, $4)
+      ON CONFLICT (id_item, rut_supplier) 
+      DO UPDATE SET
+        purchase_price = EXCLUDED.purchase_price,
+        purchase_date = EXCLUDED.purchase_date
       RETURNING *;
     `;
     const values = [data.id_item, data.rut_supplier, data.purchase_price, data.purchase_date || new Date()];
     const result = await db.query(query, values);
     return result.rows[0];
-  }
+}
 
   static async findSuppliersByItem(id_item) {
     const query = `
-      SELECT 
+      SELECT DISTINCT 
         s.*, 
         item_supp.purchase_price, 
         item_supp.purchase_date 
@@ -35,7 +39,7 @@ class ItemSupplier {
   
   static async findItemsBySupplier(rut_supplier) {
     const query = `
-      SELECT 
+      SELECT DISTINCT 
         i.id_item, 
         i.name_item, 
         item_supp.purchase_price, 

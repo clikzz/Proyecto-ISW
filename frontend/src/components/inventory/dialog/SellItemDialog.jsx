@@ -10,9 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
-import { recordTransaction } from '@/api/inventory';
 import { useAlert } from '@/context/alertContext';
-import { getInventoryItems } from '@/api/inventory';
+import { getInventoryItems, recordSale } from '@/api/inventory';
 import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select';
 import { capitalize } from '@/helpers/capitalize';
 
@@ -69,7 +68,8 @@ export default function SellItemDialog({ fetchSales }) {
     };
   
     try {
-      await recordTransaction(transaction);
+      console.log('transaction enviada del dialog:', transaction);
+      await recordSale(transaction);
       showAlert('Venta registrada exitosamente', 'success');
       setIsDialogOpen(false);
       setSelectedItem(null);

@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select';
-import { getInventoryItems, recordTransaction } from '@/api/inventory';
+import { getInventoryItems, recordPurchase } from '@/api/inventory';
 import { getSuppliers } from '@/api/suppliers';
 import { useAlert } from '@/context/alertContext';
 import { capitalize } from '@/helpers/capitalize';
@@ -64,24 +64,38 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
 
   const handlePurchaseSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const transaction = { ...purchaseDetails };
 
-      if (section === 'new') {
+      if (section === 'existing') {
+        if (!selectedSupplier) {
+          showAlert('Selecciona un proveedor.', 'error');
+          return;
+        }
+
+        transaction.items[0] = {
+          ...transaction.items[0],
+          rut_supplier: selectedSupplier,
+        };
+      } else if (section === 'new') {
+        if (!newItem.rut_supplier) {
+          showAlert('Selecciona un proveedor para el nuevo producto.', 'error');
+          return;
+        }
         transaction.items = [{ ...newItem }];
       }
-
+      // Calcular el monto total
       transaction.details.amount = transaction.items.reduce(
         (total, item) => total + item.quantity * item.unit_price,
         0
       );
-
-      await recordTransaction(transaction);
+      console.log('Datos enviados:', JSON.stringify(transaction, null, 2));
+      await recordPurchase(transaction);
       showAlert('Compra registrada exitosamente', 'success');
       setIsDialogOpen(false);
       await fetchPurchases();
     } catch (error) {
+      console.error('Error al registrar la compra:', error);
       showAlert('Error al registrar la compra', 'error');
     }
   };
@@ -136,7 +150,13 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
               <Label htmlFor="supplier">Proveedor</Label>
               <Select
                 value={selectedSupplier}
-                onValueChange={(value) => setSelectedSupplier(value)}
+                onValueChange={(value) => {
+                  setSelectedSupplier(value);
+                  setPurchaseDetails((prev) => ({
+                    ...prev,
+                    items: [{ ...prev.items[0], rut_supplier: value }],
+                  }));
+                }}
               >
                 <SelectTrigger>
                   {selectedSupplier
@@ -225,13 +245,31 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
             </div>
             <div>
               <Label htmlFor="category">Categoría</Label>
-              <Input
-                id="category"
-                name="category"
+              <Select
                 value={newItem.category}
-                onChange={(e) => setNewItem((prev) => ({ ...prev, category: e.target.value }))}
-                required
-              />
+                onValueChange={(value) => setNewItem((prev) => ({ ...prev, category: value }))}
+              >
+                <SelectTrigger>
+                  {capitalize(newItem.category) || 'Seleccionar categoría'}
+                </SelectTrigger>
+                <SelectContent>
+                  {[
+                    'Accesorios',
+                    'Bicicletas',
+                    'Componentes',
+                    'Equipamiento',
+                    'Electrónica',
+                    'Herramientas',
+                    'Limpieza',
+                    'Repuestos',
+                    'Otros',
+                  ].map((category) => (
+                    <SelectItem key={category} value={category.toLowerCase()}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <Label htmlFor="description">Descripción</Label>
@@ -283,7 +321,10 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
               <Label htmlFor="supplier">Proveedor</Label>
               <Select
                 value={newItem.rut_supplier}
-                onValueChange={(value) => setNewItem((prev) => ({ ...prev, rut_supplier: value }))}
+                onValueChange={(value) => {
+                  setSelectedSupplier(value);
+                  setNewItem((prev) => ({ ...prev, rut_supplier: value }));
+                }}
               >
                 <SelectTrigger>
                   {newItem.rut_supplier
@@ -311,7 +352,7 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
                 }
               >
                 <SelectTrigger>
-                  {purchaseDetails.details.payment_method || 'Seleccionar método de pago'}
+                  {capitalize(purchaseDetails.details.payment_method) || 'Seleccionar método de pago'}
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="efectivo">Efectivo</SelectItem>

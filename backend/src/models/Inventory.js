@@ -19,19 +19,22 @@ class Inventory {
     return result.rows[0].id_transaction;
   }
 
-  static async createTransactionDetails(transactionId, item) {
+  static async createTransactionDetails(transactionId, item, type) {
+    console.log('Item antes de insertar en la BD:', item);
     const query = `
       INSERT INTO transaction_item (id_transaction, id_item, quantity_item, unit_price)
       VALUES ($1, $2, $3, $4);
     `;
     await db.query(query, [transactionId, item.id_item, item.quantity, item.unit_price]);
-
-    await ItemSupplier.addItemSupplier({
-      id_item: item.id_item,
-      rut_supplier: item.rut_supplier,
-      purchase_price: item.unit_price,
-      purchase_date: new Date(),
-    });
+  
+    if (type === 'compra' && item.rut_supplier) {
+      await ItemSupplier.addItemSupplier({
+        id_item: item.id_item,
+        rut_supplier: item.rut_supplier,
+        purchase_price: item.unit_price,
+        purchase_date: new Date(),
+      });
+    }
   }
 
   static async validateStock(itemId, quantity) {
@@ -44,6 +47,28 @@ class Inventory {
       throw new Error(`Stock insuficiente para el ítem con ID ${itemId}`);
     }
     return true;
+  }
+
+  static async updateSupplier(idItem, rutSupplier, purchasePrice) {
+    const existing = await db.query(
+      `SELECT * FROM item_supplier WHERE id_item = $1 AND rut_supplier = $2`,
+      [idItem, rutSupplier]
+    );
+  
+    if (existing.rowCount === 0) {
+      await db.query(
+        `INSERT INTO item_supplier (id_item, rut_supplier, purchase_price, purchase_date)
+        VALUES ($1, $2, $3, NOW())`,
+        [idItem, rutSupplier, purchasePrice]
+      );
+    } else {
+      await db.query(
+        `UPDATE item_supplier
+        SET purchase_price = $1, purchase_date = NOW()
+        WHERE id_item = $2 AND rut_supplier = $3`,
+        [purchasePrice, idItem, rutSupplier]
+      );
+    }
   }
 
   static async getPurchases() {
@@ -64,9 +89,9 @@ class Inventory {
         i.name_item
       FROM 
         transaction t
-      JOIN 
+      LEFT JOIN 
         transaction_item ti ON t.id_transaction = ti.id_transaction
-      JOIN 
+      LEFT JOIN 
         item_supplier isup ON ti.id_item = isup.id_item
       LEFT JOIN 
         supplier s ON isup.rut_supplier = s.rut_supplier

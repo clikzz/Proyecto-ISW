@@ -1,40 +1,38 @@
 const inventoryService = require('../services/inventory.service');
 
-exports.createTransaction = async (req, res) => {
-  const { type, items, details } = req.body;
+exports.createPurchase = async (req, res) => {
+  console.log('Datos recibidos (compra):', req.body);
+  const { items, details } = req.body;
 
   try {
-    if (type !== 'venta' && type !== 'compra') {
-      return res.status(400).json({ message: 'Tipo de transacción inválido' });
-    }
-
-    for (const item of items) {
-      if (!item.id_item) {
-        if (
-          !item.name_item ||
-          !item.category ||
-          !item.description ||
-          !item.unit_price ||
-          !item.selling_price ||
-          !item.rut_supplier
-        ) {
-          return res.status(400).json({
-            message: 'Faltan datos para crear un nuevo producto',
-          });
-        }
-      }
-    }
-
     const transactionDetails = {
       ...details,
-      rut: req.user.rut,
-      type,
+      rut: req.user.rut, // Rut del usuario autenticado
     };
 
-    const transactionId = await inventoryService.createTransaction(type, items, transactionDetails);
-    res.status(201).json({ message: 'Transacción registrada exitosamente', transactionId });
+    const transactionId = await inventoryService.createPurchase(items, transactionDetails);
+    res.status(201).json({ message: 'Compra registrada exitosamente', transactionId });
   } catch (error) {
-    res.status(500).json({ message: 'Error al registrar la transacción', error: error.message });
+    console.error('Error al registrar la compra:', error);
+    res.status(500).json({ message: 'Error al registrar la compra', error: error.message });
+  }
+};
+
+exports.createSale = async (req, res) => {
+  console.log('Datos recibidos (venta):', req.body);
+  const { items, details } = req.body;
+
+  try {
+    const transactionDetails = {
+      ...details,
+      rut: req.user.rut, // Rut del usuario autenticado
+    };
+
+    const transactionId = await inventoryService.createSale(items, transactionDetails);
+    res.status(201).json({ message: 'Venta registrada exitosamente', transactionId });
+  } catch (error) {
+    console.error('Error al registrar la venta:', error);
+    res.status(500).json({ message: 'Error al registrar la venta', error: error.message });
   }
 };
 

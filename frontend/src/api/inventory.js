@@ -80,18 +80,34 @@ export const deleteItem = async (id) => {
   }
 };
 
-// Registrar una transacción (compra o venta)
-export const recordTransaction = async (transaction) => {
+// Registrar una compra
+export const recordPurchase = async (purchase) => {
   try {
-    console.log('Datos enviados:', transaction);
-    const response = await api.post('/inventory/create', transaction, {
+    console.log('Datos enviados para compra:', purchase);
+    const response = await api.post('/inventory/purchase', purchase, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
     return response.data;
   } catch (error) {
-    console.error('Error al registrar transacción:', error.response?.data || error.message);
+    console.error('Error al registrar la compra:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Registrar una venta
+export const recordSale = async (sale) => {
+  try {
+    console.log('Datos enviados para venta:', sale);
+    const response = await api.post('/inventory/sale', sale, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al registrar la venta:', error.response?.data || error.message);
     throw error;
   }
 };
