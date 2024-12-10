@@ -17,8 +17,25 @@ const getAllServices = async (category) => {
 };
 
 const getServiceById = async (id) => await Service.findById(id);
-const updateService = async (id, data) => await Service.update(id, data);
+
+
+const updateService = async (id, data) => {
+  try {
+    const service = await Service.findById(id);
+    if (!service) {
+      throw new Error('Servicio no encontrado.');
+    }
+
+    await service.update(data);
+    return service; 
+  } catch (error) {
+    console.error('Error al actualizar el servicio:', error.message);
+    throw error;
+  }
+};
+
 const deleteService = async (id) => await Service.delete(id);
+
 
 module.exports = {
   createService,

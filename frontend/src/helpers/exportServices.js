@@ -11,14 +11,14 @@ export const exportToExcel = (services) => {
     { wch: 30 }, // Descripción
     { wch: 15 }, // Precio
     { wch: 20 }, // Categoría
-    { wch: 15 }, // Fecha
+    { wch: 20 }, // Método de Pago
   ];
   worksheet['!cols'] = colWidths;
 
 
   utils.sheet_add_aoa(
     worksheet,
-    [['Nombre', 'Descripción', 'Precio', 'Categoría', 'Fecha']],
+    [['Nombre', 'Descripción', 'Precio', 'Categoría', 'Método de Pago']],
     { origin: 'A1' }
   );
 
@@ -43,14 +43,15 @@ export const exportToPDF = (services) => {
   const tableData = services.map((service) => [
     service.name_service,
     service.description_service,
-    service.price_service.toFixed(2),
+    service.price_service,
     service.category,
+    service.payment_method_service,
     new Date(service.date_service).toLocaleDateString(),
   ]);
 
-  // Agregar tabla con estilos
+
   autoTable(doc, {
-    head: [['Nombre', 'Descripción', 'Precio', 'Categoría', 'Fecha']],
+    head: [['Nombre', 'Descripción', 'Precio', 'Categoría', 'Método de Pago']],
     body: tableData,
     startY: 40,
     styles: {
