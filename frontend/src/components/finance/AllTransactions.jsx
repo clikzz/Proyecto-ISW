@@ -7,6 +7,7 @@ import NewTransactionForm from './NewTransactionForm';
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import { useAlert } from '@context/alertContext';
+import { formatDate } from '@/helpers/dates';
 
 
 const formatoPesoChileno = (valor) => {
@@ -54,7 +55,8 @@ export default function AllTransactions({ isOpen, onClose, transactions, onTrans
           description: `${service.name_service}`,
           type: 'servicio',
           amount: service.price_service,
-          payment_method: service.payment_method_service
+          payment_method: service.payment_method_service,
+          transaction_date: service.created_at
         }));
 
         setAllTransactions([
@@ -115,7 +117,7 @@ export default function AllTransactions({ isOpen, onClose, transactions, onTrans
 
     const tableColumn = ["Fecha", "Tipo", "Descripción", "Monto", "Método de Pago", "RUT"];
     const tableRows = allTransactions.map(t => [
-      new Date(t.transaction_date).toLocaleDateString(),
+      formatDate(t.transaction_date),
       t.transaction_type,
       t.description,
       formatoPesoChileno(t.amount),
@@ -183,7 +185,7 @@ export default function AllTransactions({ isOpen, onClose, transactions, onTrans
                     {t.description}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {new Date(t.transaction_date).toLocaleDateString()} - {t.transaction_type} - {t.payment_method}
+                    {formatDate(t.transaction_date)} - {t.transaction_type} - {t.payment_method}
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
