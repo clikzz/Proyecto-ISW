@@ -18,6 +18,9 @@ const createPurchase = async (items, details) => {
       if (item.rut_supplier) {
         await Inventory.updateSupplier(item.id_item, item.rut_supplier, item.unit_price);
       }
+
+      // Registrar el detalle de compra para producto existente
+      await Inventory.createTransactionDetails(transactionId, item, 'compra');
     } else {
       // Producto nuevo: crear el producto
       const newItem = await Item.create({

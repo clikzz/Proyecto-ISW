@@ -22,10 +22,10 @@ class Inventory {
   static async createTransactionDetails(transactionId, item, type) {
     console.log('Item antes de insertar en la BD:', item);
     const query = `
-      INSERT INTO transaction_item (id_transaction, id_item, quantity_item, unit_price)
-      VALUES ($1, $2, $3, $4);
+      INSERT INTO transaction_item (id_transaction, id_item, quantity_item, unit_price, rut_supplier)
+      VALUES ($1, $2, $3, $4, $5);
     `;
-    await db.query(query, [transactionId, item.id_item, item.quantity, item.unit_price]);
+    await db.query(query, [transactionId, item.id_item, item.quantity, item.unit_price, item.rut_supplier || null]);
   
     if (type === 'compra' && item.rut_supplier) {
       await ItemSupplier.addItemSupplier({
@@ -83,24 +83,17 @@ class Inventory {
         COALESCE(t.description, '') AS description,
         ti.id_item, 
         ti.quantity_item, 
-        ti.unit_price, 
+        ti.unit_price,
         ti.id_transaction_item,
         s.name_supplier,
         i.name_item
       FROM 
         transaction t
-      LEFT JOIN 
-        transaction_item ti ON t.id_transaction = ti.id_transaction
-      LEFT JOIN 
-        item_supplier isup ON ti.id_item = isup.id_item
-      LEFT JOIN 
-        supplier s ON isup.rut_supplier = s.rut_supplier
-      LEFT JOIN
-        item i ON ti.id_item = i.id_item
-      WHERE 
-        t.transaction_type = 'compra'
-      ORDER BY 
-        t.transaction_date DESC;
+      LEFT JOIN transaction_item ti ON t.id_transaction = ti.id_transaction
+      LEFT JOIN supplier s ON ti.rut_supplier = s.rut_supplier
+      LEFT JOIN item i ON ti.id_item = i.id_item
+      WHERE t.transaction_type = 'compra'
+      ORDER BY t.transaction_date DESC;
     `;
 
     const result = await db.query(query);
