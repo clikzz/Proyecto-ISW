@@ -7,19 +7,49 @@ const authorizationMiddleware = require('../middleware/authorization.middleware'
 
 router.use(authMiddleware);
 
-router.use(authorizationMiddleware(['admin', 'employee']));
+router.post(
+  '/purchase',
+  validatePurchase,
+  authorizationMiddleware(['admin', 'employee']),
+  inventoryController.createPurchase
+);
 
-router.post('/purchase', validatePurchase, inventoryController.createPurchase);
-router.post('/sale', validateSale, inventoryController.createSale);
+router.delete(
+  '/purchases/delete/:id', 
+  authorizationMiddleware(['admin']),
+  inventoryController.deletePurchase
+);
+
+router.post(
+  '/sale',
+  validateSale,
+  authorizationMiddleware(['admin', 'employee']),
+  inventoryController.createSale
+);
 
 router.put(
   '/sales/update/:id_transaction',
-  authorizationMiddleware(['admin', 'employee']),
   validateEditSale,
+  authorizationMiddleware(['admin', 'employee']),
   inventoryController.updateSale
 );
 
-router.get('/purchases', inventoryController.getPurchases);
-router.get('/sales', inventoryController.getSales);
+router.delete(
+  '/sales/delete/:id',
+  authorizationMiddleware(['admin']),
+  inventoryController.deleteSale
+);
+
+router.get(
+  '/purchases', 
+  authorizationMiddleware(['admin', 'employee']),
+  inventoryController.getPurchases
+);
+
+router.get(
+  '/sales', 
+  authorizationMiddleware(['admin', 'employee']),
+  inventoryController.getSales
+);
 
 module.exports = router;

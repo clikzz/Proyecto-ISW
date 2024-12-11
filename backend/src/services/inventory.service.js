@@ -1,5 +1,6 @@
 const Inventory = require('../models/Inventory');
 const Item = require('../models/Item');
+const ItemSupplier = require('../models/ItemSupplier');
 const Transaction = require('../models/Transaction');
 
 const createPurchase = async (items, details) => {
@@ -84,6 +85,71 @@ const updateSale = async (transactionId, updatedItems, updatedDetails) => {
   return await Inventory.getSales(transactionId); // Retorna los datos actualizados
 };
 
+const deleteSale = async (transactionId) => {
+  // Validar existencia y estado de la transacción
+  const transaction = await Inventory.getSales().then((sales) =>
+    sales.find((sale) => sale.id_transaction === Number(transactionId))
+  );
+  if (!transaction) {
+    throw new Error('La transacción no existe');
+  }
+  if (transaction.is_deleted) {
+    throw new Error('La transacción ya ha sido eliminada');
+  }
+
+  // Obtener todos los ítems de la transacción
+  const transactionItems = await Inventory.getTransactionItems(transactionId);
+
+  // Revertir el stock de cada ítem
+  for (const item of transactionItems) {
+    await Item.updateStock(item.id_item, item.quantity_item, 'add');
+  }
+
+  // Marcar la transacción como eliminada
+  const updatedTransaction = await Inventory.softDeleteTransaction(transactionId);
+
+  return updatedTransaction;
+};
+
+const deletePurchase = async (transactionId) => {
+  console.log('ID de la compra a eliminar:', transactionId);
+  // Validar la existencia de la compra
+  const transaction = await Inventory.getPurchases().then((purchases) =>
+    purchases.find((purchase) => purchase.id_transaction === Number(transactionId))
+  );
+
+  if (!transaction) {
+    throw new Error('La transacción no existe');
+  }
+  if (transaction.is_deleted) {
+    throw new Error('La transacción ya ha sido eliminada');
+  }
+
+  // Obtener los ítems de la transacción
+  const transactionItems = await Inventory.getTransactionItems(transactionId);
+
+  // Revertir el stock de cada ítem
+  for (const item of transactionItems) {
+    await Item.updateStock(item.id_item, item.quantity_item, 'subtract');
+
+    // Revisar si el proveedor tiene otras compras activas
+    const activeTransactions = await Inventory.getActiveTransactionsByItemAndSupplier(
+      item.id_item,
+      item.rut_supplier
+    );
+
+    if (activeTransactions.length === 0) {
+      // Si no hay más compras activas, eliminar la relación proveedor-producto
+      await ItemSupplier.removeSupplierFromItem(item.id_item, item.rut_supplier);
+    }
+  }
+
+  // Marcar la transacción como eliminada
+  const updatedTransaction = await Inventory.softDeleteTransaction(transactionId);
+
+  return updatedTransaction;
+};
+
 const getPurchases = async () => {
   return await Inventory.getPurchases();
 };
@@ -94,8 +160,10 @@ const getSales = async () => {
 
 module.exports = {
   createPurchase,
+  deletePurchase,
   createSale,
   updateSale,
+  deleteSale,
   getPurchases,
   getSales,
 };

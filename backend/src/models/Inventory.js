@@ -104,6 +104,34 @@ class Inventory {
     return result.rows[0];
   }
 
+  static async getTransactionItems(transactionId) {
+    const query = `
+      SELECT 
+        ti.id_transaction_item, 
+        ti.id_item, 
+        ti.quantity_item, 
+        ti.unit_price,
+        i.name_item
+      FROM 
+        transaction_item ti
+      JOIN 
+        item i 
+      ON 
+        ti.id_item = i.id_item
+      JOIN
+        transaction t
+      ON
+        ti.id_transaction = t.id_transaction
+      WHERE 
+        ti.id_transaction = $1 AND t.is_deleted = FALSE;
+    `;
+    const result = await db.query(query, [transactionId]);
+    if (result.rows.length === 0) {
+      throw new Error(`No se encontraron ítems para la transacción con ID ${transactionId}`);
+    }
+    return result.rows;
+  }
+
   static async getTransactionItemById(id_transaction_item) {
     const query = `
       SELECT 
@@ -124,7 +152,7 @@ class Inventory {
       ON 
         ti.id_transaction = t.id_transaction
       WHERE 
-        ti.id_transaction_item = $1;
+        ti.id_transaction_item = $1 AND t.is_deleted = FALSE;
     `;
     const result = await db.query(query, [id_transaction_item]);
     if (result.rows.length === 0) {
@@ -132,6 +160,34 @@ class Inventory {
     }
     return result.rows[0];
   }
+
+  static async softDeleteTransaction(transactionId) {
+    const query = `
+      UPDATE transaction
+      SET is_deleted = TRUE, updated_at = NOW()
+      WHERE id_transaction = $1 AND is_deleted = FALSE
+      RETURNING *;
+    `;
+    
+    const result = await db.query(query, [transactionId]);
+    
+    if (result.rowCount === 0) {
+      throw new Error(`La transacción con ID ${transactionId} no existe o ya ha sido eliminada`);
+    }
+  
+    return result.rows[0];
+  }
+
+  static async getActiveTransactionsByItemAndSupplier(id_item, rut_supplier) {
+    const query = `
+      SELECT t.id_transaction
+      FROM transaction t
+      JOIN transaction_item ti ON t.id_transaction = ti.id_transaction
+      WHERE ti.id_item = $1 AND ti.rut_supplier = $2 AND t.is_deleted = FALSE;
+    `;
+    const result = await db.query(query, [id_item, rut_supplier]);
+    return result.rows;
+  }  
 
   static async getPurchases() {
     const query = `
@@ -154,7 +210,7 @@ class Inventory {
       LEFT JOIN transaction_item ti ON t.id_transaction = ti.id_transaction
       LEFT JOIN supplier s ON ti.rut_supplier = s.rut_supplier
       LEFT JOIN item i ON ti.id_item = i.id_item
-      WHERE t.transaction_type = 'compra'
+      WHERE t.transaction_type = 'compra' AND t.is_deleted = FALSE
       ORDER BY t.transaction_date DESC;
     `;
 
@@ -189,7 +245,7 @@ class Inventory {
       ON 
         ti.id_item = i.id_item
       WHERE 
-        t.transaction_type = 'venta' 
+        t.transaction_type = 'venta' AND t.is_deleted = FALSE
       ORDER BY 
         t.transaction_date DESC;
     `;

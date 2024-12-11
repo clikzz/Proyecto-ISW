@@ -156,3 +156,34 @@ export const updateSale = async (id, updatedFields) => {
     throw error;
   }
 };
+
+// Eliminar una venta
+export const deleteSale = async (id) => {
+  try {
+    const response = await api.delete(`/inventory/sales/delete/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al eliminar la venta:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Eliminar una compra
+export const deletePurchase = async (id) => {
+  try {
+    console.log('ID de la compra a eliminar al llamar a la api:', id);
+    const response = await api.delete(`/inventory/purchases/delete/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al eliminar la compra:', error.response?.data || error.message);
+    throw error;
+  }
+};

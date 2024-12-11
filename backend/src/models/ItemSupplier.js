@@ -14,7 +14,15 @@ class ItemSupplier {
     const values = [data.id_item, data.rut_supplier, data.purchase_price, data.purchase_date || new Date()];
     const result = await db.query(query, values);
     return result.rows[0];
-}
+  }
+
+  static async removeSupplierFromItem(id_item, rut_supplier) {
+    const query = `
+      DELETE FROM item_supplier
+      WHERE id_item = $1 AND rut_supplier = $2;
+    `;
+    await db.query(query, [id_item, rut_supplier]);
+  }
 
   static async findSuppliersByItem(id_item) {
     const query = `
@@ -29,7 +37,15 @@ class ItemSupplier {
       ON 
         item_supp.rut_supplier = s.rut_supplier
       WHERE 
-        item_supp.id_item = $1
+        item_supp.id_item = $1 
+        AND EXISTS (
+          SELECT 1 
+          FROM transaction t 
+          JOIN transaction_item ti ON t.id_transaction = ti.id_transaction
+          WHERE ti.id_item = $1 
+          AND ti.rut_supplier = item_supp.rut_supplier
+          AND t.is_deleted = FALSE
+        )
       ORDER BY
         item_supp.purchase_date DESC;
     `;

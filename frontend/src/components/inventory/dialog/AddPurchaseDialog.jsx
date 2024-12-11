@@ -89,7 +89,6 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
         (total, item) => total + item.quantity * item.unit_price,
         0
       );
-      console.log('Datos enviados:', JSON.stringify(transaction, null, 2));
       await recordPurchase(transaction);
       showAlert('Compra registrada exitosamente', 'success');
       setIsDialogOpen(false);
