@@ -59,6 +59,31 @@ exports.getPurchases = async (req, res) => {
   }
 };
 
+exports.deletePurchase = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedPurchase = await inventoryService.deletePurchase(id);
+    res.status(200).json({ message: 'Compra eliminada exitosamente', deletedPurchase });
+  } catch (error) {
+    console.error('Error al eliminar la compra:', error);
+    res.status(500).json({ message: 'Error al eliminar la compra', error: error.message });
+  }
+};
+
+
+exports.deleteSale = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedSale = await inventoryService.deleteSale(id);
+    res.status(200).json({ message: 'Venta eliminada exitosamente', deletedSale });
+  } catch (error) {
+    console.error('Error al eliminar la venta:', error);
+    res.status(500).json({ message: 'Error al eliminar la venta', error: error.message });
+  }
+};
+
 exports.getSales = async (req, res) => {
   try {
     const sales = await inventoryService.getSales();

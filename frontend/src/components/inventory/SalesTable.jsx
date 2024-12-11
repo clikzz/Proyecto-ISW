@@ -10,12 +10,15 @@ import { capitalize } from '@/helpers/capitalize';
 import SellItemDialog from '@/components/inventory/dialog/SellItemDialog';
 import EditSaleDialog from '@/components/inventory/dialog/EditSaleDialog';
 import SaleDetailsDialog from '@/components/inventory/dialog/SaleDetailsDialog';
+import { deleteSale } from '@/api/inventory';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useAlert } from '@/context/alertContext';
+import ConfirmationDialog from '@/components/ConfirmationDialog';
 
 const SalesTable = () => {
   const [sales, setSales] = useState([]);
@@ -24,6 +27,9 @@ const SalesTable = () => {
   const [isEditSaleDialogOpen, setIsEditSaleDialogOpen] = useState(false);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [selectedSale, setSelectedSale] = useState(null);
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
+  const [saleToDelete, setSaleToDelete] = useState(null);
+  const { showAlert } = useAlert();
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -59,6 +65,31 @@ const SalesTable = () => {
       direction = 'descending';
     }
     setSortConfig({ key, direction });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (saleToDelete) {
+      try {
+        await deleteSale(saleToDelete);
+        await fetchSales(); // Refresca la lista de ventas
+        showAlert('Venta eliminada exitosamente', 'success');
+      } catch (error) {
+        console.error('Error al eliminar la venta:', error);
+        showAlert('Error al eliminar la venta', 'error');
+      } finally {
+        closeConfirmationDialog();
+      }
+    }
+  };
+
+  const openConfirmationDialog = (saleId) => {
+    setSaleToDelete(saleId);
+    setIsConfirmationDialogOpen(true);
+  };
+  
+  const closeConfirmationDialog = () => {
+    setSaleToDelete(null);
+    setIsConfirmationDialogOpen(false);
   };
 
   const openEditSaleDialog = (sale) => {
@@ -222,6 +253,7 @@ const SalesTable = () => {
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="hover:bg-red-100 px-4 py-2 cursor-pointer text-red-600"
+                            onClick={() => openConfirmationDialog(sale.id_transaction)}
                           >
                             Eliminar
                           </DropdownMenuItem>
@@ -247,6 +279,12 @@ const SalesTable = () => {
         isOpen={isDetailsDialogOpen}
         onClose={closeDetailsDialog}
         sale={selectedSale}
+      />
+
+      <ConfirmationDialog
+        open={isConfirmationDialogOpen}
+        handleClose={closeConfirmationDialog}
+        handleConfirm={handleConfirmDelete}
       />
     </div>
   );
