@@ -7,6 +7,7 @@ export default function NewTransactionForm({ isOpen, onClose, onTransactionAdded
   const [amount, setAmount] = useState('');
   const [payment_method, setPaymentMethod] = useState('efectivo');
   const [description, setDescription] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (editingTransaction) {
@@ -19,9 +20,17 @@ export default function NewTransactionForm({ isOpen, onClose, onTransactionAdded
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
+    if (amount <= 0) {
+      setError('El monto debe ser un valor positivo.');
+      return;
+    }
+
     if (editingTransaction && !window.confirm('¿Estás seguro de guardar estas modificaciones?')) {
       return;
     }
+
     try {
       const transactionData = { transaction_type, amount, payment_method, description };
       if (editingTransaction) {
@@ -33,6 +42,7 @@ export default function NewTransactionForm({ isOpen, onClose, onTransactionAdded
       onClose();
     } catch (error) {
       console.error('Error al agregar la transacción:', error);
+      setError('Error al agregar la transacción.');
     }
   };
 
@@ -48,6 +58,7 @@ export default function NewTransactionForm({ isOpen, onClose, onTransactionAdded
           </button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && <div className="text-red-500">{error}</div>}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="transaction_type" className="block text-sm font-medium text-foreground">
