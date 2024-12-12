@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Bar, Line, Pie } from "react-chartjs-2";
 import { useTheme } from "next-themes";
 import { Card, CardContent } from "@/components/ui/card";
-import { getTransactionsSummary } from '@/api/transaction';
-import { getSales } from '@/api/inventory';
-import { getServices } from '@/api/service';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -39,36 +36,26 @@ ChartJS.register(
 
 export default function Charts({ transactions }) {
   const { theme } = useTheme();
-  const [summary, setSummary] = useState({ ingresos: 0, egresos: 0, ventas: 0, compras: 0, servicios: 0 });
-
-  const fetchSummary = async () => {
-    try {
-      const [transactionData, salesData, servicesData] = await Promise.all([
-        getTransactionsSummary(),
-        getSales(),
-        getServices()
-      ]);
-
-      const ventasTotal = salesData.reduce((total, sale) => total + Number(sale.amount || 0), 0);
-      const comprasTotal = salesData.filter(sale => sale.type === 'compra').reduce((total, purchase) => total + Number(purchase.amount || 0), 0);
-      const serviciosTotal = servicesData.reduce((total, service) => total + Number(service.price_service || 0), 0);
-
-      const ingresosTotales = Number(transactionData.ingresos || 0) + ventasTotal + serviciosTotal;
-      const egresosTotales = Number(transactionData.egresos || 0) + comprasTotal;
-
-      setSummary({
-        ingresos: ingresosTotales,
-        egresos: egresosTotales,
-        balance: ingresosTotales - egresosTotales
-      });
-    } catch (error) {
-      console.error('Error al obtener el resumen:', error);
-      setSummary({ ingresos: 0, egresos: 0, balance: 0 });
-    }
-  };
+  const [summary, setSummary] = useState({ ingresos: 0, egresos: 0, balance: 0 });
 
   useEffect(() => {
-    fetchSummary();
+    const calculateSummary = () => {
+      const ingresos = transactions
+        .filter(t => !t.is_deleted && (t.transaction_type === 'ingreso' || t.transaction_type === 'venta' || t.transaction_type === 'servicio'))
+        .reduce((total, t) => total + Number(t.amount || 0), 0);
+
+      const egresos = transactions
+        .filter(t => !t.is_deleted && (t.transaction_type === 'egreso' || t.transaction_type === 'compra'))
+        .reduce((total, t) => total + Number(t.amount || 0), 0);
+
+      setSummary({
+        ingresos: ingresos,
+        egresos: egresos,
+        balance: ingresos - egresos
+      });
+    };
+
+    calculateSummary();
   }, [transactions]);
 
   // Configuración del gráfico de barras
@@ -90,9 +77,9 @@ export default function Charts({ transactions }) {
   // Configuración del gráfico de líneas
   const lineData = (() => {
     // Ordenar las transacciones por fecha
-    const sortedTransactions = [...transactions].sort(
-      (a, b) => new Date(a.transaction_date) - new Date(b.transaction_date)
-    );
+    const sortedTransactions = transactions
+      .filter(t => !t.is_deleted)
+      .sort((a, b) => new Date(a.transaction_date) - new Date(b.transaction_date));
 
     return {
       labels: sortedTransactions.map((t) =>
@@ -126,7 +113,6 @@ export default function Charts({ transactions }) {
       ],
     };
   })();
-
 
   // Configuración del gráfico de torta
   const tortinhaData = {
@@ -212,13 +198,10 @@ export default function Charts({ transactions }) {
                     Gráfico de Torta
                   </h3>
                   <div className="w-full h-[350px] items-center">
-                    {" "}
-                    {/* Fixed height container */}
                     <Pie data={tortinhaData} options={options} />
                   </div>
                 </CardContent>
-              </Card>
-            </CarouselItem>
+              </Card></CarouselItem>
           </CarouselContent>
           <CarouselPrevious
             className=" -left-4 flex items-center justify-center"
@@ -233,3 +216,4 @@ export default function Charts({ transactions }) {
     </Card>
   );
 }
+

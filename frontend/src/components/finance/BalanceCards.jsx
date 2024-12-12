@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
-import { getTransactionsSummary } from '@/api/transaction';
-import { getSales } from '@/api/inventory';
-import { getServices } from '@/api/service';
 
 const formatoPesoChileno = (valor) => {
   return new Intl.NumberFormat('es-CL', {
@@ -18,23 +15,18 @@ export default function BalanceCards({ transactions }) {
 
   const fetchSummary = async () => {
     try {
-      const [transactionData, salesData, servicesData] = await Promise.all([
-        getTransactionsSummary(),
-        getSales(),
-        getServices()
-      ]);
+      const ingresos = transactions
+        .filter(t => !t.is_deleted && (t.transaction_type === 'ingreso' || t.transaction_type === 'venta' || t.transaction_type === 'servicio'))
+        .reduce((total, t) => total + Number(t.amount || 0), 0);
 
-      const ventasTotal = salesData.reduce((total, sale) => total + Number(sale.amount || 0), 0);
-      const comprasTotal = salesData.filter(sale => sale.type === 'compra').reduce((total, purchase) => total + Number(purchase.amount || 0), 0);
-      const serviciosTotal = servicesData.reduce((total, service) => total + Number(service.price_service || 0), 0);
-
-      const ingresosTotales = Number(transactionData.ingresos || 0) + ventasTotal + serviciosTotal;
-      const egresosTotales = Number(transactionData.egresos || 0) + comprasTotal;
+      const egresos = transactions
+        .filter(t => !t.is_deleted && (t.transaction_type === 'egreso' || t.transaction_type === 'compra'))
+        .reduce((total, t) => total + Number(t.amount || 0), 0);
 
       setSummary({
-        ingresos: ingresosTotales,
-        egresos: egresosTotales,
-        balance: ingresosTotales - egresosTotales
+        ingresos: ingresos,
+        egresos: egresos,
+        balance: ingresos - egresos
       });
     } catch (error) {
       console.error('Error al obtener el resumen:', error);

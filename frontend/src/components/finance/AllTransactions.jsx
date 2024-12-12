@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { X, Edit, Trash2 } from 'lucide-react';
 import { deleteTransaction } from '@/api/transaction';
-import { getSales, getPurchases } from '@/api/inventory';
 import { getServices } from '@/api/service';
 import NewTransactionForm from './NewTransactionForm';
-import { jsPDF } from "jspdf";
-import "jspdf-autotable";
 import { useAlert } from '@context/alertContext';
 import { formatDate } from '@/helpers/dates';
-
+import { exportTransactionsToPDF } from '@/helpers/exportTransactions';
 
 const formatoPesoChileno = (valor) => {
   return new Intl.NumberFormat('es-CL', {
@@ -26,43 +23,30 @@ export default function AllTransactions({ isOpen, onClose, transactions, onTrans
   useEffect(() => {
     const fetchAllTransactions = async () => {
       try {
-        const sales = await getSales();
-        const purchases = await getPurchases();
         const services = await getServices();
 
         const formattedTransactions = transactions
-          .filter(transaction => transaction.transaction_type === 'ingreso' || transaction.transaction_type === 'egreso')
+          .filter(transaction => !transaction.is_deleted)
           .map(transaction => ({
             ...transaction,
             type: transaction.transaction_type
           }));
 
-        const formattedSales = sales.map(sale => ({
-          ...sale,
-          transaction_type: 'venta', // Cambiado de 'venta' a 'ingreso'
-          description: `${sale.name_item}`
-        }));
-
-        const formattedPurchases = purchases.map(purchase => ({
-          ...purchase,
-          transaction_type: 'compra',
-          description: `${purchase.name_item}`,
-        }));
-
-        const formattedServices = services.map(service => ({
-          ...service,
-          transaction_type: 'servicio',
-          description: `${service.name_service}`,
-          type: 'servicio',
-          amount: service.price_service,
-          payment_method: service.payment_method_service,
-          transaction_date: service.created_at
-        }));
+        const formattedServices = services
+          .filter(service => !service.is_deleted)
+          .map(service => ({
+            ...service,
+            id: service.id_service,
+            transaction_type: 'servicio',
+            description: `${service.name_service}`,
+            type: 'servicio',
+            amount: service.price_service,
+            payment_method: service.payment_method_service,
+            transaction_date: service.created_at
+          }));
 
         setAllTransactions([
-          ...formattedTransactions,
-          ...formattedSales,
-          ...formattedPurchases,
+          ...formattedTransactions.filter(t => t.transaction_type !== 'servicio'),
           ...formattedServices
         ]);
       } catch (error) {
@@ -79,7 +63,6 @@ export default function AllTransactions({ isOpen, onClose, transactions, onTrans
   const handleDelete = async (id, transaction_type) => {
     console.log('Attempting to delete transaction:', { id, transaction_type });
 
-    // Permitir eliminar transacciones de tipo 'ingreso', 'egreso'
     if (transaction_type !== 'ingreso' && transaction_type !== 'egreso') {
       showAlert('Solo se pueden eliminar transacciones de tipo ingreso o egreso, las compras/ventas o servicios deben tratarse en sus secciones correspondientes.', 'warning');
       return;
@@ -108,46 +91,6 @@ export default function AllTransactions({ isOpen, onClose, transactions, onTrans
     }
   };
 
-
-  const downloadPDF = () => {
-    const doc = new jsPDF();
-
-    doc.setFontSize(16);
-    doc.text("Resumen de Transacciones", doc.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
-
-    const tableColumn = ["Fecha", "Tipo", "Descripción", "Monto", "Método de Pago", "RUT"];
-    const tableRows = allTransactions.map(t => [
-      formatDate(t.transaction_date),
-      t.transaction_type,
-      t.description,
-      formatoPesoChileno(t.amount),
-      t.payment_method,
-      t.rut
-    ]);
-
-    doc.autoTable(tableColumn, tableRows, {
-      startY: 25,
-      margin: { top: 25, right: 15, bottom: 15, left: 15 },
-      headStyles: { fillColor: [41, 128, 185], textColor: 255 },
-      alternateRowStyles: { fillColor: [245, 245, 245] },
-      columnStyles: {
-        0: { cellWidth: 25 },
-        2: { cellWidth: 'auto' },
-        3: { cellWidth: 30 },
-        4: { cellWidth: 30 },
-        5: { cellWidth: 30 },
-      },
-      theme: 'grid',
-      didDrawPage: function(data) {
-        if (data.pageNumber > 1) {
-          doc.setFontSize(16);
-          doc.text("Resumen de Transacciones", doc.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
-        }
-      }
-    });
-    doc.save("transacciones.pdf");
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -157,7 +100,7 @@ export default function AllTransactions({ isOpen, onClose, transactions, onTrans
           <h3 className="text-lg font-semibold">Todas las Transacciones</h3>
           <div className="flex gap-2">
             <button
-              onClick={downloadPDF}
+              onClick={() => exportTransactionsToPDF(allTransactions)}
               className="mr-4 px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
             >
               Descargar PDF
@@ -190,15 +133,22 @@ export default function AllTransactions({ isOpen, onClose, transactions, onTrans
                 </div>
                 <div className="flex items-center gap-4">
                   <div className={`text-lg font-semibold ${t.transaction_type === 'ingreso' || t.transaction_type === 'venta' || t.transaction_type === 'servicio' ? 'text-green-500' : 'text-red-500'}`}>
-                    {t.transaction_type === 'ingreso' || t.type === 'venta' ? '+' : '-'}
+                    {t.transaction_type === 'ingreso' || t.type === 'venta' || t.transaction_type === 'servicio' ? '+' : '-'}
                     {formatoPesoChileno(t.amount)}
                   </div>
-                  <button onClick={() => handleEdit(t)} className="text-blue-500 hover:text-blue-700">
+                  <button
+                    onClick={() => handleEdit(t)}
+                    className={`text-blue-500 hover:text-blue-700 ${(t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra') ? 'text-gray-400 cursor-not-allowed' : ''}`}
+                    disabled={t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra'}
+                    title={t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra' ? 'No se puede modificar porque la transacción está asociado a un servicio/venta/compra' : ''}
+                  >
                     <Edit className="h-5 w-5" />
                   </button>
                   <button
                     onClick={() => handleDelete(t.id_transaction || t.id, t.transaction_type)}
-                    className="text-red-500 hover:text-red-700"
+                    className={`text-red-500 hover:text-red-700 ${(t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra') ? 'text-gray-400 cursor-not-allowed' : ''}`}
+                    disabled={t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra'}
+                    title={t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra' ? 'No se puede eliminar porque está asociado a un servicio/venta/compra' : ''}
                   >
                     <Trash2 className="h-5 w-5" />
                   </button>
