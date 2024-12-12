@@ -11,6 +11,7 @@ import AddPurchaseDialog from '@/components/inventory/dialog/AddPurchaseDialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import { deletePurchase } from '@/api/inventory';
+import { useAlert } from '@/context/alertContext';
 
 const PurchasesTable = () => {
   const [purchases, setPurchases] = useState([]);
@@ -18,7 +19,7 @@ const PurchasesTable = () => {
   const [search, setSearch] = useState('');
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [purchaseToDelete, setPurchaseToDelete] = useState(null);
-
+  const { showAlert } = useAlert();
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -72,10 +73,10 @@ const PurchasesTable = () => {
         console.log('ID de la compra a eliminar en el front:', purchaseToDelete);
         await deletePurchase(purchaseToDelete);
         await fetchPurchases(); // Refresca la lista de compras
-        alert('Compra eliminada exitosamente');
+        showAlert('Compra eliminada correctamente', 'success');
       } catch (error) {
         console.error('Error al eliminar la compra:', error);
-        alert('Error al eliminar la compra');
+        showAlert('Ocurrió un error al eliminar la compra', 'error');
       } finally {
         closeConfirmationDialog();
       }

@@ -248,7 +248,7 @@ const InventoryTable = () => {
                             <>
                               {uniqueSuppliers[0] || 'Desconocido'}
                               {uniqueSuppliers.length > 1 && (
-                                <span className="inline-block ml-1.5 px-2 py-1 bg-blue-100 text-blue-400 text-xs font-semibold rounded">
+                                <span className="inline-block ml-1.5 px-2 py-1 bg-background text-gray-500 dark:text-gray-300 text-xs font-semibold rounded">
                                   +{uniqueSuppliers.length - 1}
                                 </span>
                               )}

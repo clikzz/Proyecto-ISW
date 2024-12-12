@@ -18,8 +18,10 @@ class ItemSupplier {
 
   static async removeSupplierFromItem(id_item, rut_supplier) {
     const query = `
-      DELETE FROM item_supplier
-      WHERE id_item = $1 AND rut_supplier = $2;
+      UPDATE item_supplier
+      SET is_deleted = TRUE
+      WHERE id_item = $1 AND rut_supplier = $2
+      RETURNING *;
     `;
     await db.query(query, [id_item, rut_supplier]);
   }
@@ -46,6 +48,7 @@ class ItemSupplier {
           AND ti.rut_supplier = item_supp.rut_supplier
           AND t.is_deleted = FALSE
         )
+        AND item_supp.is_deleted = FALSE
       ORDER BY
         item_supp.purchase_date DESC;
     `;
@@ -65,7 +68,7 @@ class ItemSupplier {
       JOIN 
         item i ON item_supp.id_item = i.id_item
       WHERE 
-        item_supp.rut_supplier = $1
+        item_supp.rut_supplier = $1 AND item_supp.is_deleted = FALSE
       ORDER BY 
         item_supp.purchase_date DESC;
     `;
