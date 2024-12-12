@@ -57,12 +57,11 @@ const updateTransaction = async (req, res) => {
   }
 };
 
-
 const deleteTransaction = async (req, res) => {
   try {
     const { id_transaction } = req.params;
     const result = await Transaction.delete(id_transaction);
-    if (result.rowCount === 0) {
+    if (!result) {
       return res.status(404).json({ message: 'Transacción no encontrada' });
     }
     res.status(200).json({ message: 'Transacción eliminada con éxito' });

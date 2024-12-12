@@ -1,4 +1,3 @@
-//models/Transaction.js
 const pool = require('../config/db');
 
 class Transaction {
@@ -7,6 +6,7 @@ class Transaction {
       SELECT t.*, u.name_user, u.status as user_status
       FROM transaction t
       LEFT JOIN users u ON t.rut = u.rut
+      WHERE t.is_deleted = FALSE
       ORDER BY t.transaction_date DESC
     `;
     const result = await pool.query(query);
@@ -26,22 +26,9 @@ class Transaction {
   }
 
   static async getById(id_transaction) {
-    const query = 'SELECT * FROM transaction WHERE id_transaction = ?';
-    const [rows] = await pool.execute(query, [id_transaction]);
-    return rows[0];
-  }
-
-  static async update(id_transaction, transactionData) {
-    const query = 'UPDATE transaction SET transaction_type = ?, amount = ?, transaction_date = ?, payment_method = ?, description = ? WHERE id_transaction = ?';
-    const [result] = await pool.execute(query, [
-      transactionData.transaction_type,
-      transactionData.amount,
-      transactionData.transaction_date,
-      transactionData.payment_method,
-      transactionData.description,
-      id_transaction,
-    ]);
-    return result;
+    const query = 'SELECT * FROM transaction WHERE id_transaction = $1 AND is_deleted = FALSE';
+    const result = await pool.query(query, [id_transaction]);
+    return result.rows[0];
   }
 
   static async update(id_transaction, transactionData) {
@@ -49,7 +36,7 @@ class Transaction {
     const query = `
       UPDATE transaction
       SET transaction_type = $1, amount = $2, payment_method = $3, description = $4
-      WHERE id_transaction = $5
+      WHERE id_transaction = $5 AND is_deleted = FALSE
       RETURNING *
     `;
     const values = [transaction_type, amount, payment_method, description, id_transaction];
@@ -59,11 +46,13 @@ class Transaction {
 
   static async delete(id_transaction) {
     const query = `
-      DELETE FROM transaction
-      WHERE id_transaction = $1 AND (transaction_type = 'ingreso' OR transaction_type = 'egreso')
+      UPDATE transaction
+      SET is_deleted = TRUE, updated_at = CURRENT_TIMESTAMP
+      WHERE id_transaction = $1 AND is_deleted = FALSE
+      RETURNING *
     `;
     const result = await pool.query(query, [id_transaction]);
-    return result;
+    return result.rows[0];
   }
 
   static async getSummary() {
@@ -73,6 +62,7 @@ class Transaction {
         SUM(CASE WHEN transaction_type = 'egreso' THEN amount ELSE 0 END) AS egresos,
         SUM(CASE WHEN transaction_type = 'ingreso' THEN amount ELSE 0 END) - SUM(CASE WHEN transaction_type = 'egreso' THEN amount ELSE 0 END) AS balance
       FROM transaction
+      WHERE is_deleted = FALSE
     `;
     const result = await pool.query(query);
     return result.rows[0];
