@@ -8,9 +8,11 @@ import {
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { updateItem } from '@/api/inventory';
 import { Textarea } from '@/components/ui/textarea';
+import { useAlert } from '@/context/alertContext';
 
 const EditItemDialog = ({ isOpen, onClose, item, onUpdateItem }) => {
   const [editedItem, setEditedItem] = useState({});
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     if (item) {
@@ -42,8 +44,10 @@ const EditItemDialog = ({ isOpen, onClose, item, onUpdateItem }) => {
         onUpdateItem(); // Actualizar el elemento en la tabla
       }
       onClose();
+      showAlert('Ítem actualizado correctamente', 'success');
     } catch (error) {
       console.error('Error al actualizar el ítem:', error);
+      showAlert('Ocurrió un error al actualizar el ítem', 'error');
     }
   };
 

@@ -13,13 +13,6 @@ const allowedCategories = [
 ]
 
 const createItem = Joi.object({
-  rut_supplier: Joi.string()
-    .max(12)
-    .required()
-    .messages({
-      'string.max': 'El RUT del proveedor no puede exceder los 12 caracteres.',
-      'any.required': 'El RUT del proveedor es obligatorio.',
-    }),
   name_item: Joi.string()
   .max(50)
   .required()

@@ -28,7 +28,7 @@ const createPurchase = async (items, details) => {
       const newItem = await Item.create({
         rut_supplier: item.rut_supplier,
         name_item: item.name_item,
-        description: item.description || 'Ítem creado mediante compra',
+        description: item.description || 'Producto creado mediante compra',
         category: item.category || 'otros',
         stock: item.quantity,
         selling_price: item.selling_price || 0,
@@ -130,17 +130,23 @@ const deletePurchase = async (transactionId) => {
 
   // Revertir el stock de cada ítem
   for (const item of transactionItems) {
-    await Item.updateStock(item.id_item, item.quantity_item, 'subtract');
+    try {
+      await Item.updateStock(item.id_item, item.quantity_item, 'subtract');
 
-    // Revisar si el proveedor tiene otras compras activas
-    const activeTransactions = await Inventory.getActiveTransactionsByItemAndSupplier(
-      item.id_item,
-      item.rut_supplier
-    );
+      // Revisar si el proveedor tiene otras compras activas
+      const activeTransactions = await Inventory.getActiveTransactionsByItemAndSupplier(
+        item.id_item,
+        item.rut_supplier
+      );
 
-    if (activeTransactions.length === 0) {
-      // Si no hay más compras activas, eliminar la relación proveedor-producto
-      await ItemSupplier.removeSupplierFromItem(item.id_item, item.rut_supplier);
+      if (activeTransactions.length === 0) {
+        console.log(`Marcando como eliminado el proveedor ${item.rut_supplier} del producto ${item.id_item}`);
+        // Si no hay más compras activas, eliminar la relación proveedor-producto
+        await ItemSupplier.removeSupplierFromItem(item.id_item, item.rut_supplier);
+      }
+    } catch (error) {
+      console.error(`Error al procesar el ítem ${item.id_item}:`, error);
+      throw new Error(`Error al revertir el stock o eliminar proveedor del ítem ${item.id_item}`);
     }
   }
 
