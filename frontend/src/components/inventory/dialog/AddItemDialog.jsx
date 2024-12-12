@@ -24,7 +24,6 @@ export default function AddItemDialog({ fetchItems }) {
     category: '',
     selling_price: '',
     stock: '',
-    rut_supplier: '',
   });
   const { showAlert } = useAlert();
 
@@ -44,7 +43,6 @@ export default function AddItemDialog({ fetchItems }) {
         category: '',
         selling_price: '',
         stock: '',
-        rut_supplier: '',
       });
       fetchItems();
     } catch (error) {
@@ -141,26 +139,6 @@ export default function AddItemDialog({ fetchItems }) {
               placeholder="Stock disponible"
               required
             />
-          </div>
-          <div>
-            <Label htmlFor="supplier">Proveedor</Label>
-            <Select
-              value={newItem.rut_supplier}
-              onValueChange={(value) => setNewItem((prev) => ({ ...prev, rut_supplier: value }))}
-            >
-              <SelectTrigger>
-                {newItem.rut_supplier
-                  ? suppliers.find((sup) => sup.rut_supplier === newItem.rut_supplier)?.name_supplier
-                  : 'Seleccionar proveedor'}
-              </SelectTrigger>
-              <SelectContent>
-                {suppliers.map((supplier) => (
-                  <SelectItem key={supplier.rut_supplier} value={supplier.rut_supplier}>
-                    {supplier.name_supplier} - {supplier.rut_supplier}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
           <div className="flex justify-center">
             <Button type="submit">Guardar</Button>

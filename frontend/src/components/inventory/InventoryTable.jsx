@@ -38,6 +38,7 @@ const InventoryTable = () => {
   const fetchItems = async () => {
     try {
       const data = await getInventoryItems();
+      console.log('Datos del inventario:', data);
       setItems(data);
       setFilteredItems(data);
     } catch (error) {
@@ -200,20 +201,20 @@ const InventoryTable = () => {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('rut_supplier')}
+                      onClick={() => handleSort('stock')}
                       className="text-foreground"
                     >
-                      <strong>Proveedor</strong>
+                      <strong>Stock</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('stock')}
+                      onClick={() => handleSort('rut_supplier')}
                       className="text-foreground"
                     >
-                      <strong>Stock</strong>
+                      <strong>Proveedor</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
@@ -238,6 +239,7 @@ const InventoryTable = () => {
                     <TableCell>{item.name_item}</TableCell>
                     <TableCell>{capitalize(item.category)}</TableCell>
                     <TableCell>{item.selling_price}</TableCell>
+                    <TableCell>{item.stock}</TableCell>
                     <TableCell>
                       {item.suppliers && item.suppliers.length > 0 ? (
                         (() => {
@@ -246,7 +248,7 @@ const InventoryTable = () => {
                           // Renderizar el primer proveedor y el contador de adicionales
                           return (
                             <>
-                              {uniqueSuppliers[0] || 'Desconocido'}
+                              {uniqueSuppliers[0] || 'No Registrado'}
                               {uniqueSuppliers.length > 1 && (
                                 <span className="inline-block ml-1.5 px-2 py-1 bg-background text-gray-500 dark:text-gray-300 text-xs font-semibold rounded">
                                   +{uniqueSuppliers.length - 1}
@@ -256,10 +258,9 @@ const InventoryTable = () => {
                           );
                         })()
                       ) : (
-                        'Desconocido'
+                        'No Registrado'
                       )}
                     </TableCell>
-                    <TableCell>{item.stock}</TableCell>
                     <TableCell>{formatDateTime(item.created_at)}</TableCell>
                     <TableCell>
                     <DropdownMenu>

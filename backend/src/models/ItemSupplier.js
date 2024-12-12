@@ -23,7 +23,8 @@ class ItemSupplier {
       WHERE id_item = $1 AND rut_supplier = $2
       RETURNING *;
     `;
-    await db.query(query, [id_item, rut_supplier]);
+    const result = await db.query(query, [id_item, rut_supplier]);
+    return result.rows[0];
   }
 
   static async findSuppliersByItem(id_item) {
@@ -40,6 +41,7 @@ class ItemSupplier {
         item_supp.rut_supplier = s.rut_supplier
       WHERE 
         item_supp.id_item = $1 
+        AND item_supp.is_deleted = FALSE
         AND EXISTS (
           SELECT 1 
           FROM transaction t 
@@ -48,7 +50,6 @@ class ItemSupplier {
           AND ti.rut_supplier = item_supp.rut_supplier
           AND t.is_deleted = FALSE
         )
-        AND item_supp.is_deleted = FALSE
       ORDER BY
         item_supp.purchase_date DESC;
     `;
