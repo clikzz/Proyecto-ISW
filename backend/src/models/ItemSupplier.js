@@ -5,6 +5,10 @@ class ItemSupplier {
     const query = `
       INSERT INTO item_supplier (id_item, rut_supplier, purchase_price, purchase_date)
       VALUES ($1, $2, $3, $4)
+      ON CONFLICT (id_item, rut_supplier) 
+      DO UPDATE SET
+        purchase_price = EXCLUDED.purchase_price,
+        purchase_date = EXCLUDED.purchase_date
       RETURNING *;
     `;
     const values = [data.id_item, data.rut_supplier, data.purchase_price, data.purchase_date || new Date()];
@@ -12,9 +16,17 @@ class ItemSupplier {
     return result.rows[0];
   }
 
+  static async removeSupplierFromItem(id_item, rut_supplier) {
+    const query = `
+      DELETE FROM item_supplier
+      WHERE id_item = $1 AND rut_supplier = $2;
+    `;
+    await db.query(query, [id_item, rut_supplier]);
+  }
+
   static async findSuppliersByItem(id_item) {
     const query = `
-      SELECT 
+      SELECT DISTINCT 
         s.*, 
         item_supp.purchase_price, 
         item_supp.purchase_date 
@@ -25,7 +37,15 @@ class ItemSupplier {
       ON 
         item_supp.rut_supplier = s.rut_supplier
       WHERE 
-        item_supp.id_item = $1
+        item_supp.id_item = $1 
+        AND EXISTS (
+          SELECT 1 
+          FROM transaction t 
+          JOIN transaction_item ti ON t.id_transaction = ti.id_transaction
+          WHERE ti.id_item = $1 
+          AND ti.rut_supplier = item_supp.rut_supplier
+          AND t.is_deleted = FALSE
+        )
       ORDER BY
         item_supp.purchase_date DESC;
     `;
@@ -35,7 +55,7 @@ class ItemSupplier {
   
   static async findItemsBySupplier(rut_supplier) {
     const query = `
-      SELECT 
+      SELECT DISTINCT 
         i.id_item, 
         i.name_item, 
         item_supp.purchase_price, 

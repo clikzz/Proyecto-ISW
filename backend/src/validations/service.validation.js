@@ -39,6 +39,9 @@ const updateServiceSchema = Joi.object({
   category: Joi.string()
     .valid('reparación', 'mantenimiento', 'personalización', 'otro')
     .optional(),
+  payment_method_service: Joi.string()
+    .valid('efectivo', 'tarjeta', 'transferencia')
+    .optional(),
 });
 
 module.exports = {

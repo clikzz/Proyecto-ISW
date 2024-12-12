@@ -103,14 +103,6 @@ export default function PrivateLayout({ children }) {
             <NavLink href="/home" icon={<Home className="h-6 w-6" />}>
               Home
             </NavLink>
-            {role === 'admin' && (
-              <NavLink
-                href="/overview"
-                icon={<TrendingUp className="h-6 w-6" />}
-              >
-                Overview
-              </NavLink>
-            )}
             <NavLink href="/inventory" icon={<Package className="h-6 w-6" />}>
               Inventario
             </NavLink>
@@ -132,7 +124,7 @@ export default function PrivateLayout({ children }) {
                   Usuarios
                 </NavLink>
                 <NavLink
-                  href="/finanzas"
+                  href="/finance"
                   icon={<DollarSign className="h-6 w-6" />}
                 >
                   Finanzas

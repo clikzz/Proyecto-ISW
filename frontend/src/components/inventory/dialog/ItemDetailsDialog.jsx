@@ -158,9 +158,11 @@ const ItemDetailsDialog = ({ isOpen, onClose, item, onUpdateItem }) => {
               <label className="block text-sm font-semibold text-gray-700">Proveedores</label>
               <div className="p-2 bg-gray-100 rounded-md space-y-1">
                 {Array.isArray(item.suppliers) && item.suppliers.length > 0 ? (
-                  item.suppliers.map((supplier, index) => (
-                    <p key={index} className="text-sm">{supplier?.name_supplier || 'Desconocido'}</p>
-                  ))
+                  [...new Set(item.suppliers.map((supplier) => supplier.name_supplier))].map(
+                    (uniqueSupplier, index) => (
+                      <p key={index} className="text-sm">{uniqueSupplier || 'Desconocido'}</p>
+                    )
+                  )
                 ) : (
                   <p>Desconocido</p>
                 )}

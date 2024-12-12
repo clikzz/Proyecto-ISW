@@ -2,17 +2,34 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { getSales } from '@/api/inventory';
-import { Info, Search, ArrowUpDown, Trash } from 'lucide-react';
+import { Info, Search, ArrowUpDown, EllipsisVertical } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatDateTime } from '@/helpers/dates';
 import { capitalize } from '@/helpers/capitalize';
 import SellItemDialog from '@/components/inventory/dialog/SellItemDialog';
+import EditSaleDialog from '@/components/inventory/dialog/EditSaleDialog';
+import SaleDetailsDialog from '@/components/inventory/dialog/SaleDetailsDialog';
+import { deleteSale } from '@/api/inventory';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useAlert } from '@/context/alertContext';
+import ConfirmationDialog from '@/components/ConfirmationDialog';
 
 const SalesTable = () => {
   const [sales, setSales] = useState([]);
   const [filteredSales, setFilteredSales] = useState([]);
   const [search, setSearch] = useState('');
+  const [isEditSaleDialogOpen, setIsEditSaleDialogOpen] = useState(false);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+  const [selectedSale, setSelectedSale] = useState(null);
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
+  const [saleToDelete, setSaleToDelete] = useState(null);
+  const { showAlert } = useAlert();
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -48,6 +65,59 @@ const SalesTable = () => {
       direction = 'descending';
     }
     setSortConfig({ key, direction });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (saleToDelete) {
+      try {
+        await deleteSale(saleToDelete);
+        await fetchSales(); // Refresca la lista de ventas
+        showAlert('Venta eliminada exitosamente', 'success');
+      } catch (error) {
+        console.error('Error al eliminar la venta:', error);
+        showAlert('Error al eliminar la venta', 'error');
+      } finally {
+        closeConfirmationDialog();
+      }
+    }
+  };
+
+  const openConfirmationDialog = (saleId) => {
+    setSaleToDelete(saleId);
+    setIsConfirmationDialogOpen(true);
+  };
+  
+  const closeConfirmationDialog = () => {
+    setSaleToDelete(null);
+    setIsConfirmationDialogOpen(false);
+  };
+
+  const openEditSaleDialog = (sale) => {
+    setSelectedSale(sale);
+    setIsEditSaleDialogOpen(true);
+  };
+  
+  const closeEditSaleDialog = () => {
+    setSelectedSale(null);
+    setIsEditSaleDialogOpen(false);
+  };
+
+  const openDetailsDialog = (sale) => {
+    setSelectedSale(sale);
+    setIsDetailsDialogOpen(true);
+  };
+
+  const closeDetailsDialog = () => {
+    setSelectedSale(null);
+    setIsDetailsDialogOpen(false);
+  };
+  
+  const handleUpdateSale = (updatedSale) => {
+    setSales((prevSales) =>
+      prevSales.map((sale) =>
+        sale.id_transaction === updatedSale.id_transaction ? updatedSale : sale
+      )
+    );
   };
 
   const sortedSales = useMemo(() => {
@@ -158,14 +228,37 @@ const SalesTable = () => {
                     <TableCell>{capitalize(sale.payment_method)}</TableCell>
                     <TableCell>{formatDateTime(sale.transaction_date)}</TableCell>
                     <TableCell>
-                      <Button className="bg-blue-500 text-white mr-2">
-                        <Info />
-                      </Button>
-                      <Button
-                        className="bg-red-500 hover:bg-red-600"
-                      >
-                        <Trash />
-                      </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="p-2 hover:bg-gray-100 rounded-md"
+                        >
+                          <EllipsisVertical className="h-5 w-5 text-gray-600" />
+                        </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-white border rounded-md shadow-lg z-50 w-48">
+                          <DropdownMenuItem
+                            className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                            onClick={() => openDetailsDialog(sale)}
+                          >
+                            Ver información
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                            onClick={() => openEditSaleDialog(sale)}
+                          >
+                            Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="hover:bg-red-100 px-4 py-2 cursor-pointer text-red-600"
+                            onClick={() => openConfirmationDialog(sale.id_transaction)}
+                          >
+                            Eliminar
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -174,6 +267,25 @@ const SalesTable = () => {
           </div>
         </CardContent>
       </Card>
+
+      <EditSaleDialog
+        isOpen={isEditSaleDialogOpen}
+        onClose={closeEditSaleDialog}
+        sale={selectedSale}
+        onUpdateSale={fetchSales}
+      />
+
+      <SaleDetailsDialog
+        isOpen={isDetailsDialogOpen}
+        onClose={closeDetailsDialog}
+        sale={selectedSale}
+      />
+
+      <ConfirmationDialog
+        open={isConfirmationDialogOpen}
+        handleClose={closeConfirmationDialog}
+        handleConfirm={handleConfirmDelete}
+      />
     </div>
   );
 };

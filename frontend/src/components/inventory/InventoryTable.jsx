@@ -3,14 +3,21 @@ import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { getInventoryItems, getItemById, deleteItem } from '@/api/inventory';
-import { Info, Search, ArrowUpDown, Trash, Filter } from 'lucide-react';
+import { Info, Search, ArrowUpDown, EllipsisVertical, Filter } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatDateTime } from '@/helpers/dates';
 import AddItemDialog from '@/components/inventory/dialog/AddItemDialog';
 import ItemDetailsDialog from '@/components/inventory/dialog/ItemDetailsDialog';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
+import EditItemDialog from '@/components/inventory/dialog/EditItemDialog';
 import { capitalize } from '@/helpers/capitalize';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const InventoryTable = () => {
   const [items, setItems] = useState([]);
@@ -21,6 +28,7 @@ const InventoryTable = () => {
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('todas');
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -74,14 +82,6 @@ const InventoryTable = () => {
         closeConfirmationDialog();
       }
     }
-  };
-
-  const handleUpdateItem = (updatedItem) => {
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id_item === updatedItem.id_item ? updatedItem : item
-      )
-    );
   };
 
   useEffect(() => {
@@ -234,38 +234,68 @@ const InventoryTable = () => {
               </TableHeader>
               <TableBody>
                 {filteredAndSortedItems.map((item) => (
-                  <TableRow key={item.id}>
+                  <TableRow key={item.id_item}>
                     <TableCell>{item.name_item}</TableCell>
                     <TableCell>{capitalize(item.category)}</TableCell>
                     <TableCell>{item.selling_price}</TableCell>
                     <TableCell>
                       {item.suppliers && item.suppliers.length > 0 ? (
-                        <>
-                          {item.suppliers[0] || 'Desconocido'}
-                          {item.suppliers.length > 1 && (
-                            <span className="inline-block ml-1.5 px-2 py-1 bg-blue-100 text-blue-400 text-xs font-semibold rounded">
-                              +{item.suppliers.length - 1}
-                            </span>
-                          )}
-                        </>
-                        )
-                        : 'Desconocido'}
+                        (() => {
+                          // Filtrar duplicados usando un conjunto (Set)
+                          const uniqueSuppliers = [...new Set(item.suppliers)];
+                          // Renderizar el primer proveedor y el contador de adicionales
+                          return (
+                            <>
+                              {uniqueSuppliers[0] || 'Desconocido'}
+                              {uniqueSuppliers.length > 1 && (
+                                <span className="inline-block ml-1.5 px-2 py-1 bg-blue-100 text-blue-400 text-xs font-semibold rounded">
+                                  +{uniqueSuppliers.length - 1}
+                                </span>
+                              )}
+                            </>
+                          );
+                        })()
+                      ) : (
+                        'Desconocido'
+                      )}
                     </TableCell>
                     <TableCell>{item.stock}</TableCell>
                     <TableCell>{formatDateTime(item.created_at)}</TableCell>
                     <TableCell>
-                      <Button
-                        className="bg-blue-500 text-white mr-2"
-                        onClick={() => fetchItemDetails(item.id_item)}
-                      >
-                        <Info />
-                      </Button>
-                      <Button
-                        className="bg-red-500 hover:bg-red-600"
-                        onClick={() => openConfirmationDialog(item.id_item)}
-                      >
-                        <Trash />
-                      </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="p-2 hover:bg-gray-100 rounded-md"
+                          >
+                            <EllipsisVertical className="h-5 w-5 text-gray-600" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-white border rounded-md shadow-lg z-50 w-48">
+                          <DropdownMenuItem
+                            className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                            onClick={() => fetchItemDetails(item.id_item)}
+                          >
+                            Ver información
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                            onClick={() => {
+                              setSelectedItem(item);
+                              setIsEditDialogOpen(true);
+                            }}
+                          >
+                            Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="hover:bg-red-100 px-4 py-2 cursor-pointer text-red-600"
+                            onClick={() => openConfirmationDialog(item.id_item)}
+                          >
+                            Eliminar
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -279,13 +309,20 @@ const InventoryTable = () => {
         isOpen={isDetailsDialogOpen}
         onClose={() => setIsDetailsDialogOpen(false)}
         item={selectedItem}
-        onUpdateItem={handleUpdateItem}
+        onUpdateItem={fetchItems}
       />
 
       <ConfirmationDialog
         open={isConfirmationDialogOpen}
         handleClose={closeConfirmationDialog}
         handleConfirm={handleConfirmDelete}
+      />
+
+      <EditItemDialog
+        isOpen={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+        item={selectedItem}
+        onUpdateItem={fetchItems}
       />
     </div>
   );

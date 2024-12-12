@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Camera } from 'lucide-react';
 import { uploadProfilePicture, getProfile } from '@api/profile';
 import ImageCropper from './ui/ImageCropper';
+import { useAlert } from '@/context/alertContext';
+
+
 
 export default function ProfilePicture({ profilePicture, setProfilePicture }) {
   const [showCropper, setShowCropper] = useState(false);
   const [tempImage, setTempImage] = useState(null);
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -43,9 +47,11 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
       setProfilePicture(data.profilePicture);
       setShowCropper(false);
       setTempImage(null);
+      showAlert('Imagen de perfil actualizada correctamente', 'success');
       document.body.style.overflow = 'auto'; 
     } catch (error) {
       console.error('Error al guardar la imagen recortada:', error.message);
+      showAlert('Error al guardar la imagen', 'error');
     }
   };
 
