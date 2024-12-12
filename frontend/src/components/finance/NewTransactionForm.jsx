@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Upload, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X } from 'lucide-react';
 import { createTransaction, updateTransaction } from '@/api/transaction';
 
 export default function NewTransactionForm({ isOpen, onClose, onTransactionAdded, editingTransaction }) {
@@ -8,6 +8,15 @@ export default function NewTransactionForm({ isOpen, onClose, onTransactionAdded
   const [payment_method, setPaymentMethod] = useState('efectivo');
   const [description, setDescription] = useState('');
   const [error, setError] = useState('');
+  const formRef = useRef(null);
+
+  const resetForm = () => {
+    setTransactionType('ingreso');
+    setAmount('');
+    setPaymentMethod('efectivo');
+    setDescription('');
+    setError('');
+  };
 
   useEffect(() => {
     if (editingTransaction) {
@@ -15,8 +24,28 @@ export default function NewTransactionForm({ isOpen, onClose, onTransactionAdded
       setAmount(editingTransaction.amount);
       setPaymentMethod(editingTransaction.payment_method);
       setDescription(editingTransaction.description);
+    } else {
+      resetForm();
     }
-  }, [editingTransaction]);
+  }, [editingTransaction, isOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (formRef.current && !formRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,22 +56,24 @@ export default function NewTransactionForm({ isOpen, onClose, onTransactionAdded
       return;
     }
 
-    if (editingTransaction && !window.confirm('¿Estás seguro de guardar estas modificaciones?')) {
-      return;
-    }
+    await saveTransaction();
+  };
 
+  const saveTransaction = async () => {
     try {
       const transactionData = { transaction_type, amount, payment_method, description };
+      let updatedTransaction;
       if (editingTransaction) {
-        await updateTransaction(editingTransaction.id_transaction, transactionData);
+        updatedTransaction = await updateTransaction(editingTransaction.id_transaction, transactionData);
       } else {
-        await createTransaction(transactionData);
+        updatedTransaction = await createTransaction(transactionData);
       }
-      onTransactionAdded();
+      onTransactionAdded(updatedTransaction);
+      resetForm();
       onClose();
     } catch (error) {
-      console.error('Error al agregar la transacción:', error);
-      setError('Error al agregar la transacción.');
+      console.error('Error al agregar/actualizar la transacción:', error);
+      setError('Error al agregar/actualizar la transacción.');
     }
   };
 
@@ -50,9 +81,9 @@ export default function NewTransactionForm({ isOpen, onClose, onTransactionAdded
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md">
+      <div ref={formRef} className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">Agrega un Movimiento</h3>
+          <h3 className="text-lg font-semibold">{editingTransaction ? 'Editar Movimiento' : 'Agrega un Movimiento'}</h3>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <X className="h-6 w-6" />
           </button>
