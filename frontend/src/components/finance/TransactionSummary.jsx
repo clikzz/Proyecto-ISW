@@ -8,6 +8,7 @@ import NewTransactionForm from './NewTransactionForm';
 import { useAlert } from '@context/alertContext';
 import { getServices } from '@/api/service';
 import { formatDate } from '@/helpers/dates';
+import ConfirmationDialog from '@/components/ConfirmationDialog';
 
 const formatoPesoChileno = (valor) => {
   return new Intl.NumberFormat('es-CL', {
@@ -22,6 +23,8 @@ export default function TransactionSummary({ transactions, onTransactionUpdated 
   const [modalViewMoreOpen, setModalViewMoreOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
   const { showAlert } = useAlert();
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] = useState(null);
 
   useEffect(() => {
     const fetchAllTransactions = async () => {
@@ -29,7 +32,7 @@ export default function TransactionSummary({ transactions, onTransactionUpdated 
         const services = await getServices();
 
         const formattedTransactions = transactions
-          .filter(transaction => !transaction.is_deleted && (transaction.transaction_type === 'ingreso' || transaction.transaction_type === 'egreso'))
+          .filter(transaction => !transaction.is_deleted)
           .map(transaction => ({
             ...transaction,
             type: transaction.transaction_type
@@ -65,17 +68,17 @@ export default function TransactionSummary({ transactions, onTransactionUpdated 
     fetchAllTransactions();
   }, [transactions, showAlert]);
 
-  const handleDelete = async (id, transaction_type) => {
+  const handleDelete = (id, transaction_type) => {
     console.log('Attempting to delete transaction:', { id, transaction_type });
 
-    if (transaction_type !== 'ingreso' && transaction_type !== 'egreso') {
-      showAlert('Solo se pueden eliminar transacciones de tipo ingreso o egreso, las compras/ventas o servicios deben tratarse en sus secciones correspondientes.', 'warning');
-      return;
-    }
+    setTransactionToDelete({ id, transaction_type });
+    setIsConfirmDialogOpen(true);
+  };
 
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta transacción?')) {
+  const handleConfirmDelete = async () => {
+    if (transactionToDelete) {
       try {
-        await deleteTransaction(id);
+        await deleteTransaction(transactionToDelete.id);
         onTransactionUpdated();
         showAlert('Transacción eliminada con éxito', 'success');
       } catch (error) {
@@ -83,14 +86,12 @@ export default function TransactionSummary({ transactions, onTransactionUpdated 
         showAlert('Error al eliminar la transacción', 'error');
       }
     }
+    setIsConfirmDialogOpen(false);
+    setTransactionToDelete(null);
   };
 
   const handleEdit = (transaction) => {
     console.log('Attempting to edit transaction:', transaction);
-    if (transaction.transaction_type !== 'ingreso' && transaction.transaction_type !== 'egreso') {
-      showAlert('Solo se pueden modificar transacciones de tipo ingreso o egreso, las compras/ventas o servicios deben tratarse en sus secciones correspondientes.', 'warning');
-      return;
-    }
     setEditingTransaction(transaction);
   };
 
@@ -172,6 +173,11 @@ export default function TransactionSummary({ transactions, onTransactionUpdated 
           editingTransaction={editingTransaction}
         />
       )}
+      <ConfirmationDialog
+        open={isConfirmDialogOpen}
+        handleClose={() => setIsConfirmDialogOpen(false)}
+        handleConfirm={handleConfirmDelete}
+      />
     </>
   );
 }

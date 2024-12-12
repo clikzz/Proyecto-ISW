@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
+import { getServices } from '@/api/service';
 
 const formatoPesoChileno = (valor) => {
   return new Intl.NumberFormat('es-CL', {
@@ -11,16 +12,43 @@ const formatoPesoChileno = (valor) => {
 };
 
 export default function BalanceCards({ transactions }) {
-  const [summary, setSummary] = useState({ ingresos: 0, egresos: 0, ventas: 0, compras: 0, servicios: 0 });
+  const [summary, setSummary] = useState({ ingresos: 0, egresos: 0, balance: 0 });
 
   const fetchSummary = async () => {
     try {
-      const ingresos = transactions
-        .filter(t => !t.is_deleted && (t.transaction_type === 'ingreso' || t.transaction_type === 'venta' || t.transaction_type === 'servicio'))
+      const services = await getServices();
+
+      const formattedTransactions = transactions
+        .filter(transaction => !transaction.is_deleted)
+        .map(transaction => ({
+          ...transaction,
+          type: transaction.transaction_type
+        }));
+
+      const formattedServices = services
+        .filter(service => !service.is_deleted)
+        .map(service => ({
+          ...service,
+          id: service.id_service,
+          transaction_type: 'servicio',
+          description: `${service.name_service}`,
+          type: 'servicio',
+          amount: service.price_service,
+          payment_method: service.payment_method_service,
+          transaction_date: service.created_at
+        }));
+
+      const combinedData = [
+        ...formattedTransactions,
+        ...formattedServices
+      ];
+
+      const ingresos = combinedData
+        .filter(t => t.transaction_type === 'ingreso' || t.transaction_type === 'venta' || t.transaction_type === 'servicio')
         .reduce((total, t) => total + Number(t.amount || 0), 0);
 
-      const egresos = transactions
-        .filter(t => !t.is_deleted && (t.transaction_type === 'egreso' || t.transaction_type === 'compra'))
+      const egresos = combinedData
+        .filter(t => t.transaction_type === 'egreso' || t.transaction_type === 'compra')
         .reduce((total, t) => total + Number(t.amount || 0), 0);
 
       setSummary({
