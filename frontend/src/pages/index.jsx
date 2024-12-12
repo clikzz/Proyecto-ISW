@@ -96,8 +96,6 @@ export default function LandingPage() {
                   Optimiza tu negocio, aumenta la satisfacción de tus clientes y
                   pedalea hacia el éxito con nuestra solución integral.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                </div>
               </motion.div>
               <motion.div
                 className="flex items-center justify-center"
@@ -106,7 +104,7 @@ export default function LandingPage() {
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
                 <Image
-                  src="/placeholder.svg?height=400&width=400"
+                  src="/bodoque.gif"
                   width={400}
                   height={400}
                   className="rounded-full animate-float"
@@ -116,56 +114,149 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
-              Características Principales
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              {[
-                {
-                  icon: Wrench,
-                  title: "Gestión de Servicios",
-                  description: "Administra tus servicios, precios y categorías de manera eficiente."
-                },
-                {
-                  icon: DollarSign,
-                  title: "Balance Financiero",
-                  description: "Visualiza tus ingresos, egresos y ganancias en un solo lugar."
-                },
-                {
-                  icon: Package,
-                  title: "Gestión de Inventario",
-                  description: "Administra tus productos, compras y ventas de manera sencilla."
-                },
-                {
-                  icon: Truck,
-                  title: "Proveedores",
-                  description: "Administra tus proveedores y mantén un registro de tus compras."
-                }
-              ].map((feature, index) => (
+        <motion.div
+          className="mt-10"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <ChevronDown className="w-10 h-10 mx-auto text-gray-600 animate-bounce" />
+        </motion.div>
+      </motion.main>
+
+
+      <section
+        id="testimonials"
+        className="w-full py-12 md:py-24 lg:py-32"
+      >
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
+            Lo que Dicen Nuestros Clientes
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Johanna Olivares",
+                role: "Dueña de Taller",
+                content:
+                  "<strong>bikefy</strong> ha transformado completamente la forma en que gestionamos nuestro taller.",
+                image: "/johanna.png",
+              },
+              {
+                name: "Nicole Ibieta",
+                role: "Gerente de Tienda",
+                content:
+                  "<strong>bikefy</strong> nos ha permitido optimizar nuestro tiempo y recursos.",
+                image: "/nicole.png",
+              },
+              {
+                name: "Cristina Betancurt",
+                role: "Técnica de Bicicletas",
+                content:
+                  "Los análisis y reportes de <strong>bikefy</strong> me han ayudado a identificar áreas de mejora en mi trabajo.",
+                image: "/cristina.png",
+              },
+            ].map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="text-yellow-400 w-5 h-5 " />
+                      ))}
+                    </div>
+                    <p
+                      className="text-muted-foreground mb-4 italic"
+                      dangerouslySetInnerHTML={{ __html: testimonial.content }}
+                    />
+                    <div className="flex items-center">
+                      <Image
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        width={40}
+                        height={40}
+                        className="rounded-full mr-4"
+                      />
+                      <div>
+                        <p className="font-semibold">{testimonial.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {testimonial.role}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+
+      <section
+        id="características"
+        className="py-20"
+        style={{ backgroundColor: "hsl(var(--muted))" }}
+      >
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
+            Características Principales
+          </h2>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              {features.map((feature, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className={`p-6 rounded-lg cursor-pointer transition-all ${activeFeature === index ? "shadow-md" : "hover:shadow-lg"
+                    }`}
+                  style={{
+                    backgroundColor: `hsl(var(${activeFeature === index ? (document.documentElement.classList.contains('dark') ? "220, 40%, 30%" : "210, 80%, 90%") : "--card"}))`,
+                    color: `hsl(var(${activeFeature === index ? (document.documentElement.classList.contains('dark') ? "220, 60%, 70%" : "210, 50%, 20%") : "--card-foreground"}))`,
+                  }}
+                  onClick={() => setActiveFeature(index)}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300 scale-fade-animation">
-                    <CardHeader>
-                      <feature.icon className="w-12 h-12 mb-4 text-primary" />
-                      <CardTitle className="text-xl font-semibold">{feature.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground">{feature.description}</p>
-                    </CardContent>
-                  </Card>
+                  <div className="flex items-center space-x-4">
+                    <feature.icon className="w-8 h-8" />
+                    <h3 className="text-xl font-semibold">{feature.title}</h3>
+                  </div>
+                  <p
+                    className="mt-2"
+                    style={{ color: "hsl(var(--muted-foreground))" }}
+                  >
+                    {feature.description}
+                  </p>
                 </motion.div>
               ))}
             </div>
+            <div
+              className="relative h-[400px] rounded-lg overflow-hidden"
+              style={{ backgroundColor: "hsl(var(--muted))" }}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeFeature}
+                  className="absolute inset-0 flex items-center justify-center text-4xl font-bold"
+                  style={{ color: "hsl(var(--primary))" }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {features[activeFeature].title}
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
-        </section>
-
-      </motion.main>
+        </div>
+      </section>
 
       <footer className="w-full py-6 bg-background border-t border-border">
         <div className="container mx-auto px-4">
