@@ -27,6 +27,12 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
   const handleProfilePictureChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      const validTypes = ['image/jpeg', 'image/png'];
+      if (!validTypes.includes(file.type)) {
+        showAlert('Solo se permiten archivos en formato PNG o JPG.', 'error');
+        return;
+      }
+  
       const reader = new FileReader();
       reader.onload = () => {
         setTempImage(reader.result); 
@@ -35,10 +41,10 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
       };
       reader.readAsDataURL(file);
     }
-
-    
-    event.target.value = '';
+  
+    event.target.value = ''; 
   };
+  
 
   const handleSaveCroppedImage = async (blob) => {
     try {

@@ -54,7 +54,7 @@ export default function AddServiceDialog({ onAddService }) {
             category: '',
             payment_method_service: '',
           }}
-          validationSchema={newServiceValidation}
+          validationSchema={newServiceValidation} 
           onSubmit={handleSubmit}
         >
           {({ values, setFieldValue }) => (
