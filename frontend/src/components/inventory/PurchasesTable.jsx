@@ -197,7 +197,7 @@ const PurchasesTable = () => {
                   <TableRow key={purchase.id_transaction}>
                     <TableCell>{purchase.name_item}</TableCell>
                     <TableCell>{purchase.quantity_item}</TableCell>
-                    <TableCell>{purchase.amount}</TableCell>
+                    <TableCell>$ {purchase.amount?.toLocaleString('es-CL')}</TableCell>
                     <TableCell>{capitalize(purchase.payment_method)}</TableCell>
                     <TableCell>{purchase.name_supplier || 'Desconocido'}</TableCell>
                     <TableCell>{formatDateTime(purchase.transaction_date)}</TableCell>
