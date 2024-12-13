@@ -40,10 +40,12 @@ export default function ServicesTable() {
         setServices(data);
       } catch (error) {
         console.error('Error al cargar los servicios:', error);
+        showAlert('Error al cargar los servicios. Por favor, inténtalo de nuevo.', 'error');
       }
     };
     fetchServices();
   }, []);
+  
 
   const handleAddService = (newService) => {
     setServices((prev) => [...prev, newService]);
@@ -51,6 +53,9 @@ export default function ServicesTable() {
   };
 
   const handleDelete = async (id) => {
+    const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este servicio?');
+    if (!confirmDelete) return;
+  
     try {
       await deleteService(id);
       setServices((prev) => prev.filter((service) => service.id_service !== id));
@@ -59,6 +64,7 @@ export default function ServicesTable() {
       showAlert('Error al eliminar el servicio', 'error');
     }
   };
+  
 
   const handleView = (service) => {
     setSelectedService(service);
@@ -80,7 +86,8 @@ export default function ServicesTable() {
         service.id_service === updatedService.id_service ? updatedService : service
       )
     );
-    setEditingService(null); 
+    setSelectedService(null);
+    setIsDialogOpen(false);   
   };
 
 

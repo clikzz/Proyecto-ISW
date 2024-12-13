@@ -3,8 +3,15 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 export const exportToExcel = (services) => {
-  const worksheet = utils.json_to_sheet(services);
+  const mappedServices = services.map((service) => ({
+    Nombre: service.name_service,
+    Descripción: service.description_service,
+    Precio: service.price_service,
+    Categoría: service.category,
+    'Método de Pago': service.payment_method_service,
+  }));
 
+  const worksheet = utils.json_to_sheet(mappedServices);
 
   const colWidths = [
     { wch: 20 }, // Nombre
@@ -14,7 +21,6 @@ export const exportToExcel = (services) => {
     { wch: 20 }, // Método de Pago
   ];
   worksheet['!cols'] = colWidths;
-
 
   utils.sheet_add_aoa(
     worksheet,
@@ -49,7 +55,7 @@ export const exportToPDF = (services) => {
     new Date(service.date_service).toLocaleDateString(),
   ]);
 
-
+  // Crear tabla
   autoTable(doc, {
     head: [['Nombre', 'Descripción', 'Precio', 'Categoría', 'Método de Pago']],
     body: tableData,

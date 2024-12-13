@@ -23,16 +23,26 @@ const updateService = async (id, data) => {
   try {
     const service = await Service.findById(id);
     if (!service) {
+      console.error(`Servicio con ID ${id} no encontrado.`);
       throw new Error('Servicio no encontrado.');
     }
 
-    await service.update(data);
-    return service; 
+    // combina los datos existentes con los datos nuevos
+    const updatedData = {
+      ...service, // existentes
+      ...data,    // actualizados
+    };
+
+    // actualiza el servicio con los datos combinados
+    const updatedService = await Service.update(id, updatedData);
+
+    return updatedService;
   } catch (error) {
     console.error('Error al actualizar el servicio:', error.message);
     throw error;
   }
 };
+
 
 const deleteService = async (id) => await Service.delete(id);
 
