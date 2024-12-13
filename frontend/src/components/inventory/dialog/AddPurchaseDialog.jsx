@@ -4,10 +4,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { getInventoryItems, recordPurchase } from '@/api/inventory';
 import { getSuppliers } from '@/api/suppliers';
 import { useAlert } from '@/context/alertContext';
 import { capitalize } from '@/helpers/capitalize';
+import { newPurchaseValidationExisting, newPurchaseValidationNew } from '@/validations/newPurchase';
 
 export default function AddPurchaseDialog({ fetchPurchases }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -17,7 +19,7 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
   const [selectedSupplier, setSelectedSupplier] = useState('');
   const [purchaseDetails, setPurchaseDetails] = useState({
     type: 'compra',
-    items: [{ id_item: '', quantity: '', unit_price: '' }],
+    items: [{ id_item: '', quantity: 1, unit_price: '' }],
     details: {
       payment_method: '',
       amount: '',
@@ -66,13 +68,14 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
     e.preventDefault();
     try {
       const transaction = { ...purchaseDetails };
-
+  
+      // Verificar proveedor
       if (section === 'existing') {
         if (!selectedSupplier) {
           showAlert('Selecciona un proveedor.', 'error');
           return;
         }
-
+  
         transaction.items[0] = {
           ...transaction.items[0],
           rut_supplier: selectedSupplier,
@@ -84,11 +87,24 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
         }
         transaction.items = [{ ...newItem }];
       }
+  
       // Calcular el monto total
       transaction.details.amount = transaction.items.reduce(
-        (total, item) => total + item.quantity * item.unit_price,
+        (total, item) => total + (item.quantity * item.unit_price),
         0
       );
+  
+      // Generar la descripción justo antes de enviar
+      let itemName = 'producto';
+      if (section === 'existing') {
+        const selectedItem = items.find((i) => i.id_item === transaction.items[0].id_item);
+        itemName = selectedItem ? selectedItem.name_item : itemName;
+      } else {
+        itemName = transaction.items[0].name_item || 'producto nuevo';
+      }
+  
+      transaction.details.description = `Compra de ${transaction.items[0].quantity} unidades de ${itemName}`;
+  
       await recordPurchase(transaction);
       showAlert('Compra registrada exitosamente', 'success');
       setIsDialogOpen(false);
@@ -202,7 +218,7 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
                 onChange={(e) =>
                   setPurchaseDetails((prev) => ({
                     ...prev,
-                    items: [{ ...prev.items[0], quantity: parseInt(e.target.value, 10) }],
+                    items: [{ ...prev.items[0], quantity: Number(e.target.value) }],
                   }))
                 }
                 placeholder="Cantidad comprada"

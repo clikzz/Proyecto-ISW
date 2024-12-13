@@ -224,7 +224,7 @@ const SalesTable = () => {
                   <TableRow key={sale.id_transaction}>
                     <TableCell>{sale.name_item}</TableCell>
                     <TableCell>{sale.quantity_item}</TableCell>
-                    <TableCell>{sale.amount}</TableCell>
+                    <TableCell>$ {sale.amount?.toLocaleString('es-CL')}</TableCell>
                     <TableCell>{capitalize(sale.payment_method)}</TableCell>
                     <TableCell>{formatDateTime(sale.transaction_date)}</TableCell>
                     <TableCell>
