@@ -13,7 +13,7 @@ const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <DialogContent className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <DialogHeader className="flex justify-between items-center">
           <DialogTitle className="text-xl font-bold text-gray-800">
             Detalles de la Venta
@@ -33,17 +33,9 @@ const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700">Cantidad vendida</label>
-              <div className="p-2 bg-gray-100 rounded-md space-y-2">
-                {sale.items && sale.items.length > 0 ? (
-                  sale.items.map((item, index) => (
-                    <div key={index} className="flex justify-between items-center">
-                      <span>{item.name_item}</span>
-                      <span>
-                        {item.quantity_item} x ${item.unit_price} = $
-                        {(item.quantity_item * item.unit_price).toFixed(2)}
-                      </span>
-                    </div>
-                  ))
+              <div className="p-2 bg-gray-100 rounded-md">
+                {sale.quantity_item > 0 ? (
+                  <p>{sale.quantity_item}</p>
                 ) : (
                   <p>No se vendieron productos.</p>
                 )}
@@ -55,7 +47,7 @@ const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700">Monto Total</label>
-              <p className="p-2 bg-gray-100 rounded-md">${sale.amount}</p>
+              <p className="p-2 bg-gray-100 rounded-md">$ {sale.amount?.toLocaleString('es-CL')}</p>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700">Descripción</label>

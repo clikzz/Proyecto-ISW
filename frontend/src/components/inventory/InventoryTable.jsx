@@ -12,6 +12,7 @@ import ItemDetailsDialog from '@/components/inventory/dialog/ItemDetailsDialog';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import EditItemDialog from '@/components/inventory/dialog/EditItemDialog';
 import { capitalize } from '@/helpers/capitalize';
+import { useAlert } from '@/context/alertContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,6 +30,7 @@ const InventoryTable = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { showAlert } = useAlert();
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -76,9 +78,10 @@ const InventoryTable = () => {
         setFilteredItems((prevItems) =>
           prevItems.filter((item) => item.id_item !== itemToDelete)
         );
+        showAlert('Ítem eliminado correctamente', 'success');
       } catch (error) {
         console.error('Error al eliminar el item:', error);
-        alert('No se pudo eliminar el item.');
+        showAlert('Ocurrió un error al eliminar el ítem', 'error');
       } finally {
         closeConfirmationDialog();
       }

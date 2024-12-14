@@ -39,6 +39,7 @@ const SalesTable = () => {
   const fetchSales = async () => {
     try {
       const data = await getSales();
+      console.log('Ventas:', data);
       setSales(data);
       setFilteredSales(data);
     } catch (error) {
@@ -71,7 +72,7 @@ const SalesTable = () => {
     if (saleToDelete) {
       try {
         await deleteSale(saleToDelete);
-        await fetchSales(); // Refresca la lista de ventas
+        await fetchSales();
         showAlert('Venta eliminada exitosamente', 'success');
       } catch (error) {
         console.error('Error al eliminar la venta:', error);

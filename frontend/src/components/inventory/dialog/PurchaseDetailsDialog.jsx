@@ -13,7 +13,7 @@ const PurchaseDetailsDialog = ({ isOpen, onClose, onEdit, purchase }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <DialogContent className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <DialogHeader className="flex justify-between items-center">
           <DialogTitle className="text-xl font-bold text-gray-800">
             Detalles de la Compra
@@ -42,6 +42,12 @@ const PurchaseDetailsDialog = ({ isOpen, onClose, onEdit, purchase }) => {
             <div>
               <label className="block text-sm font-semibold text-gray-700">Monto Total</label>
               <p className="p-2 bg-gray-100 rounded-md">${purchase.amount.toLocaleString('es-CL')}</p>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700">Proveedor</label>
+              <p className="p-2 bg-gray-100 rounded-md">
+                {purchase.name_supplier || 'Sin Proveedor'}
+              </p>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700">Descripción</label>

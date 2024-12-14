@@ -9,10 +9,12 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { updateSale } from '@/api/inventory';
+import { useAlert } from '@/context/alertContext';
 
 const EditSaleDialog = ({ isOpen, onClose, sale, onUpdateSale }) => {
   const [editedSale, setEditedSale] = useState({});
   const [total, setTotal] = useState(0);
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     if (sale) {
@@ -77,82 +79,84 @@ const EditSaleDialog = ({ isOpen, onClose, sale, onUpdateSale }) => {
         onUpdateSale(response);
       }
       onClose();
+      showAlert('Venta actualizada correctamente', 'success');
     } catch (error) {
       console.error('Error al actualizar la venta:', error);
+      showAlert('Ocurrió un error al actualizar la venta', 'error');
     }
   };
 
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg bg-white p-6 rounded-md shadow-md">
+      <DialogContent className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-gray-800">
             Editar Venta
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          {/* Producto (solo lectura) */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Producto</label>
-            <Input
-              value={`${sale.name_item} - $${sale.unit_price}`}
-              readOnly
-              className="p-2 border rounded-md w-full bg-gray-100"
-            />
+
+        <div className="grid grid-cols-2 gap-6 mt-4">
+          {/* Columna izquierda */}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700">Producto</label>
+              <Input
+                value={`${sale.name_item} - $${sale.unit_price}`}
+                readOnly
+                className="p-2 border rounded-md w-full bg-gray-100"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700">Método de Pago</label>
+              <Select
+                value={editedSale.payment_method}
+                onValueChange={(value) =>
+                  setEditedSale((prev) => ({ ...prev, payment_method: value }))
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Seleccionar método de pago" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="efectivo">Efectivo</SelectItem>
+                  <SelectItem value="tarjeta">Tarjeta</SelectItem>
+                  <SelectItem value="transferencia">Transferencia</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700">Cantidad vendida</label>
+              <Input
+                type="number"
+                name="quantity_item"
+                value={editedSale.quantity_item}
+                onChange={handleInputChange}
+                min={1}
+                className="p-2 border rounded-md w-full"
+              />
+            </div>
           </div>
 
-          {/* Cantidad */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Cantidad</label>
-            <Input
-              type="number"
-              name="quantity_item"
-              value={editedSale.quantity_item}
-              onChange={handleInputChange}
-              min={1}
-              className="p-2 border rounded-md w-full"
-            />
-          </div>
-
-          {/* Método de pago */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Método de Pago</label>
-            <Select
-              value={editedSale.payment_method}
-              onValueChange={(value) =>
-                setEditedSale((prev) => ({ ...prev, payment_method: value }))
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Seleccionar método de pago" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="efectivo">Efectivo</SelectItem>
-                <SelectItem value="tarjeta">Tarjeta</SelectItem>
-                <SelectItem value="transferencia">Transferencia</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Monto Total */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Monto Total</label>
-            <Input
-              value={`$${total.toFixed(2)}`}
-              readOnly
-              className="p-2 border rounded-md w-full bg-gray-100"
-            />
-          </div>
-
-          {/* Descripción */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Descripción</label>
-            <Textarea
-              name="description"
-              value={editedSale.description}
-              onChange={handleInputChange}
-              className="p-2 border rounded-md w-full"
-            />
+          {/* Columna derecha */}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700">Monto Total</label>
+              <Input
+                value={`$${total.toLocaleString('es-CL')}`}
+                readOnly
+                className="p-2 border rounded-md w-full bg-gray-100"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700">Descripción</label>
+              <Textarea
+                name="description"
+                value={editedSale.description}
+                onChange={handleInputChange}
+                className="p-2 border rounded-md w-full"
+              />
+            </div>
           </div>
         </div>
 

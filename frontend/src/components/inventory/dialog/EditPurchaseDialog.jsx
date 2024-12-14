@@ -9,10 +9,12 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { updatePurchase } from '@/api/inventory';
 import { Textarea } from '@/components/ui/textarea';
+import { useAlert } from '@/context/alertContext';
 
 const EditPurchaseDialog = ({ isOpen, onClose, purchase, onUpdatePurchase }) => {
   const [editedPurchase, setEditedPurchase] = useState({});
   const [total, setTotal] = useState(0);
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     if (purchase) {
@@ -74,8 +76,10 @@ const EditPurchaseDialog = ({ isOpen, onClose, purchase, onUpdatePurchase }) => 
         onUpdatePurchase(response);
       }
       onClose();
+      showAlert('Compra actualizada correctamente', 'success');
     } catch (error) {
       console.error('Error al actualizar la compra:', error);
+      showAlert('Error al actualizar la compra', 'error');
     }
   };
 
