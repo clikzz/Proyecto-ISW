@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { DragDropContext } from '@hello-pangea/dnd';
-import { motion } from 'framer-motion';
-import TaskBoard from '../components/tasks/TaskBoard';
-import { ClipboardCheck } from 'lucide-react';
-import { getServices } from '../api/service';
+import { useState, useEffect } from "react";
+import { DragDropContext } from "@hello-pangea/dnd";
+import { motion } from "framer-motion";
+import TaskBoard from "../components/tasks/TaskBoard";
+import { ClipboardCheck } from "lucide-react";
+import { getServices } from "../api/service";
 
 export default function TareasPage() {
   const [tasks, setTasks] = useState([]);
@@ -12,12 +12,13 @@ export default function TareasPage() {
     try {
       const fetchServices = async () => {
         const tasks = await getServices();
+        console.log(tasks);
         setTasks(tasks);
       };
 
       fetchServices();
     } catch (error) {
-      console.error('Error al obtener los servicios:', error);
+      console.error("Error al obtener los servicios:", error);
     }
   }, []);
 
@@ -68,10 +69,10 @@ export default function TareasPage() {
           ? {
               ...task,
               assignee: {
-                name: 'Nuevo Usuario',
-                avatar: '/placeholder.svg?height=32&width=32',
+                name: "Nuevo Usuario",
+                avatar: "/placeholder.svg?height=32&width=32",
               },
-              service_status: 'in_progress',
+              service_status: "in_progress",
             }
           : task
       )

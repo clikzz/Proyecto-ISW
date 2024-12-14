@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require("../config/db");
 
 class Service {
   static async create(data) {
@@ -31,7 +31,8 @@ class Service {
         s.created_at,
         s.updated_at,
         s.is_deleted,
-        u.name_user AS employee_name
+        u.name_user AS employee_name,
+        s.status_service
       FROM service s
       LEFT JOIN users u ON s.rut_user = u.rut
       WHERE s.is_deleted = FALSE;
@@ -75,7 +76,7 @@ class Service {
       data.price_service,
       data.category,
       data.payment_method_service,
-      id
+      id,
     ];
     const result = await db.query(query, values);
     return result.rows[0];
