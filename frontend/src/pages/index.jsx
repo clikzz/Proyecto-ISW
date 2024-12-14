@@ -8,7 +8,6 @@ import {
   Package,
   Users,
   ChevronDown,
-  Star,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -124,11 +123,7 @@ export default function LandingPage() {
         </motion.div>
       </motion.main>
 
-
-      <section
-        id="testimonials"
-        className="w-full py-12 md:py-24 lg:py-32"
-      >
+      <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
             Lo que Dicen Nuestros Clientes
@@ -136,25 +131,25 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                name: "Johanna Olivares",
-                role: "Dueña de Taller",
+                name: 'Johanna Olivares',
+                role: 'Dueña de Taller',
                 content:
-                  "<strong>bikefy</strong> ha transformado completamente la forma en que gestionamos nuestro taller.",
-                image: "/johanna.png",
+                  '<strong>bikefy</strong> ha transformado completamente la forma en que gestionamos nuestro taller.',
+                image: '/johanna.png',
               },
               {
-                name: "Nicole Ibieta",
-                role: "Gerente de Tienda",
+                name: 'Nicole Ibieta',
+                role: 'Gerente de Tienda',
                 content:
-                  "<strong>bikefy</strong> nos ha permitido optimizar nuestro tiempo y recursos.",
-                image: "/nicole.png",
+                  '<strong>bikefy</strong> nos ha permitido optimizar nuestro tiempo y recursos.',
+                image: '/nicole.png',
               },
               {
-                name: "Cristina Betancurt",
-                role: "Técnica de Bicicletas",
+                name: 'Cristina Betancurt',
+                role: 'Técnica de Bicicletas',
                 content:
-                  "Los análisis y reportes de <strong>bikefy</strong> me han ayudado a identificar áreas de mejora en mi trabajo.",
-                image: "/cristina.png",
+                  'Los análisis y reportes de <strong>bikefy</strong> me han ayudado a identificar áreas de mejora en mi trabajo.',
+                image: '/cristina.png',
               },
             ].map((testimonial, index) => (
               <motion.div
@@ -196,8 +191,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-
 
       <section
         id="características"
