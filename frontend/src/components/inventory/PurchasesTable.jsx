@@ -2,17 +2,24 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { getPurchases } from '@/api/inventory';
-import { Info, Search, ArrowUpDown, Trash } from 'lucide-react';
+import { Info, Search, ArrowUpDown, EllipsisVertical } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatDateTime } from '@/helpers/dates';
 import { capitalize } from '@/helpers/capitalize';
 import AddPurchaseDialog from '@/components/inventory/dialog/AddPurchaseDialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import ConfirmationDialog from '@/components/ConfirmationDialog';
+import { deletePurchase } from '@/api/inventory';
+import { useAlert } from '@/context/alertContext';
 
 const PurchasesTable = () => {
   const [purchases, setPurchases] = useState([]);
   const [filteredPurchases, setFilteredPurchases] = useState([]);
   const [search, setSearch] = useState('');
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
+  const [purchaseToDelete, setPurchaseToDelete] = useState(null);
+  const { showAlert } = useAlert();
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -35,11 +42,11 @@ const PurchasesTable = () => {
 
   useEffect(() => {
     const lowercasedSearch = search.toLowerCase();
-    setFilteredPurchases(
-      purchases.filter((purchase) =>
-        purchase.description && purchase.description.toLowerCase().includes(lowercasedSearch)
-      )
-    );
+    const filtered = purchases.filter((purchase) => {
+      const description = purchase.name_item || '';
+      return description.toLowerCase().includes(lowercasedSearch);
+    });
+    setFilteredPurchases(filtered);
   }, [search, purchases]);
 
   const handleSort = (key) => {
@@ -48,6 +55,32 @@ const PurchasesTable = () => {
       direction = 'descending';
     }
     setSortConfig({ key, direction });
+  };
+
+  const openConfirmationDialog = (purchaseId) => {
+    setPurchaseToDelete(purchaseId);
+    setIsConfirmationDialogOpen(true);
+  };
+  
+  const closeConfirmationDialog = () => {
+    setPurchaseToDelete(null);
+    setIsConfirmationDialogOpen(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (purchaseToDelete) {
+      try {
+        console.log('ID de la compra a eliminar en el front:', purchaseToDelete);
+        await deletePurchase(purchaseToDelete);
+        await fetchPurchases(); // Refresca la lista de compras
+        showAlert('Compra eliminada correctamente', 'success');
+      } catch (error) {
+        console.error('Error al eliminar la compra:', error);
+        showAlert('Ocurrió un error al eliminar la compra', 'error');
+      } finally {
+        closeConfirmationDialog();
+      }
+    }
   };
 
   const sortedPurchases = useMemo(() => {
@@ -70,7 +103,7 @@ const PurchasesTable = () => {
   }, [filteredPurchases, sortConfig]);
 
   return (
-    <div className="container mx-auto py-5">
+    <div className="container mx-auto py-4">
       <div className="flex items-center mb-4">
         <h2 className="text-2xl font-bold mr-3">Compras</h2>
       </div>
@@ -80,7 +113,7 @@ const PurchasesTable = () => {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por descripción..."
+            placeholder="Buscar por producto..."
             className="max-w-full"
           />
           <Search className="ml-2 h-5 w-5 text-gray-500" />
@@ -164,19 +197,40 @@ const PurchasesTable = () => {
                   <TableRow key={purchase.id_transaction}>
                     <TableCell>{purchase.name_item}</TableCell>
                     <TableCell>{purchase.quantity_item}</TableCell>
-                    <TableCell>{purchase.amount}</TableCell>
+                    <TableCell>$ {purchase.amount?.toLocaleString('es-CL')}</TableCell>
                     <TableCell>{capitalize(purchase.payment_method)}</TableCell>
-                    <TableCell>{purchase.name_supplier}</TableCell>
+                    <TableCell>{purchase.name_supplier || 'Desconocido'}</TableCell>
                     <TableCell>{formatDateTime(purchase.transaction_date)}</TableCell>
                     <TableCell>
-                      <Button className="bg-blue-500 text-white mr-2">
-                        <Info />
-                      </Button>
-                      <Button
-                        className="bg-red-500 hover:bg-red-600"
-                      >
-                        <Trash />
-                      </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="p-2 hover:bg-gray-100 rounded-md"
+                        >
+                          <EllipsisVertical className="h-5 w-5 text-gray-600" />
+                        </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-white border rounded-md shadow-lg z-50 w-48">
+                          <DropdownMenuItem
+                            className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                          >
+                            Ver información
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                          >
+                            Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="hover:bg-red-100 px-4 py-2 cursor-pointer text-red-600"
+                            onClick={() => openConfirmationDialog(purchase.id_transaction)}
+                          >
+                            Eliminar
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -185,6 +239,12 @@ const PurchasesTable = () => {
           </div>
         </CardContent>
       </Card>
+
+      <ConfirmationDialog
+        open={isConfirmationDialogOpen}
+        handleClose={closeConfirmationDialog}
+        handleConfirm={handleConfirmDelete}
+      />
     </div>
   );
 };

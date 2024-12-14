@@ -1,13 +1,18 @@
 const Joi = require('joi');
 
+const allowedCategories = [
+  'accesorios',
+  'bicicletas',
+  'componentes',
+  'equipamiento',
+  'electrónica',
+  'herramientas',
+  'limpieza',
+  'repuestos',
+  'otros',
+]
+
 const createItem = Joi.object({
-  rut_supplier: Joi.string()
-    .max(12)
-    .required()
-    .messages({
-      'string.max': 'El RUT del proveedor no puede exceder los 12 caracteres.',
-      'any.required': 'El RUT del proveedor es obligatorio.',
-    }),
   name_item: Joi.string()
   .max(50)
   .required()
@@ -21,11 +26,11 @@ const createItem = Joi.object({
     'string.base': 'La descripción debe ser de tipo texto.',
   }),
   category: Joi.string()
-  .max(50)
+  .valid(...allowedCategories)
   .required()
   .messages({
-    'string.empty': 'La categoría no puede estar vacía.',
-    'string.max': 'La categoría no puede exceder los 50 caracteres.',
+    'any.only': 'La categoría no es válida. Debe ser una de las siguientes: ' + allowedCategories.join(', ') + '.',
+    'any.required': 'La categoría es obligatoria.',
   }),
   stock: Joi.number().integer()
   .min(0)
@@ -33,13 +38,6 @@ const createItem = Joi.object({
   .messages({
     'number.base': 'El stock debe ser un número entero.',
     'number.min': 'El stock no puede ser negativo.',
-  }),
-  cost_price: Joi.number()
-  .positive()
-  .required()
-  .messages({
-    'number.base': 'El precio de costo debe ser un número.',
-    'number.positive': 'El precio de costo debe ser positivo.',
   }),
   selling_price: Joi.number()
   .positive()
@@ -70,10 +68,10 @@ const updateItem = Joi.object({
       'string.base': 'La descripción debe ser de tipo texto.',
     }),
   category: Joi.string()
-    .max(50)
+    .valid(...allowedCategories)
     .optional()
     .messages({
-      'string.max': 'La categoría no puede exceder los 50 caracteres.',
+      'any.only': 'La categoría no es válida. Debe ser una de las siguientes: ' + allowedCategories.join(', ') + '.',
     }),
   stock: Joi.number().integer()
     .min(0)
@@ -81,13 +79,6 @@ const updateItem = Joi.object({
     .messages({
       'number.base': 'El stock debe ser un número entero.',
       'number.min': 'El stock no puede ser negativo.',
-    }),
-  cost_price: Joi.number()
-    .positive()
-    .optional()
-    .messages({
-      'number.base': 'El precio de costo debe ser un número.',
-      'number.positive': 'El precio de costo debe ser positivo.',
     }),
   selling_price: Joi.number()
     .positive()

@@ -1,109 +1,219 @@
 const Joi = require('joi');
 
-const inventorySchema = Joi.object({
+const purchaseSchema = Joi.object({
   type: Joi.string()
-    .valid('venta', 'compra')
+  .valid('compra')
+  .required()
+  .messages({
+    'any.required': 'El tipo de transacción es obligatorio.',
+    'any.only': 'El tipo de transacción debe ser "compra".',
+  }),
+  items: Joi.array()
+    .items(
+      Joi.object({
+        id_item: Joi.number()
+          .integer()
+          .messages({
+            'number.base': 'El ID del ítem debe ser un número.',
+          }),
+        name_item: Joi.string()
+          .when('id_item', {
+            is: Joi.exist(),
+            then: Joi.forbidden(),
+            otherwise: Joi.required().messages({
+              'any.required': 'El nombre del ítem es obligatorio para nuevos productos.',
+            }),
+          }),
+        category: Joi.string()
+          .when('id_item', {
+            is: Joi.exist(),
+            then: Joi.forbidden(),
+            otherwise: Joi.required().messages({
+              'any.required': 'La categoría es obligatoria para nuevos productos.',
+            }),
+          }),
+        description: Joi.string()
+          .allow('')
+          .messages({
+            'string.base': 'La descripción debe ser texto.',
+          }),
+        quantity: Joi.number()
+          .integer()
+          .positive()
+          .required()
+          .messages({
+            'number.base': 'La cantidad debe ser un número entero.',
+            'number.positive': 'La cantidad debe ser mayor a 0.',
+            'any.required': 'La cantidad es obligatoria.',
+          }),
+        unit_price: Joi.number()
+          .positive()
+          .required()
+          .messages({
+            'number.base': 'El precio unitario debe ser un número.',
+            'number.positive': 'El precio unitario debe ser mayor a 0.',
+            'any.required': 'El precio unitario es obligatorio.',
+          }),
+        selling_price: Joi.number()
+          .positive()
+          .when('id_item', {
+            is: Joi.exist(),
+            then: Joi.forbidden(),
+            otherwise: Joi.required().messages({
+              'any.required': 'El precio de venta es obligatorio para nuevos productos.',
+            }),
+          }),
+        rut_supplier: Joi.string()
+          .required()
+          .messages({
+            'any.required': 'El RUT del proveedor es obligatorio para compras.',
+          }),
+      })
+    )
+    .min(1)
     .required()
     .messages({
-      'any.required': 'El tipo de transacción es obligatorio.',
-      'any.only': 'El tipo de transacción debe ser "venta" o "compra".',
-    }),
-  items: Joi.array().items(
-    Joi.object({
-      id_item: Joi.number()
-        .integer()
-        .allow(null)
-        .messages({
-          'number.base': 'El ID del item debe ser un número.',
-        }),
-      name_item: Joi.string()
-        .max(50)
-        .when('id_item', { is: null, then: Joi.required() })
-        .messages({
-          'string.empty': 'El nombre del item no puede estar vacío.',
-          'string.max': 'El nombre del item no puede exceder los 50 caracteres.',
-        }),
-      description: Joi.string()
-        .allow('')
-        .optional()
-        .when('id_item', { is: null, then: Joi.optional() })
-        .messages({
-          'string.base': 'La descripción debe ser de tipo texto.',
-        }),
-      category: Joi.string()
-        .max(50)
-        .when('id_item', { is: null, then: Joi.required() })
-        .messages({
-          'string.empty': 'La categoría no puede estar vacía.',
-          'string.max': 'La categoría no puede exceder los 50 caracteres.',
-        }),
-      cantidad: Joi.number()
-        .integer()
-        .positive()
-        .required()
-        .messages({
-          'number.base': 'La cantidad debe ser un número entero.',
-          'number.positive': 'La cantidad debe ser positiva.',
-          'any.required': 'La cantidad es obligatoria.',
-        }),
-      unit_price: Joi.number()
-        .positive()
-        .required()
-        .messages({
-          'number.base': 'El precio unitario debe ser un número.',
-          'number.positive': 'El precio unitario debe ser positivo.',
-          'any.required': 'El precio unitario es obligatorio.',
-        }),
-      selling_price: Joi.number()
-        .positive()
-        .when('id_item', { is: null, then: Joi.required() })
-        .messages({
-          'number.base': 'El precio de venta debe ser un número.',
-          'number.positive': 'El precio de venta debe ser positivo.',
-          'any.required': 'El precio de venta es obligatorio cuando se crea un nuevo item.',
-        }),
-    })
-  ).required()
-    .messages({
-      'array.base': 'Los items deben ser un arreglo de objetos.',
-      'any.required': 'Los items son obligatorios.',
+      'array.base': 'Los ítems deben ser un arreglo de objetos.',
+      'array.min': 'Debe incluir al menos un ítem en la transacción.',
+      'any.required': 'Los ítems son obligatorios.',
     }),
   details: Joi.object({
-    rut: Joi.string()
-      .required()
-      .messages({
-        'string.base': 'El RUT debe ser una cadena de texto.',
-        'any.required': 'El RUT del empleado que registra la transacción es obligatorio.',
-      }),
-    rut_supplier: Joi.string()
-      .when('type', { is: 'compra', then: Joi.required() })
-      .messages({
-        'any.required': 'Para la compra de un nuevo item, es necesario proporcionar el rut del proveedor.',
-      }),
-    monto: Joi.number()
+    amount: Joi.number()
       .positive()
       .required()
       .messages({
         'number.base': 'El monto debe ser un número.',
-        'number.positive': 'El monto debe ser positivo.',
-        'any.required': 'El monto es obligatorio.',
+        'number.positive': 'El monto debe ser mayor a 0.',
+        'any.required': 'El monto total es obligatorio.',
       }),
-    metodo_pago: Joi.string()
+    payment_method: Joi.string()
       .required()
       .messages({
         'string.base': 'El método de pago debe ser texto.',
         'any.required': 'El método de pago es obligatorio.',
       }),
-    descripcion: Joi.string()
+    description: Joi.string()
       .allow('')
       .messages({
         'string.base': 'La descripción debe ser texto.',
       }),
-  }).required()
+  })
+    .required()
     .messages({
       'object.base': 'Los detalles deben ser un objeto.',
-      'any.required': 'Los detalles son obligatorios.',
+      'any.required': 'Los detalles de la transacción son obligatorios.',
     }),
 });
 
-module.exports = { inventorySchema };
+const saleSchema = Joi.object({
+  type: Joi.string()
+  .valid('venta')
+  .required()
+  .messages({
+    'any.required': 'El tipo de transacción es obligatorio.',
+    'any.only': 'El tipo de transacción debe ser "venta".',
+  }),
+  items: Joi.array()
+    .items(
+      Joi.object({
+        id_item: Joi.number().integer().required().messages({
+          'number.base': 'El ID del ítem debe ser un número.',
+          'any.required': 'El ID del ítem es obligatorio.',
+        }),
+        quantity: Joi.number().integer().positive().required().messages({
+          'number.base': 'La cantidad debe ser un número entero.',
+          'number.positive': 'La cantidad debe ser mayor a 0.',
+          'any.required': 'La cantidad es obligatoria.',
+        }),
+        unit_price: Joi.number().positive().required().messages({
+          'number.base': 'El precio unitario debe ser un número.',
+          'number.positive': 'El precio unitario debe ser mayor a 0.',
+          'any.required': 'El precio unitario es obligatorio.',
+        }),
+      })
+    )
+    .min(1)
+    .required()
+    .messages({
+      'array.base': 'Los ítems deben ser un arreglo de objetos.',
+      'array.min': 'Debe incluir al menos un ítem en la transacción.',
+      'any.required': 'Los ítems son obligatorios.',
+    }),
+  details: Joi.object({
+    amount: Joi.number().positive().required().messages({
+      'number.base': 'El monto debe ser un número.',
+      'number.positive': 'El monto debe ser mayor a 0.',
+      'any.required': 'El monto total es obligatorio.',
+    }),
+    payment_method: Joi.string().required().messages({
+      'string.base': 'El método de pago debe ser texto.',
+      'any.required': 'El método de pago es obligatorio.',
+    }),
+    description: Joi.string().allow('').messages({
+      'string.base': 'La descripción debe ser texto.',
+    }),
+  }).required().messages({
+    'object.base': 'Los detalles deben ser un objeto.',
+    'any.required': 'Los detalles de la transacción son obligatorios.',
+  }),
+});
+
+const editSaleSchema = Joi.object({
+  items: Joi.array()
+    .items(
+      Joi.object({
+        id_transaction_item: Joi.number()
+          .integer()
+          .required()
+          .messages({
+            'number.base': 'El ID del ítem de la transacción debe ser un número.',
+            'any.required': 'El ID del ítem de la transacción es obligatorio.',
+          }),
+        quantity_item: Joi.number()
+          .integer()
+          .positive()
+          .optional()
+          .messages({
+            'number.base': 'La cantidad debe ser un número entero.',
+            'number.positive': 'La cantidad debe ser mayor a 0.',
+          }),
+        unit_price: Joi.number()
+          .positive()
+          .optional()
+          .messages({
+            'number.base': 'El precio unitario debe ser un número.',
+            'number.positive': 'El precio unitario debe ser mayor a 0.',
+          }),
+      })
+    )
+    .optional()
+    .messages({
+      'array.base': 'Los ítems deben ser un arreglo de objetos.',
+    }),
+  details: Joi.object({
+    amount: Joi.number()
+      .positive()
+      .optional()
+      .messages({
+        'number.base': 'El monto debe ser un número.',
+        'number.positive': 'El monto debe ser mayor a 0.',
+      }),
+    payment_method: Joi.string()
+      .optional()
+      .messages({
+        'string.base': 'El método de pago debe ser texto.',
+      }),
+    description: Joi.string()
+      .allow('')
+      .optional()
+      .messages({
+        'string.base': 'La descripción debe ser texto.',
+      }),
+  })
+    .optional()
+    .messages({
+      'object.base': 'Los detalles deben ser un objeto.',
+    }),
+});
+
+module.exports = { purchaseSchema, saleSchema, editSaleSchema };

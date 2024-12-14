@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Camera } from 'lucide-react';
 import { uploadProfilePicture, getProfile } from '@api/profile';
 import ImageCropper from './ui/ImageCropper';
+import { useAlert } from '@/context/alertContext';
+
+
 
 export default function ProfilePicture({ profilePicture, setProfilePicture }) {
   const [showCropper, setShowCropper] = useState(false);
   const [tempImage, setTempImage] = useState(null);
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -23,18 +27,24 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
   const handleProfilePictureChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      const validTypes = ['image/jpeg', 'image/png'];
+      if (!validTypes.includes(file.type)) {
+        showAlert('Solo se permiten archivos en formato PNG o JPG.', 'error');
+        return;
+      }
+  
       const reader = new FileReader();
       reader.onload = () => {
-        setTempImage(reader.result); // Imagen temporal para mostrar en el recortador
-        setShowCropper(true); // Mostrar el modal de recorte
-        document.body.style.overflow = 'hidden'; // Deshabilitar scroll
+        setTempImage(reader.result); 
+        setShowCropper(true); 
+        document.body.style.overflow = 'hidden'; 
       };
       reader.readAsDataURL(file);
     }
-
-    // Restablecer el valor del input para permitir seleccionar la misma imagen
-    event.target.value = '';
+  
+    event.target.value = ''; 
   };
+  
 
   const handleSaveCroppedImage = async (blob) => {
     try {
@@ -43,22 +53,24 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
       setProfilePicture(data.profilePicture);
       setShowCropper(false);
       setTempImage(null);
-      document.body.style.overflow = 'auto'; // Restaurar scroll
+      showAlert('Imagen de perfil actualizada correctamente', 'success');
+      document.body.style.overflow = 'auto'; 
     } catch (error) {
       console.error('Error al guardar la imagen recortada:', error.message);
+      showAlert('Error al guardar la imagen', 'error');
     }
   };
 
   const handleCancelCrop = () => {
     setShowCropper(false);
     setTempImage(null);
-    document.body.style.overflow = 'auto'; // Restaurar scroll
+    document.body.style.overflow = 'auto'; 
   };
 
   const handleRemoveProfilePicture = async () => {
     try {
       const response = await removeProfilePicture();
-      setProfilePicture(response.profilePicture); // Restaurar imagen por defecto
+      setProfilePicture(response.profilePicture); 
     } catch (error) {
       console.error('Error al eliminar la imagen de perfil:', error.message);
     }

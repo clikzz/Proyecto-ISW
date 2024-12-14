@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
-import { getTransactionsSummary } from '@/api/transaction';
+import { getServices } from '@/api/service';
 
 const formatoPesoChileno = (valor) => {
   return new Intl.NumberFormat('es-CL', {
@@ -16,10 +16,49 @@ export default function BalanceCards({ transactions }) {
 
   const fetchSummary = async () => {
     try {
-      const data = await getTransactionsSummary();
-      setSummary(data);
+      const services = await getServices();
+
+      const formattedTransactions = transactions
+        .filter(transaction => !transaction.is_deleted)
+        .map(transaction => ({
+          ...transaction,
+          type: transaction.transaction_type
+        }));
+
+      const formattedServices = services
+        .filter(service => !service.is_deleted)
+        .map(service => ({
+          ...service,
+          id: service.id_service,
+          transaction_type: 'servicio',
+          description: `${service.name_service}`,
+          type: 'servicio',
+          amount: service.price_service,
+          payment_method: service.payment_method_service,
+          transaction_date: service.created_at
+        }));
+
+      const combinedData = [
+        ...formattedTransactions,
+        ...formattedServices
+      ];
+
+      const ingresos = combinedData
+        .filter(t => t.transaction_type === 'ingreso' || t.transaction_type === 'venta' || t.transaction_type === 'servicio')
+        .reduce((total, t) => total + Number(t.amount || 0), 0);
+
+      const egresos = combinedData
+        .filter(t => t.transaction_type === 'egreso' || t.transaction_type === 'compra')
+        .reduce((total, t) => total + Number(t.amount || 0), 0);
+
+      setSummary({
+        ingresos: ingresos,
+        egresos: egresos,
+        balance: ingresos - egresos
+      });
     } catch (error) {
       console.error('Error al obtener el resumen:', error);
+      setSummary({ ingresos: 0, egresos: 0, balance: 0 });
     }
   };
 

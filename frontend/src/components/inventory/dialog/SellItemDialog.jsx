@@ -10,10 +10,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
-import { recordTransaction } from '@/api/inventory';
 import { useAlert } from '@/context/alertContext';
-import { getInventoryItems } from '@/api/inventory';
-import { set } from 'date-fns';
+import { getInventoryItems, recordSale } from '@/api/inventory';
+import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select';
+import { capitalize } from '@/helpers/capitalize';
 
 export default function SellItemDialog({ fetchSales }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -50,22 +50,26 @@ export default function SellItemDialog({ fetchSales }) {
       showAlert('Selecciona un producto válido y una cantidad mayor a 0', 'error');
       return;
     }
-
-    try {
-      await recordTransaction('venta', [
+  
+    const transaction = {
+      type: 'venta',
+      items: [
         {
           id_item: selectedItem.id_item,
           quantity,
           unit_price: selectedItem.selling_price,
         },
-      ], {
-        rut: '12345678-9',
-        type: 'venta',
+      ],
+      details: {
         amount: total,
-        payment_method: paymentMethod,
-        description: `Venta de ${selectedItem.name_item}`,
-      });
-
+        payment_method: paymentMethod.toLowerCase(),
+        description: `Venta de ${quantity} unidades de ${selectedItem.name_item}`,
+      },
+    };
+  
+    try {
+      console.log('transaction enviada del dialog:', transaction);
+      await recordSale(transaction);
       showAlert('Venta registrada exitosamente', 'success');
       setIsDialogOpen(false);
       setSelectedItem(null);
@@ -94,20 +98,25 @@ export default function SellItemDialog({ fetchSales }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="item">Producto</Label>
-            <select
-              id="item"
-              className="w-full border border-gray-300 rounded-md p-2"
-              onChange={(e) =>
-                setSelectedItem(items.find((item) => item.id_item === parseInt(e.target.value)))
+            <Select
+              value={selectedItem?.id_item || ''}
+              onValueChange={(value) =>
+                setSelectedItem(items.find((item) => item.id_item === parseInt(value)))
               }
             >
-              <option value="">Selecciona un producto</option>
-              {items.map((item) => (
-                <option key={item.id_item} value={item.id_item}>
-                  {item.name_item} - ${item.selling_price}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger>
+                {selectedItem
+                  ? `${selectedItem.name_item} - $${selectedItem.selling_price}`
+                  : 'Selecciona un producto'}
+              </SelectTrigger>
+              <SelectContent>
+                {items.map((item) => (
+                  <SelectItem key={item.id_item} value={item.id_item.toString()}>
+                    {item.name_item} - ${item.selling_price}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <Label htmlFor="quantity">Cantidad</Label>
@@ -122,18 +131,19 @@ export default function SellItemDialog({ fetchSales }) {
           </div>
           <div>
             <Label htmlFor="paymentMethod">Método de Pago</Label>
-            <select
-              id="paymentMethod"
-              className="w-full border border-gray-300 rounded-md p-2"
+            <Select
               value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-              required
+              onValueChange={(value) => setPaymentMethod(value)}
             >
-              <option value="">Selecciona un método</option>
-              <option value="Efectivo">Efectivo</option>
-              <option value="Tarjeta">Tarjeta</option>
-              <option value="Transferencia">Transferencia</option>
-            </select>
+              <SelectTrigger>
+                {capitalize(paymentMethod) || 'Selecciona un método'}
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="efectivo">Efectivo</SelectItem>
+                <SelectItem value="tarjeta">Tarjeta</SelectItem>
+                <SelectItem value="transferencia">Transferencia</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <Label htmlFor="total">Monto Total</Label>

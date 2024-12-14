@@ -21,7 +21,7 @@ const ConfirmationDialog = ({ open, handleClose, handleConfirm }) => {
           <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button variant="primary" onClick={handleConfirm}>
+          <Button variant="destructive" onClick={handleConfirm}>
             Confirmar
           </Button>
         </DialogFooter>

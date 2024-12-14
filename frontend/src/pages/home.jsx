@@ -1,23 +1,18 @@
 "use client";
 
-import { useAuth } from "../context/authContext";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import { getProfile } from "@/api/profile";
-import { getUsers } from "../api/user";
 import { useState, useEffect } from "react";
 import { Statistics } from "@/components/home/Statistics";
 import { RecentActivity } from "@/components/home/RecentActivity";
 import { TopSellingProducts } from "@/components/home/TopSellingProducts";
 
 export default function HomePage() {
-  const { user } = useAuth();
-  const isAuthorized = useAuthRedirect(["default", "admin", "employee"]);
-  const [totalEmployees, setTotalEmployees] = useState(0);
-  const [mesesActivos, setMesesActivos] = useState(0);
+
+  const isAuthorized = useAuthRedirect(["admin", "employee"]);
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
-  const [totalProducts, setTotalProducts] = useState(1134); // This should be fetched from an API
-  const [recentSales, setRecentSales] = useState(245); // This should be fetched from an API
+
 
   const fetchProfileData = async () => {
     try {
@@ -32,21 +27,9 @@ export default function HomePage() {
     }
   };
 
-  const fetchTotalUsers = async () => {
-    try {
-      const users = await getUsers();
-      setTotalEmployees(users.length);
-    } catch (error) {
-      console.error(
-        "Error fetching total employees:",
-        error.response?.data || error.message
-      );
-    }
-  };
 
   useEffect(() => {
     fetchProfileData();
-    fetchTotalUsers();
   }, []);
 
   if (!isAuthorized) {
@@ -69,12 +52,7 @@ export default function HomePage() {
       </div>
 
       {/* Estadísticas */}
-      <Statistics
-        totalProducts={totalProducts}
-        recentSales={recentSales}
-        totalEmployees={totalEmployees}
-        mesesActivos={mesesActivos}
-      />
+      <Statistics/>
 
       {/* Actividad Reciente y Productos Principales */}
       <div className="grid gap-4 md:grid-cols-2">

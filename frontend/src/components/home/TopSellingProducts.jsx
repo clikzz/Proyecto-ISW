@@ -65,7 +65,7 @@ export function TopSellingProducts() {
                 </p>
               </div>
               <div className="text-lg font-semibold">
-                {product.totalQuantity} ventas
+                {product.totalQuantity} unidades
               </div>
             </motion.div>
           ))}
