@@ -85,6 +85,42 @@ const updateSale = async (transactionId, updatedItems, updatedDetails) => {
   return await Inventory.getSales(transactionId); // Retorna los datos actualizados
 };
 
+const updatePurchase = async (transactionId, updatedDetails, updatedItems) => {
+  if (!transactionId) {
+    throw new Error('El ID de la transacción es obligatorio');
+  }
+
+  // Actualizar los detalles de la transacción si existen cambios
+  if (updatedDetails) {
+    await Inventory.updateTransactionDetails(transactionId, updatedDetails);
+  }
+
+  // Actualizar los ítems si hay modificaciones
+  if (updatedItems && updatedItems.length > 0) {
+    for (const updatedItem of updatedItems) {
+      const existingItem = await Inventory.getTransactionItemById(updatedItem.id_transaction_item);
+
+      // Si la cantidad cambia, ajustar el stock
+      if (updatedItem.quantity_item !== existingItem.quantity_item) {
+        const difference = updatedItem.quantity_item - existingItem.quantity_item;
+        const operation = difference > 0 ? 'add' : 'subtract';
+
+        await Item.updateStock(existingItem.id_item, Math.abs(difference), operation);
+      }
+
+      // Actualizar los detalles del ítem
+      await Inventory.updateTransactionItem(updatedItem.id_transaction_item, updatedItem);
+    }
+  }
+
+  // Retornar los detalles actualizados
+  const updatedTransactionItems = await Inventory.getTransactionItems(transactionId);
+  return {
+    transactionId,
+    updatedItems: updatedTransactionItems,
+  };
+};
+
 const deleteSale = async (transactionId) => {
   // Validar existencia y estado de la transacción
   const transaction = await Inventory.getSales().then((sales) =>
@@ -167,6 +203,7 @@ const getSales = async () => {
 module.exports = {
   createPurchase,
   deletePurchase,
+  updatePurchase,
   createSale,
   updateSale,
   deleteSale,

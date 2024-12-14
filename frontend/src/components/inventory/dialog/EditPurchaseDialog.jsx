@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -7,46 +7,44 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { updatePurchase } from '@/api/inventory';
 import { Textarea } from '@/components/ui/textarea';
-import { updateSale } from '@/api/inventory';
 
-const EditSaleDialog = ({ isOpen, onClose, sale, onUpdateSale }) => {
-  const [editedSale, setEditedSale] = useState({});
+const EditPurchaseDialog = ({ isOpen, onClose, purchase, onUpdatePurchase }) => {
+  const [editedPurchase, setEditedPurchase] = useState({});
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    if (sale) {
-      setEditedSale({
-        ...sale,
-        quantity_item: sale.quantity_item,
-        payment_method: sale.payment_method,
-        description: sale.description || generateDescription(sale.quantity_item, sale.name_item),
+    if (purchase) {
+      setEditedPurchase({
+        ...purchase,
+        quantity_item: purchase.quantity_item,
+        payment_method: purchase.payment_method,
+        description: generateDescription(purchase.quantity_item, purchase.name_item),
       });
-      setTotal(sale.quantity_item * sale.unit_price);
+      setTotal(purchase.quantity_item * purchase.unit_price);
     }
-  }, [sale]);
+  }, [purchase]);
 
-  // Recalcula el total y actualiza la descripción cuando cambia la cantidad
+  // Recalcula el total cuando la cantidad o el precio unitario cambian
   useEffect(() => {
-    if (editedSale.quantity_item && sale) {
-      setTotal(editedSale.quantity_item * sale.unit_price);
-      setEditedSale((prev) => ({
+    if (editedPurchase.quantity_item && editedPurchase.unit_price) {
+      setTotal(editedPurchase.quantity_item * editedPurchase.unit_price);
+      setEditedPurchase((prev) => ({
         ...prev,
-        description: generateDescription(editedSale.quantity_item, sale.name_item),
+        description: generateDescription(editedPurchase.quantity_item, purchase.name_item),
       }));
     }
-  }, [editedSale.quantity_item, sale]);
-
-  if (!sale) return null;
+  }, [editedPurchase.quantity_item, editedPurchase.unit_price, purchase]);
 
   // Función para generar la descripción dinámica
   const generateDescription = (quantity, productName) => {
-    return `Venta de ${quantity || 1} unidades de ${productName || 'producto'}`;
+    return `Compra de ${quantity || 1} unidades de ${productName || 'producto'}`;
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditedSale((prev) => ({
+    setEditedPurchase((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -54,31 +52,30 @@ const EditSaleDialog = ({ isOpen, onClose, sale, onUpdateSale }) => {
 
   const handleSave = async () => {
     try {
-      const unitPrice = sale.unit_price || editedSale.unit_price;
-      const totalAmount = editedSale.quantity_item * sale.unit_price;
+      const totalAmount = editedPurchase.quantity_item * editedPurchase.unit_price;
 
       const updatedFields = {
         items: [
           {
-            id_transaction_item: sale.id_transaction_item,
-            quantity_item: editedSale.quantity_item,
-            unit_price: unitPrice,
+            id_transaction_item: purchase.id_transaction_item,
+            quantity_item: editedPurchase.quantity_item,
+            unit_price: editedPurchase.unit_price,
           },
         ],
         details: {
           amount: totalAmount,
-          payment_method: editedSale.payment_method,
-          description: editedSale.description,
+          payment_method: editedPurchase.payment_method,
+          description: editedPurchase.description,
         },
       };
 
-      const response = await updateSale(sale.id_transaction, updatedFields);
+      const response = await updatePurchase(purchase.id_transaction, updatedFields);
       if (response) {
-        onUpdateSale(response);
+        onUpdatePurchase(response);
       }
       onClose();
     } catch (error) {
-      console.error('Error al actualizar la venta:', error);
+      console.error('Error al actualizar la compra:', error);
     }
   };
 
@@ -87,7 +84,7 @@ const EditSaleDialog = ({ isOpen, onClose, sale, onUpdateSale }) => {
       <DialogContent className="max-w-lg bg-white p-6 rounded-md shadow-md">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-gray-800">
-            Editar Venta
+            Editar Compra
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
@@ -95,7 +92,7 @@ const EditSaleDialog = ({ isOpen, onClose, sale, onUpdateSale }) => {
           <div>
             <label className="block text-sm font-medium text-gray-700">Producto</label>
             <Input
-              value={`${sale.name_item} - $${sale.unit_price}`}
+              value={purchase.name_item}
               readOnly
               className="p-2 border rounded-md w-full bg-gray-100"
             />
@@ -107,9 +104,22 @@ const EditSaleDialog = ({ isOpen, onClose, sale, onUpdateSale }) => {
             <Input
               type="number"
               name="quantity_item"
-              value={editedSale.quantity_item}
+              value={editedPurchase.quantity_item}
               onChange={handleInputChange}
               min={1}
+              className="p-2 border rounded-md w-full"
+            />
+          </div>
+
+          {/* Precio Unitario */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Precio Unitario</label>
+            <Input
+              type="number"
+              name="unit_price"
+              value={editedPurchase.unit_price}
+              onChange={handleInputChange}
+              min={0}
               className="p-2 border rounded-md w-full"
             />
           </div>
@@ -118,9 +128,9 @@ const EditSaleDialog = ({ isOpen, onClose, sale, onUpdateSale }) => {
           <div>
             <label className="block text-sm font-medium text-gray-700">Método de Pago</label>
             <Select
-              value={editedSale.payment_method}
+              value={editedPurchase.payment_method}
               onValueChange={(value) =>
-                setEditedSale((prev) => ({ ...prev, payment_method: value }))
+                setEditedPurchase((prev) => ({ ...prev, payment_method: value }))
               }
             >
               <SelectTrigger className="w-full">
@@ -149,7 +159,7 @@ const EditSaleDialog = ({ isOpen, onClose, sale, onUpdateSale }) => {
             <label className="block text-sm font-medium text-gray-700">Descripción</label>
             <Textarea
               name="description"
-              value={editedSale.description}
+              value={editedPurchase.description}
               onChange={handleInputChange}
               className="p-2 border rounded-md w-full"
             />
@@ -176,4 +186,4 @@ const EditSaleDialog = ({ isOpen, onClose, sale, onUpdateSale }) => {
   );
 };
 
-export default EditSaleDialog;
+export default EditPurchaseDialog;

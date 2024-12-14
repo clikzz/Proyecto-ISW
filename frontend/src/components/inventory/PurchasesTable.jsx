@@ -11,6 +11,7 @@ import AddPurchaseDialog from '@/components/inventory/dialog/AddPurchaseDialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import { deletePurchase } from '@/api/inventory';
+import EditPurchaseDialog from '@/components/inventory/dialog/EditPurchaseDialog';
 import { useAlert } from '@/context/alertContext';
 
 const PurchasesTable = () => {
@@ -19,6 +20,8 @@ const PurchasesTable = () => {
   const [search, setSearch] = useState('');
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [purchaseToDelete, setPurchaseToDelete] = useState(null);
+  const [purchaseToEdit, setPurchaseToEdit] = useState(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { showAlert } = useAlert();
 
   const [sortConfig, setSortConfig] = useState({
@@ -65,6 +68,20 @@ const PurchasesTable = () => {
   const closeConfirmationDialog = () => {
     setPurchaseToDelete(null);
     setIsConfirmationDialogOpen(false);
+  };
+
+  const openEditDialog = (purchase) => {
+    setPurchaseToEdit(purchase);
+    setIsEditDialogOpen(true);
+  };
+
+  const closeEditDialog = () => {
+    setPurchaseToEdit(null);
+    setIsEditDialogOpen(false);
+  };
+
+  const handleUpdatePurchase = async (updatedPurchase) => {
+    await fetchPurchases();
   };
 
   const handleConfirmDelete = async () => {
@@ -220,6 +237,7 @@ const PurchasesTable = () => {
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                            onClick={() => openEditDialog(purchase)}
                           >
                             Editar
                           </DropdownMenuItem>
@@ -245,6 +263,15 @@ const PurchasesTable = () => {
         handleClose={closeConfirmationDialog}
         handleConfirm={handleConfirmDelete}
       />
+
+      {purchaseToEdit && (
+        <EditPurchaseDialog
+          isOpen={isEditDialogOpen}
+          onClose={closeEditDialog}
+          purchase={purchaseToEdit}
+          onUpdatePurchase={handleUpdatePurchase}
+        />
+      )}
     </div>
   );
 };

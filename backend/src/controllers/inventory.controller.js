@@ -71,6 +71,23 @@ exports.deletePurchase = async (req, res) => {
   }
 };
 
+exports.updatePurchase = async (req, res) => {
+  const { id_transaction } = req.params; // ID de la compra a editar
+  const { details, items } = req.body; // Detalles y elementos enviados desde el cliente
+
+  try {
+    // Llamar al servicio para procesar la actualización
+    const updatedPurchase = await inventoryService.updatePurchase(id_transaction, details, items);
+
+    res.status(200).json({
+      message: 'Compra actualizada exitosamente',
+      updatedPurchase,
+    });
+  } catch (error) {
+    console.error('Error al actualizar la compra:', error);
+    res.status(500).json({ message: 'Error al actualizar la compra', error: error.message });
+  }
+};
 
 exports.deleteSale = async (req, res) => {
   const { id } = req.params;

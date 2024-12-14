@@ -20,6 +20,12 @@ router.delete(
   inventoryController.deletePurchase
 );
 
+router.put(
+  '/purchases/update/:id_transaction',
+  authorizationMiddleware(['admin', 'employee']),
+  inventoryController.updatePurchase
+)
+
 router.post(
   '/sale',
   validateSale,
