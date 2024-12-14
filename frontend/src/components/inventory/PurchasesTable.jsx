@@ -12,6 +12,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import { deletePurchase } from '@/api/inventory';
 import EditPurchaseDialog from '@/components/inventory/dialog/EditPurchaseDialog';
+import PurchaseDetailsDialog from '@/components/inventory/dialog/PurchaseDetailsDialog';
 import { useAlert } from '@/context/alertContext';
 
 const PurchasesTable = () => {
@@ -22,6 +23,8 @@ const PurchasesTable = () => {
   const [purchaseToDelete, setPurchaseToDelete] = useState(null);
   const [purchaseToEdit, setPurchaseToEdit] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedPurchase, setSelectedPurchase] = useState(null);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const { showAlert } = useAlert();
 
   const [sortConfig, setSortConfig] = useState({
@@ -82,6 +85,11 @@ const PurchasesTable = () => {
 
   const handleUpdatePurchase = async (updatedPurchase) => {
     await fetchPurchases();
+  };
+
+  const handleViewDetails = (purchase) => {
+    setSelectedPurchase(purchase);
+    setIsDetailsDialogOpen(true);
   };
 
   const handleConfirmDelete = async () => {
@@ -232,6 +240,7 @@ const PurchasesTable = () => {
                         <DropdownMenuContent className="bg-white border rounded-md shadow-lg z-50 w-48">
                           <DropdownMenuItem
                             className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                            onClick={() => handleViewDetails(purchase)}
                           >
                             Ver información
                           </DropdownMenuItem>
@@ -262,6 +271,13 @@ const PurchasesTable = () => {
         open={isConfirmationDialogOpen}
         handleClose={closeConfirmationDialog}
         handleConfirm={handleConfirmDelete}
+      />
+
+      <PurchaseDetailsDialog
+        isOpen={isDetailsDialogOpen}
+        onClose={() => setIsDetailsDialogOpen(false)}
+        onEdit={openEditDialog}
+        purchase={selectedPurchase}
       />
 
       {purchaseToEdit && (
