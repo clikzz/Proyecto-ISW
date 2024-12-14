@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const inventoryController = require('../controllers/inventory.controller');
-const { validatePurchase, validateSale, validateEditSale } = require('../middleware/inventory.middleware');
+const { validatePurchase, validateEditPurchase, validateSale, validateEditSale } = require('../middleware/inventory.middleware');
 const authMiddleware = require('../middleware/auth.middleware');
 const authorizationMiddleware = require('../middleware/authorization.middleware');
 
@@ -14,23 +14,36 @@ router.post(
   inventoryController.createPurchase
 );
 
+router.get(
+  '/purchases', 
+  authorizationMiddleware(['admin', 'employee']),
+  inventoryController.getPurchases
+);
+
+router.put(
+  '/purchases/update/:id_transaction',
+  validateEditPurchase,
+  authorizationMiddleware(['admin', 'employee']),
+  inventoryController.updatePurchase
+)
+
 router.delete(
   '/purchases/delete/:id', 
   authorizationMiddleware(['admin']),
   inventoryController.deletePurchase
 );
 
-router.put(
-  '/purchases/update/:id_transaction',
-  authorizationMiddleware(['admin', 'employee']),
-  inventoryController.updatePurchase
-)
-
 router.post(
   '/sale',
   validateSale,
   authorizationMiddleware(['admin', 'employee']),
   inventoryController.createSale
+);
+
+router.get(
+  '/sales', 
+  authorizationMiddleware(['admin', 'employee']),
+  inventoryController.getSales
 );
 
 router.put(
@@ -44,18 +57,6 @@ router.delete(
   '/sales/delete/:id',
   authorizationMiddleware(['admin']),
   inventoryController.deleteSale
-);
-
-router.get(
-  '/purchases', 
-  authorizationMiddleware(['admin', 'employee']),
-  inventoryController.getPurchases
-);
-
-router.get(
-  '/sales', 
-  authorizationMiddleware(['admin', 'employee']),
-  inventoryController.getSales
 );
 
 module.exports = router;

@@ -1,7 +1,6 @@
 const Inventory = require('../models/Inventory');
 const Item = require('../models/Item');
 const ItemSupplier = require('../models/ItemSupplier');
-const Transaction = require('../models/Transaction');
 
 const createPurchase = async (items, details) => {
   const transactionId = await Inventory.createTransaction({
@@ -148,7 +147,6 @@ const deleteSale = async (transactionId) => {
 };
 
 const deletePurchase = async (transactionId) => {
-  console.log('ID de la compra a eliminar:', transactionId);
   // Validar la existencia de la compra
   const transaction = await Inventory.getPurchases().then((purchases) =>
     purchases.find((purchase) => purchase.id_transaction === Number(transactionId))
@@ -176,7 +174,6 @@ const deletePurchase = async (transactionId) => {
       );
 
       if (activeTransactions.length === 0) {
-        console.log(`Marcando como eliminado el proveedor ${item.rut_supplier} del producto ${item.id_item}`);
         // Si no hay más compras activas, eliminar la relación proveedor-producto
         await ItemSupplier.removeSupplierFromItem(item.id_item, item.rut_supplier);
       }

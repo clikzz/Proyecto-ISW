@@ -1,7 +1,6 @@
 const inventoryService = require('../services/inventory.service');
 
 exports.createPurchase = async (req, res) => {
-  console.log('Datos recibidos (compra):', req.body);
   const { items, details } = req.body;
 
   try {
@@ -19,7 +18,6 @@ exports.createPurchase = async (req, res) => {
 };
 
 exports.createSale = async (req, res) => {
-  console.log('Datos recibidos (venta):', req.body);
   const { items, details } = req.body;
 
   try {
@@ -72,8 +70,8 @@ exports.deletePurchase = async (req, res) => {
 };
 
 exports.updatePurchase = async (req, res) => {
-  const { id_transaction } = req.params; // ID de la compra a editar
-  const { details, items } = req.body; // Detalles y elementos enviados desde el cliente
+  const { id_transaction } = req.params;
+  const { details, items } = req.body;
 
   try {
     // Llamar al servicio para procesar la actualización
