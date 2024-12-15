@@ -27,7 +27,12 @@ const columnConfig = {
   },
 };
 
-export default function TaskColumn({ columnId, tasks, assignTask }) {
+export default function TaskColumn({
+  columnId,
+  tasks,
+  fetchTasks,
+  updateTaskStatus,
+}) {
   const config = columnConfig[columnId];
   if (!config) {
     console.error(`Invalid columnId: ${columnId}`);
@@ -62,7 +67,8 @@ export default function TaskColumn({ columnId, tasks, assignTask }) {
                 key={task.id_service}
                 task={task}
                 index={index}
-                assignTask={assignTask}
+                fetchTasks={fetchTasks}
+                updateTaskStatus={updateTaskStatus}
               />
             ))}
             {provided.placeholder}

@@ -15,7 +15,7 @@ const container = {
   },
 };
 
-export default function TaskBoard({ tasks, updateTaskStatus, assignTask }) {
+export default function TaskBoard({ tasks, fetchTasks, updateTaskStatus }) {
   const { showAlert } = useAlert();
   const getColumnTasks = (columnId) => {
     return tasks.filter((task) => task.status_service === columnId);
@@ -41,7 +41,17 @@ export default function TaskBoard({ tasks, updateTaskStatus, assignTask }) {
       source.droppableId === 'unassigned' &&
       destination.droppableId === 'in_progress'
     ) {
-      if (!task.assignee) {
+      if (!task.employee_name) {
+        showAlert('Debes asignar un trabajador primero.', 'error');
+        return;
+      }
+    }
+
+    if (
+      source.droppableId === 'unassigned' &&
+      destination.droppableId === 'done'
+    ) {
+      if (!task.employee_name) {
         showAlert('Debes asignar un trabajador primero.', 'error');
         return;
       }
@@ -51,7 +61,7 @@ export default function TaskBoard({ tasks, updateTaskStatus, assignTask }) {
       source.droppableId === 'in_progress' &&
       destination.droppableId === 'done'
     ) {
-      if (!task.assignee) {
+      if (!task.employee_name) {
         showAlert('Debes asignar un trabajador primero.', 'error');
         return;
       }
@@ -84,7 +94,8 @@ export default function TaskBoard({ tasks, updateTaskStatus, assignTask }) {
             key={columnId}
             columnId={columnId}
             tasks={getColumnTasks(columnId)}
-            assignTask={assignTask}
+            fetchTasks={fetchTasks}
+            updateTaskStatus={updateTaskStatus}
           />
         ))}
       </motion.div>

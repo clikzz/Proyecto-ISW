@@ -1,24 +1,24 @@
-import { useState, useEffect } from "react";
-import { DragDropContext } from "@hello-pangea/dnd";
-import { motion } from "framer-motion";
-import TaskBoard from "../components/tasks/TaskBoard";
-import { ClipboardCheck } from "lucide-react";
-import { getServices } from "../api/service";
+import { useState, useEffect } from 'react';
+import { DragDropContext } from '@hello-pangea/dnd';
+import { motion } from 'framer-motion';
+import TaskBoard from '../components/tasks/TaskBoard';
+import { ClipboardCheck } from 'lucide-react';
+import { getServices } from '@/api/service';
+import { updateTaskStatus as updTaskStatus } from '@/api/task';
 
 export default function TareasPage() {
   const [tasks, setTasks] = useState([]);
 
+  const fetchTasks = async () => {
+    const tasks = await getServices();
+    setTasks(tasks);
+  };
+
   useEffect(() => {
     try {
-      const fetchServices = async () => {
-        const tasks = await getServices();
-        console.log(tasks);
-        setTasks(tasks);
-      };
-
-      fetchServices();
+      fetchTasks();
     } catch (error) {
-      console.error("Error al obtener los servicios:", error);
+      console.error('Error al obtener los servicios:', error);
     }
   }, []);
 
@@ -62,21 +62,14 @@ export default function TareasPage() {
     setTasks(updatedTasks);
   };
 
-  const assignTask = (taskId) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId
-          ? {
-              ...task,
-              assignee: {
-                name: "Nuevo Usuario",
-                avatar: "/placeholder.svg?height=32&width=32",
-              },
-              service_status: "in_progress",
-            }
-          : task
-      )
-    );
+  const updateTaskStatus = async (taskId, status) => {
+    try {
+      console.log('Updating task status:', taskId, status);
+      await updTaskStatus(taskId, status);
+      fetchTasks();
+    } catch (error) {
+      console.error('Error al actualizar el estado del servicio:', error);
+    }
   };
 
   return (
@@ -95,7 +88,11 @@ export default function TareasPage() {
         <h1 className="text-2xl font-bold">Tareas</h1>
       </motion.div>
       <DragDropContext onDragEnd={onDragEnd}>
-        <TaskBoard tasks={tasks} assignTask={assignTask} />
+        <TaskBoard
+          tasks={tasks}
+          fetchTasks={fetchTasks}
+          updateTaskStatus={updateTaskStatus}
+        />
       </DragDropContext>
     </motion.div>
   );

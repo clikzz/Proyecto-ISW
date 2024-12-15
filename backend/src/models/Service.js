@@ -1,4 +1,4 @@
-const db = require("../config/db");
+const db = require('../config/db');
 
 class Service {
   static async create(data) {
@@ -13,7 +13,8 @@ class Service {
       data.description_service,
       data.price_service,
       data.category,
-      data.payment_method_service];
+      data.payment_method_service,
+    ];
     const result = await db.query(query, values);
     return result.rows[0];
   }
@@ -90,6 +91,29 @@ class Service {
       RETURNING *;
     `;
     const result = await db.query(query, [id]);
+    return result.rows[0];
+  }
+
+  //alvaro - tasks
+  static async assignEmployee(id, rut) {
+    const query = `
+      UPDATE service
+      SET rut_user = $1, updated_at = CURRENT_TIMESTAMP, status_service = 'in_progress'
+      WHERE id_service = $2 AND is_deleted = FALSE
+      RETURNING *;
+    `;
+    const result = await db.query(query, [rut, id]);
+    return result.rows[0];
+  }
+
+  static async updateStatus(id, status) {
+    const query = `
+      UPDATE service
+      SET status_service = $1, updated_at = CURRENT_TIMESTAMP
+      WHERE id_service = $2 AND is_deleted = FALSE
+      RETURNING *;
+    `;
+    const result = await db.query(query, [status, id]);
     return result.rows[0];
   }
 }

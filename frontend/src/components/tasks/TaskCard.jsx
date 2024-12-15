@@ -26,8 +26,16 @@ import {
 } from '@/components/ui/select';
 import { useEffect, useState } from 'react';
 import { getUsers } from '@/api/user';
+import { assignTask } from '@/api/task';
+import { get } from 'http';
 
-export default function TaskCard({ task, index, assignTask }) {
+export default function TaskCard({
+  task,
+  index,
+  columnId,
+  fetchTasks,
+  updateTaskStatus,
+}) {
   const [staff, setStaff] = useState([]);
 
   useEffect(() => {
@@ -45,9 +53,14 @@ export default function TaskCard({ task, index, assignTask }) {
     }
   }, []);
 
-  const handleAssignTask = (value) => {
-    assignTask(task.id_service, value);
-    task.rut_user = value;
+  const handleAssignTask = async (value) => {
+    console.log('Assigning task:', task.id_service, value);
+    try {
+      await assignTask(task.id_service, value);
+      fetchTasks();
+    } catch (error) {
+      console.error('Error al asignar la tarea:', error);
+    }
   };
 
   return (
