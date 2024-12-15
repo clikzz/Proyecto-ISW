@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select';
 import { capitalize } from '@/helpers/capitalize';
+import { newPurchaseValidationExisting } from '@/validations/newPurchase';
 
 export default function ExistingPurchaseForm({
   purchaseDetails,
@@ -12,145 +14,160 @@ export default function ExistingPurchaseForm({
   setSelectedSupplier,
   suppliers,
 }) {
-  const selectedItem = items.find((item) => item.id_item === purchaseDetails.items[0].id_item);
-
-  // Efecto para recalcular el monto y la descripción
-  useEffect(() => {
-    if (purchaseDetails.items[0].quantity && purchaseDetails.items[0].unit_price) {
-      const amount = purchaseDetails.items[0].quantity * purchaseDetails.items[0].unit_price;
-
-      setPurchaseDetails((prev) => ({
-        ...prev,
-        details: {
-          ...prev.details,
-          amount,
-          description: `Compra de ${purchaseDetails.items[0].quantity} unidades de ${
-            selectedItem?.name_item || 'producto'
-          }`,
-        },
-      }));
-    }
-  }, [purchaseDetails.items[0].quantity, purchaseDetails.items[0].unit_price, selectedItem, setPurchaseDetails]);
+  const initialValues = {
+    id_item: purchaseDetails.items[0].id_item || '',
+    quantity: purchaseDetails.items[0].quantity || '',
+    unit_price: purchaseDetails.items[0].unit_price || '',
+    payment_method: purchaseDetails.details.payment_method || '',
+    rut_supplier: selectedSupplier || '',
+  };
 
   return (
-    <div className="grid grid-cols-2 gap-6">
-      {/* Columna Izquierda */}
-      <div className="space-y-4">
-        {/* Producto */}
-        <div>
-          <Label htmlFor="product">Producto</Label>
-          <Select
-            value={purchaseDetails.items[0].id_item || ''}
-            onValueChange={(value) =>
-              setPurchaseDetails((prev) => ({
-                ...prev,
-                items: [{ ...prev.items[0], id_item: parseInt(value, 10) }],
-              }))
-            }
-          >
-            <SelectTrigger>
-              <span>
-                {selectedItem ? selectedItem.name_item : 'Seleccionar producto'}
-              </span>
-            </SelectTrigger>
-            <SelectContent>
-              {items.map((item) => (
-                <SelectItem key={item.id_item} value={item.id_item.toString()}>
-                  {item.name_item}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={newPurchaseValidationExisting}
+      enableReinitialize
+      onSubmit={() => {}}
+    >
+      {({ values, setFieldValue }) => {
+        const selectedItem = items.find((item) => item.id_item.toString() === values.id_item);
 
-        {/* Cantidad */}
-        <div>
-          <Label htmlFor="quantity">Cantidad</Label>
-          <Input
-            id="quantity"
-            type="number"
-            value={purchaseDetails.items[0].quantity}
-            onChange={(e) =>
-              setPurchaseDetails((prev) => ({
-                ...prev,
-                items: [{ ...prev.items[0], quantity: Number(e.target.value) }],
-              }))
-            }
-            placeholder="Cantidad comprada"
-          />
-        </div>
+        useEffect(() => {
+          if (values.quantity && values.unit_price) {
+            const amount = values.quantity * values.unit_price;
 
-        {/* Precio Unitario */}
-        <div>
-          <Label htmlFor="unit_price">Precio Unitario</Label>
-          <Input
-            id="unit_price"
-            type="number"
-            value={purchaseDetails.items[0].unit_price}
-            onChange={(e) =>
-              setPurchaseDetails((prev) => ({
-                ...prev,
-                items: [{ ...prev.items[0], unit_price: parseFloat(e.target.value) }],
-              }))
-            }
-            placeholder="Precio unitario de compra"
-          />
-        </div>
-      </div>
+            setPurchaseDetails((prev) => ({
+              ...prev,
+              items: [
+                {
+                  id_item: values.id_item,
+                  quantity: values.quantity,
+                  unit_price: values.unit_price,
+                  rut_supplier: values.rut_supplier,
+                },
+              ],
+              details: {
+                ...prev.details,
+                amount,
+                description: `Compra de ${values.quantity} unidades de ${
+                  selectedItem?.name_item || 'producto'
+                }`,
+                payment_method: values.payment_method,
+              },
+            }));
+          }
+        }, [values, selectedItem]);
 
-      {/* Columna Derecha */}
-      <div className="space-y-4">
-        {/* Proveedor */}
-        <div>
-          <Label htmlFor="supplier">Proveedor</Label>
-          <Select
-            value={selectedSupplier}
-            onValueChange={(value) => {
-              setSelectedSupplier(value);
-              setPurchaseDetails((prev) => ({
-                ...prev,
-                items: [{ ...prev.items[0], rut_supplier: value }],
-              }));
-            }}
-          >
-            <SelectTrigger>
-              {selectedSupplier
-                ? suppliers.find((sup) => sup.rut_supplier === selectedSupplier)?.name_supplier
-                : 'Seleccionar proveedor'}
-            </SelectTrigger>
-            <SelectContent>
-              {suppliers.map((supplier) => (
-                <SelectItem key={supplier.rut_supplier} value={supplier.rut_supplier}>
-                  {supplier.name_supplier} - {supplier.rut_supplier}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        return (
+          <Form className="grid grid-cols-2 gap-6">
+            {/* Columna Izquierda */}
+            <div className="space-y-4">
+              {/* Producto */}
+              <div>
+                <Label htmlFor="id_item">Producto</Label>
+                <Select
+                  value={values.id_item}
+                  onValueChange={(value) => setFieldValue('id_item', value)}
+                >
+                  <SelectTrigger>
+                    <span>
+                      {items.find((item) => item.id_item.toString() === values.id_item)?.name_item ||
+                        'Seleccionar producto'}
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {items.map((item) => (
+                      <SelectItem key={item.id_item} value={item.id_item.toString()}>
+                        {item.name_item}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <ErrorMessage name="id_item" component="div" className="text-red-500 text-sm" />
+              </div>
 
-        {/* Método de Pago */}
-        <div>
-          <Label htmlFor="payment_method">Método de Pago</Label>
-          <Select
-            value={purchaseDetails.details.payment_method}
-            onValueChange={(value) =>
-              setPurchaseDetails((prev) => ({
-                ...prev,
-                details: { ...prev.details, payment_method: value },
-              }))
-            }
-          >
-            <SelectTrigger>
-              {capitalize(purchaseDetails.details.payment_method) || 'Seleccionar método de pago'}
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="efectivo">Efectivo</SelectItem>
-              <SelectItem value="transferencia">Transferencia</SelectItem>
-              <SelectItem value="tarjeta">Tarjeta</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-    </div>
+              {/* Cantidad */}
+              <div>
+                <Label htmlFor="quantity">Cantidad</Label>
+                <Field
+                  as={Input}
+                  id="quantity"
+                  name="quantity"
+                  type="number"
+                  placeholder="Cantidad comprada"
+                />
+                <ErrorMessage name="quantity" component="div" className="text-red-500 text-sm" />
+              </div>
+
+              {/* Precio Unitario */}
+              <div>
+                <Label htmlFor="unit_price">Precio Unitario</Label>
+                <Field
+                  as={Input}
+                  id="unit_price"
+                  name="unit_price"
+                  type="number"
+                  placeholder="Precio unitario de compra"
+                />
+                <ErrorMessage name="unit_price" component="div" className="text-red-500 text-sm" />
+              </div>
+            </div>
+
+            {/* Columna Derecha */}
+            <div className="space-y-4">
+              {/* Proveedor */}
+              <div>
+                <Label htmlFor="rut_supplier">Proveedor</Label>
+                <Select
+                  value={values.rut_supplier}
+                  onValueChange={(value) => {
+                    setFieldValue('rut_supplier', value);
+                    setSelectedSupplier(value);
+                  }}
+                >
+                  <SelectTrigger>
+                    <span>
+                      {suppliers.find((sup) => sup.rut_supplier === values.rut_supplier)
+                        ?.name_supplier || 'Seleccionar proveedor'}
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {suppliers.map((supplier) => (
+                      <SelectItem key={supplier.rut_supplier} value={supplier.rut_supplier}>
+                        {supplier.name_supplier} - {supplier.rut_supplier}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <ErrorMessage name="rut_supplier" component="div" className="text-red-500 text-sm" />
+              </div>
+
+              {/* Método de Pago */}
+              <div>
+                <Label htmlFor="payment_method">Método de Pago</Label>
+                <Select
+                  value={values.payment_method}
+                  onValueChange={(value) => setFieldValue('payment_method', value)}
+                >
+                  <SelectTrigger>
+                    <span>{capitalize(values.payment_method) || 'Seleccionar método de pago'}</span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="efectivo">Efectivo</SelectItem>
+                    <SelectItem value="transferencia">Transferencia</SelectItem>
+                    <SelectItem value="tarjeta">Tarjeta</SelectItem>
+                  </SelectContent>
+                </Select>
+                <ErrorMessage
+                  name="payment_method"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
+            </div>
+          </Form>
+        );
+      }}
+    </Formik>
   );
 }
