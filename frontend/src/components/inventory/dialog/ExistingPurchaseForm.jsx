@@ -64,7 +64,9 @@ export default function ExistingPurchaseForm({
             <div className="space-y-4">
               {/* Producto */}
               <div>
-                <Label htmlFor="id_item">Producto</Label>
+                <Label htmlFor="id_item">
+                  Producto <span className="text-red-500">*</span>
+                </Label>
                 <Select
                   value={values.id_item}
                   onValueChange={(value) => setFieldValue('id_item', value)}
@@ -88,7 +90,9 @@ export default function ExistingPurchaseForm({
 
               {/* Cantidad */}
               <div>
-                <Label htmlFor="quantity">Cantidad</Label>
+                <Label htmlFor="quantity">
+                  Cantidad <span className="text-red-500">*</span>
+                </Label>
                 <Field
                   as={Input}
                   id="quantity"
@@ -101,7 +105,9 @@ export default function ExistingPurchaseForm({
 
               {/* Precio Unitario */}
               <div>
-                <Label htmlFor="unit_price">Precio Unitario</Label>
+                <Label htmlFor="unit_price">
+                  Precio Unitario <span className="text-red-500">*</span>
+                </Label>
                 <Field
                   as={Input}
                   id="unit_price"
@@ -117,7 +123,9 @@ export default function ExistingPurchaseForm({
             <div className="space-y-4">
               {/* Proveedor */}
               <div>
-                <Label htmlFor="rut_supplier">Proveedor</Label>
+                <Label htmlFor="rut_supplier">
+                  Proveedor <span className="text-red-500">*</span>
+                </Label>
                 <Select
                   value={values.rut_supplier}
                   onValueChange={(value) => {
@@ -144,7 +152,9 @@ export default function ExistingPurchaseForm({
 
               {/* Método de Pago */}
               <div>
-                <Label htmlFor="payment_method">Método de Pago</Label>
+                <Label htmlFor="payment_method">
+                  Método de Pago <span className="text-red-500">*</span>
+                </Label>
                 <Select
                   value={values.payment_method}
                   onValueChange={(value) => setFieldValue('payment_method', value)}

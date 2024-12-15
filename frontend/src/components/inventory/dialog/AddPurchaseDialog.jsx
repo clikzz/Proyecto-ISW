@@ -43,15 +43,23 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
 
   const handleSubmit = async () => {
     try {
-      const transaction =
-        activeTab === 'existing'
-          ? { ...purchaseDetails }
-          : {
-              type: 'compra',
-              items: [{ ...newItem }],
-              details: { ...purchaseDetails.details },
-            };
-
+      let transaction;
+  
+      if (activeTab === 'existing') {
+        transaction = { ...purchaseDetails };
+      } else {
+        const { payment_method, ...itemValues } = newItem;
+  
+        transaction = {
+          type: 'compra',
+          items: [{ ...itemValues }],
+          details: {
+            ...purchaseDetails.details,
+            payment_method,
+          },
+        };
+      }
+  
       await recordPurchase(transaction);
       showAlert('Compra registrada con éxito', 'success');
       fetchPurchases();

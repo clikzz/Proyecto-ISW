@@ -152,7 +152,7 @@ export default function AddItemDialog({ fetchItems }) {
                   id="selling_price"
                   name="selling_price"
                   type="number"
-                  placeholder="Precio de venta"
+                  placeholder="Establecer precio de venta"
                   required
                   onChange={(e) => handleInputChange(e, setFieldValue)}
                 />
