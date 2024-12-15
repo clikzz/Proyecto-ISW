@@ -42,6 +42,7 @@ class Service {
     return result.rows;
   }
 
+
   static async findById(id) {
     const query = `
       SELECT

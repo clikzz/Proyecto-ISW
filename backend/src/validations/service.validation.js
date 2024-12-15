@@ -19,9 +19,11 @@ const createServiceSchema = Joi.object({
   price_service: Joi.number()
     .positive()
     .required()
+    .integer()
     .messages({
       'number.base': 'El precio del servicio debe ser un número.',
       'number.positive': 'El precio debe ser positivo.',
+      'number.integer': 'El precio no puede tener decimales.',
     }),
 });
 
@@ -35,7 +37,13 @@ const updateServiceSchema = Joi.object({
     .optional(),
   price_service: Joi.number()
     .positive()
-    .optional(),
+    .optional()
+    .integer()
+    .messages({
+    'number.base': 'El precio del servicio debe ser un número.',
+    'number.positive': 'El precio debe ser positivo.',
+    'number.integer': 'El precio no puede tener decimales.',
+  }),
   category: Joi.string()
     .valid('reparación', 'mantenimiento', 'personalización', 'otro')
     .optional(),

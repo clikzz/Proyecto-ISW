@@ -4,25 +4,15 @@ const ItemSupplier = require('./ItemSupplier');
 class Item {
   static async create(data) {
     const query = `
-      INSERT INTO item (rut_supplier, name_item, description, category, stock, selling_price)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO item (name_item, description, category, stock, selling_price)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING *;
     `;
     const values = [
-      data.rut_supplier, data.name_item, data.description, data.category,
-      data.stock, data.selling_price,
+      data.name_item, data.description || 'Sin descripción', 
+      data.category, data.stock, data.selling_price,
     ];
     const result = await db.query(query, values);
-
-    if (data.rut_supplier) {
-      await ItemSupplier.addItemSupplier({
-        id_item: result.rows[0].id_item,
-        rut_supplier: data.rut_supplier,
-        purchase_price: data.purchase_price || 0,
-        purchase_date: new Date(),
-      });
-    }
-
     return result.rows[0];
   }
 
@@ -38,7 +28,18 @@ class Item {
         i.created_at,
         i.updated_at,
         i.is_deleted,
-        ARRAY_AGG(s.name_supplier) AS suppliers
+        ARRAY_AGG(DISTINCT CASE
+          WHEN EXISTS (
+            SELECT 1
+            FROM transaction t
+            JOIN transaction_item ti ON t.id_transaction = ti.id_transaction
+            WHERE ti.id_item = i.id_item
+            AND ti.rut_supplier = isup.rut_supplier
+            AND t.is_deleted = FALSE
+          ) AND isup.is_deleted = FALSE
+          THEN s.name_supplier
+          ELSE NULL
+        END) AS suppliers
       FROM 
         item i
       LEFT JOIN 
@@ -51,7 +52,10 @@ class Item {
         i.id_item
     `;
     const result = await db.query(query);
-    return result.rows;
+    return result.rows.map((row) => ({
+      ...row,
+      suppliers: row.suppliers.filter((supplier) => supplier !== null),
+    }));
   }
 
   static async findById(id) {

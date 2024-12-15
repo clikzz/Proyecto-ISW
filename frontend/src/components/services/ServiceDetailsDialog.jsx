@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select';
 import { updateService } from '@/api/service';
 import { capitalize } from '@/helpers/capitalize';
+import { useAlert } from '@/context/alertContext';
 
 const ServiceDetailsDialog = ({ isOpen, onClose, service, onUpdateService }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -25,51 +26,66 @@ const ServiceDetailsDialog = ({ isOpen, onClose, service, onUpdateService }) => 
     category: '',
     payment_method_service: '',
   });
-  
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     if (service) {
       setEditedService({ ...service });
     }
   }, [service]);
-  
 
-  // en caso de q no estén disponibles los datos del servicio
+
+  // en caso de que no estén disponibles los datos del servicio
   if (!service) {
     return null;
   }
-  
 
+  const formatDateTime = (date) => {
+    if (!date) return 'Fecha no disponible';
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(date).toLocaleString('es-ES', options);
+  };
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'price_service' && !/^\d+$/.test(value)) return; // solo enteros
     setEditedService((prev) => ({ ...prev, [name]: value }));
   };
+  
 
   const handleSave = async () => {
     try {
-      const updatedService = {
-        ...editedService,
-        category: editedService.category.toLowerCase(),
-        payment_method_service: editedService.payment_method_service || 'Sin definir',
-      };
-  
-      console.log('Datos enviados:', updatedService);
-  
-      const response = await updateService(service.id_service, updatedService);
-  
-      if (response) {
-        console.log('Respuesta del servidor:', response);
-        onUpdateService(response); 
+      // compara los datos originales y editados para asi identifique los campos modificados
+      const updatedFields = Object.keys(editedService).reduce((changes, key) => {
+        if (editedService[key] !== service[key]) {
+          changes[key] = editedService[key];
+        }
+        return changes;
+      }, {});
+
+      // si no hay cambios, no realiza la solicitud
+      if (Object.keys(updatedFields).length === 0) {
+        showAlert('No hay cambios para guardar.', 'info');
+        setIsEditing(false);
+        onClose();
+        return;
       }
-  
-      setIsEditing(false);
-      onClose(); 
+
+      // envia solo los campos modificados al backend
+      const response = await updateService(service.id_service, updatedFields);
+
+      if (response) {
+        showAlert('Servicio actualizado correctamente.', 'success');
+        onUpdateService(response);
+        setIsEditing(false);
+        onClose();
+      }
     } catch (error) {
-      console.error('Error al actualizar el servicio:', error.response?.data || error.message);
+      showAlert('Ocurrió un error al guardar los cambios. Verifica los datos e inténtalo nuevamente.', 'error');
     }
   };
-  
-  
+
+
 
   const handleCancel = () => {
     setEditedService(service);
@@ -79,11 +95,12 @@ const ServiceDetailsDialog = ({ isOpen, onClose, service, onUpdateService }) => 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="border-none text-foreground">
-        <DialogHeader>
-          <DialogTitle>Detalles del Servicio</DialogTitle>
+        <DialogHeader className="flex justify-between items-center">
+          <DialogTitle className="text-xl font-bold">
+          Detalles del Servicio
+          </DialogTitle>
         </DialogHeader>
         <div>
-          {/* Columna izquierda */}
           <div>
             <FormField
               label="Nombre"
@@ -111,7 +128,6 @@ const ServiceDetailsDialog = ({ isOpen, onClose, service, onUpdateService }) => 
               displayValue={`$${editedService?.price_service || 0}`}
             />
           </div>
-          {/* Columna derecha */}
           <div>
             <FormSelect
               label="Método de Pago"
@@ -119,7 +135,7 @@ const ServiceDetailsDialog = ({ isOpen, onClose, service, onUpdateService }) => 
               value={editedService?.payment_method_service || ''}
               options={['Efectivo', 'Tarjeta', 'Transferencia']}
               onSelect={(value) =>
-              setEditedService((prev) => ({ ...prev, payment_method_service: value }))
+                setEditedService((prev) => ({ ...prev, payment_method_service: value }))
               }
               displayValue={capitalize(editedService?.payment_method_service || 'Sin definir')}
             />
@@ -134,6 +150,20 @@ const ServiceDetailsDialog = ({ isOpen, onClose, service, onUpdateService }) => 
             />
           </div>
         </div>
+
+        {/* Fechas de creación y última modificación */}
+        <div className="mt-6 flex justify-between items-center text-sm space-x-4">
+          <p>
+            Registrado el{' '}
+            <span className="font-semibold">{formatDateTime(service.created_at)}</span>
+          </p>
+          <p>
+            Modificado por última vez el{' '}
+            <span className="font-semibold">{formatDateTime(service.updated_at)}</span>
+          </p>
+        </div>
+
+
         <div>
           {isEditing ? (
             <>

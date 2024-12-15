@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Bar, Line, Pie } from "react-chartjs-2";
 import { useTheme } from "next-themes";
 import { Card, CardContent } from "@/components/ui/card";
-import { getTransactionsSummary } from '@/api/transaction';
-import { getSales } from '@/api/inventory';
-import { getServices } from '@/api/service';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -24,6 +21,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { getServices } from '@/api/service';
 
 ChartJS.register(
   CategoryScale,
@@ -39,36 +37,60 @@ ChartJS.register(
 
 export default function Charts({ transactions }) {
   const { theme } = useTheme();
-  const [summary, setSummary] = useState({ ingresos: 0, egresos: 0, ventas: 0, compras: 0, servicios: 0 });
-
-  const fetchSummary = async () => {
-    try {
-      const [transactionData, salesData, servicesData] = await Promise.all([
-        getTransactionsSummary(),
-        getSales(),
-        getServices()
-      ]);
-
-      const ventasTotal = salesData.reduce((total, sale) => total + Number(sale.amount || 0), 0);
-      const comprasTotal = salesData.filter(sale => sale.type === 'compra').reduce((total, purchase) => total + Number(purchase.amount || 0), 0);
-      const serviciosTotal = servicesData.reduce((total, service) => total + Number(service.price_service || 0), 0);
-
-      const ingresosTotales = Number(transactionData.ingresos || 0) + ventasTotal + serviciosTotal;
-      const egresosTotales = Number(transactionData.egresos || 0) + comprasTotal;
-
-      setSummary({
-        ingresos: ingresosTotales,
-        egresos: egresosTotales,
-        balance: ingresosTotales - egresosTotales
-      });
-    } catch (error) {
-      console.error('Error al obtener el resumen:', error);
-      setSummary({ ingresos: 0, egresos: 0, balance: 0 });
-    }
-  };
+  const [summary, setSummary] = useState({ ingresos: 0, egresos: 0, balance: 0 });
+  const [allTransactions, setAllTransactions] = useState([]);
 
   useEffect(() => {
-    fetchSummary();
+    const fetchAllData = async () => {
+      try {
+        const services = await getServices();
+
+        const formattedTransactions = transactions
+          .filter(transaction => !transaction.is_deleted)
+          .map(transaction => ({
+            ...transaction,
+            type: transaction.transaction_type
+          }));
+
+        const formattedServices = services
+          .filter(service => !service.is_deleted)
+          .map(service => ({
+            ...service,
+            id: service.id_service,
+            transaction_type: 'servicio',
+            description: `${service.name_service}`,
+            type: 'servicio',
+            amount: service.price_service,
+            payment_method: service.payment_method_service,
+            transaction_date: service.created_at
+          }));
+
+        const combinedData = [
+          ...formattedTransactions,
+          ...formattedServices
+        ];
+
+        setAllTransactions(combinedData);
+
+        const ingresos = combinedData
+          .filter(t => t.transaction_type === 'ingreso' || t.transaction_type === 'venta' || t.transaction_type === 'servicio')
+          .reduce((total, t) => total + Number(t.amount || 0), 0);
+
+        const egresos = combinedData
+          .filter(t => t.transaction_type === 'egreso' || t.transaction_type === 'compra')
+          .reduce((total, t) => total + Number(t.amount || 0), 0);
+
+        setSummary({
+          ingresos: ingresos,
+          egresos: egresos,
+          balance: ingresos - egresos
+        });
+      } catch (error) {
+        console.error('Error al cargar los datos:', error);
+      }
+    };
+
+    fetchAllData();
   }, [transactions]);
 
   // Configuración del gráfico de barras
@@ -89,9 +111,16 @@ export default function Charts({ transactions }) {
 
   // Configuración del gráfico de líneas
   const lineData = (() => {
-    // Ordenar las transacciones por fecha
-    const sortedTransactions = [...transactions].sort(
-      (a, b) => new Date(a.transaction_date) - new Date(b.transaction_date)
+    // Filtrar y ordenar las transacciones por fecha
+    const sortedTransactions = allTransactions
+      .sort((a, b) => new Date(a.transaction_date) - new Date(b.transaction_date));
+
+    const ingresos = sortedTransactions.map((t) =>
+      t.transaction_type === "ingreso" || t.transaction_type === "venta" || t.transaction_type === "servicio" ? t.amount : 0
+    );
+
+    const egresos = sortedTransactions.map((t) =>
+      t.transaction_type === "egreso" || t.transaction_type === "compra" ? t.amount : 0
     );
 
     return {
@@ -105,9 +134,7 @@ export default function Charts({ transactions }) {
       datasets: [
         {
           label: "Ingresos",
-          data: sortedTransactions.map((t) =>
-            t.transaction_type === "ingreso" || t.transaction_type === "venta" || t.transaction_type === "servicio" ? t.amount : null
-          ),
+          data: ingresos,
           borderColor: "rgb(152,251,152)",
           backgroundColor: "rgb(152,251,152)",
           fill: false,
@@ -115,9 +142,7 @@ export default function Charts({ transactions }) {
         },
         {
           label: "Egresos",
-          data: sortedTransactions.map((t) =>
-            t.transaction_type === "egreso" || t.transaction_type === "compra" ? t.amount : null
-          ),
+          data: egresos,
           borderColor: "rgba(240,128,128)",
           backgroundColor: "rgba(240,128,128)",
           fill: false,
@@ -126,7 +151,6 @@ export default function Charts({ transactions }) {
       ],
     };
   })();
-
 
   // Configuración del gráfico de torta
   const tortinhaData = {
@@ -212,13 +236,10 @@ export default function Charts({ transactions }) {
                     Gráfico de Torta
                   </h3>
                   <div className="w-full h-[350px] items-center">
-                    {" "}
-                    {/* Fixed height container */}
                     <Pie data={tortinhaData} options={options} />
                   </div>
                 </CardContent>
-              </Card>
-            </CarouselItem>
+              </Card></CarouselItem>
           </CarouselContent>
           <CarouselPrevious
             className=" -left-4 flex items-center justify-center"
