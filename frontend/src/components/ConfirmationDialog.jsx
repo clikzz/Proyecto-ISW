@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -6,8 +6,8 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@components/ui/dialog';
-import { Button } from '@components/ui/button';
+} from "@components/ui/dialog";
+import { Button } from "@components/ui/button";
 
 const ConfirmationDialog = ({ open, handleClose, handleConfirm }) => {
   return (

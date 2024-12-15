@@ -48,24 +48,9 @@ exports.updateSupplier = async (req, res) => {
   if (error) return res.status(400).json({ message: error.details[0].message });
 
   try {
-    const currentSupplier = await supplierService.getSupplierById(
-      req.params.id
-    );
-    if (!currentSupplier)
-      return res.status(404).json({ message: 'Proveedor no encontrado' });
-
-    const updatedData = {
-      rut_supplier: req.body.rut_supplier || currentSupplier.rut_supplier,
-      name_supplier: req.body.name_supplier || currentSupplier.name_supplier,
-      phone_supplier: req.body.phone_supplier || currentSupplier.phone_supplier,
-      email_supplier: req.body.email_supplier || currentSupplier.email_supplier,
-      address_supplier:
-        req.body.address_supplier || currentSupplier.address_supplier,
-    };
-
     const updatedSupplier = await supplierService.updateSupplier(
-      req.params.id,
-      updatedData
+      req.params.rut,
+      req.body
     );
     res.json(updatedSupplier);
   } catch (err) {
@@ -78,7 +63,9 @@ exports.updateSupplier = async (req, res) => {
 
 exports.deleteSupplier = async (req, res) => {
   try {
-    const deletedSupplier = await supplierService.deleteSupplier(req.params.rut);
+    const deletedSupplier = await supplierService.deleteSupplier(
+      req.params.rut
+    );
     res.json({
       message: 'Proveedor eliminado correctamente',
       supplier: deletedSupplier,

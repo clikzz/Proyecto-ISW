@@ -1,36 +1,25 @@
-import { useState, useEffect } from "react";
-import { DragDropContext } from "@hello-pangea/dnd";
-import TaskBoard from "../components/tasks/TaskBoard";
-import { ClipboardCheck } from "lucide-react";
-
-// Simulated data - replace with actual data fetching in your implementation
-const initialTasks = [
-  {
-    id: "task1",
-    content: "Reparación de cadena",
-    status: "pendiente",
-    assignee: null,
-  },
-  {
-    id: "task2",
-    content: "Cambio de neumáticos",
-    status: "en_progreso",
-    assignee: { name: "Juan", avatar: "/placeholder.svg?height=32&width=32" },
-  },
-  {
-    id: "task3",
-    content: "Ajuste de frenos",
-    status: "completado",
-    assignee: { name: "María", avatar: "/placeholder.svg?height=32&width=32" },
-  },
-];
+import { useState, useEffect } from 'react';
+import { DragDropContext } from '@hello-pangea/dnd';
+import { motion } from 'framer-motion';
+import TaskBoard from '../components/tasks/TaskBoard';
+import { ClipboardCheck } from 'lucide-react';
+import { getServices } from '@/api/service';
+import { updateTaskStatus as updTaskStatus } from '@/api/task';
 
 export default function TareasPage() {
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState([]);
+
+  const fetchTasks = async () => {
+    const tasks = await getServices();
+    setTasks(tasks);
+  };
 
   useEffect(() => {
-    // Aquí deberías hacer una llamada a tu API para obtener las tareas
-    // setTasks(tasksFromAPI)
+    try {
+      fetchTasks();
+    } catch (error) {
+      console.error('Error al obtener los servicios:', error);
+    }
   }, []);
 
   const onDragEnd = (result) => {
@@ -47,45 +36,64 @@ export default function TareasPage() {
       return;
     }
 
-    const newTasks = Array.from(tasks);
-    const [reorderedItem] = newTasks.splice(source.index, 1);
-    reorderedItem.status = destination.droppableId;
-    newTasks.splice(destination.index, 0, reorderedItem);
+    // Encontrar la tarea que se está moviendo
+    const taskToMove = tasks.find((task) => task.id === draggableId);
 
-    setTasks(newTasks);
+    if (!taskToMove) return;
 
-    // Aquí deberías hacer una llamada a tu API para actualizar el estado de la tarea
-    // updateTaskStatus(draggableId, destination.droppableId)
+    // Crear una nueva lista de tareas sin la tarea que se está moviendo
+    const newTasks = tasks.filter((task) => task.id !== draggableId);
+
+    // Encontrar todas las tareas en la columna de destino
+    const tasksInDestination = newTasks.filter(
+      (task) => task.service_status === destination.droppableId
+    );
+
+    // Insertar la tarea en la posición correcta
+    const updatedTasks = [
+      ...newTasks.filter(
+        (task) => task.service_status !== destination.droppableId
+      ),
+      ...tasksInDestination.slice(0, destination.index),
+      { ...taskToMove, service_status: destination.droppableId },
+      ...tasksInDestination.slice(destination.index),
+    ];
+
+    setTasks(updatedTasks);
   };
 
-  const assignTask = (taskId, userId) => {
-    // Aquí deberías hacer una llamada a tu API para asignar la tarea
-    // Por ahora, solo actualizaremos el estado local
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId
-          ? {
-              ...task,
-              assignee: {
-                name: "Nuevo Usuario",
-                avatar: "/placeholder.svg?height=32&width=32",
-              },
-              status: "en_progreso",
-            }
-          : task
-      )
-    );
+  const updateTaskStatus = async (taskId, status) => {
+    try {
+      console.log('Updating task status:', taskId, status);
+      await updTaskStatus(taskId, status);
+      fetchTasks();
+    } catch (error) {
+      console.error('Error al actualizar el estado del servicio:', error);
+    }
   };
 
   return (
-    <div className="container mx-auto p-4 ">
-      <div className="flex items-center mb-8">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="container mx-auto p-4"
+    >
+      <motion.div
+        initial={{ y: -20 }}
+        animate={{ y: 0 }}
+        className="flex items-center mb-8"
+      >
         <ClipboardCheck size="32" className="mr-2" />
         <h1 className="text-2xl font-bold">Tareas</h1>
-      </div>
+      </motion.div>
       <DragDropContext onDragEnd={onDragEnd}>
-        <TaskBoard tasks={tasks} assignTask={assignTask} />
+        <TaskBoard
+          tasks={tasks}
+          fetchTasks={fetchTasks}
+          updateTaskStatus={updateTaskStatus}
+        />
       </DragDropContext>
-    </div>
+    </motion.div>
   );
 }
