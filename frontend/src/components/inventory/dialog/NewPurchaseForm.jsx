@@ -3,6 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { capitalize } from '@/helpers/capitalize';
 import { newPurchaseValidationNew } from '@/validations/newPurchase';
 
@@ -125,7 +126,7 @@ export default function NewPurchaseForm({
                   Descripción
                 </Label>
                 <Field
-                  as={Input}
+                  as={Textarea}
                   id="description"
                   name="description"
                   placeholder="Descripción del producto"

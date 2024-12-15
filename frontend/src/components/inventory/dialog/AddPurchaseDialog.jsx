@@ -10,7 +10,7 @@ import { useAlert } from '@/context/alertContext';
 
 export default function AddPurchaseDialog({ fetchPurchases }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('existing'); // 'existing' o 'new'
+  const [activeTab, setActiveTab] = useState('existing');
   const [suppliers, setSuppliers] = useState([]);
   const [items, setItems] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState('');
