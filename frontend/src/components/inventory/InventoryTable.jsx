@@ -246,7 +246,6 @@ const InventoryTable = () => {
                     <TableCell>
                       {item.suppliers && item.suppliers.length > 0 ? (
                         (() => {
-                          // Filtrar duplicados usando un conjunto (Set)
                           const uniqueSuppliers = [...new Set(item.suppliers)];
                           // Renderizar el primer proveedor y el contador de adicionales
                           return (
