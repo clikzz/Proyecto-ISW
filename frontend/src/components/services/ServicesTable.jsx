@@ -158,7 +158,9 @@ export default function ServicesTable() {
                     <TableCell>{capitalize(service.category)}</TableCell>
                     <TableCell>${service.price_service?.toLocaleString('es-CL')}</TableCell>
                     <TableCell>{capitalize(service.payment_method_service || 'Sin definir')}</TableCell>
-                    <TableCell>Sin asignar</TableCell>
+                    <TableCell>
+                      {service.employee_name ? capitalize(service.employee_name) : 'Sin asignar'}
+                    </TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
