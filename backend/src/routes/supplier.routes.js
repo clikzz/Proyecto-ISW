@@ -16,8 +16,11 @@ router.post(
   validateCreateSupplier,
   supplierController.createSupplier
 );
+
 router.get('/all', supplierController.getSuppliers);
+
 router.get('/get/:rut', supplierController.getSupplierById);
+
 router.put(
   '/update/:rut',
   validateUpdateSupplier,

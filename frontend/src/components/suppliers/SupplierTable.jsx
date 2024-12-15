@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ArrowUpDown, Search, Trash } from 'lucide-react'; // Ensure Trash is imported
+import { ArrowUpDown, Search, Trash, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -10,12 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { getSuppliers, deleteSupplier } from '@api/suppliers';
 import { Card, CardContent } from '@/components/ui/card';
+import { getSuppliers, deleteSupplier } from '@api/suppliers';
 import ConfirmationDialog from '@components/ConfirmationDialog';
 import AddSupplierDialog from '@/components/suppliers/AddSupplierDialog';
+import ModifySupplierDialog from '@/components/suppliers/ModifySupplierDialog';
+import ExportButtons from './ExportButtons';
 
-export default function Component() {
+export default function SupplierTable() {
   const [suppliers, setSuppliers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({
@@ -24,15 +26,18 @@ export default function Component() {
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [DialogOpen, setDialogOpen] = useState(false);
+  const [ModDialogOpen, setModDialogOpen] = useState(false);
+  const [supplierToModify, setSupplierToModify] = useState(null);
   const [supplierToDelete, setSupplierToDelete] = useState(null);
-
-  const handleAddSupplier = () => {
-    setIsDialogOpen(true);
-  };
 
   const handleDeleteClick = (rut) => {
     setSupplierToDelete(rut);
     setDialogOpen(true);
+  };
+
+  const handleModifyClick = (supplier) => {
+    setSupplierToModify(supplier);
+    setModDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
@@ -109,102 +114,107 @@ export default function Component() {
             placeholder="Buscar por nombre..."
             value={searchTerm}
             onChange={handleSearch}
-            className="max-w-sm "
+            className="max-w-sm"
           />
           <Search className="ml-2 h-4 w-4" />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
+          <ExportButtons suppliers={filteredSuppliers} />
           <AddSupplierDialog fetchSuppliers={fetchSuppliers} />
         </div>
       </div>
       <Card className="border-none pt-4">
         <CardContent>
-          <div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('rut_supplier')}
-                      className="text-foreground"
-                    >
-                      <strong>RUT</strong>
-                      <ArrowUpDown className="ml-2 h-4 w-4" />
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort('rut_supplier')}
+                    className="text-foreground"
+                  >
+                    <strong>RUT</strong>
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort('name_supplier')}
+                    className="text-foreground"
+                  >
+                    <strong>Nombre</strong>
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort('phone_supplier')}
+                    className="text-foreground"
+                  >
+                    <strong>Teléfono</strong>
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort('email_supplier')}
+                    className="text-foreground"
+                  >
+                    <strong>Correo</strong>
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort('address_supplier')}
+                    className="text-foreground"
+                  >
+                    <strong>Dirección</strong>
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <strong className="text-foreground">Acciones</strong>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredSuppliers.map((supplier) => (
+                <TableRow key={supplier.rut_supplier}>
+                  <TableCell>{supplier.rut_supplier}</TableCell>
+                  <TableCell>{supplier.name_supplier}</TableCell>
+                  <TableCell>{supplier.phone_supplier}</TableCell>
+                  <TableCell>{supplier.email_supplier}</TableCell>
+                  <TableCell>{supplier.address_supplier}</TableCell>
+                  <TableCell>
+                    <Button onClick={() => handleModifyClick(supplier)}>
+                      <Edit />
                     </Button>
-                  </TableHead>
-                  <TableHead>
                     <Button
-                      variant="ghost"
-                      onClick={() => handleSort('name_supplier')}
-                      className="text-foreground"
+                      className="ml-2 bg-red-500 hover:bg-red-600 p-1"
+                      onClick={() => handleDeleteClick(supplier.rut_supplier)}
                     >
-                      <strong>Nombre</strong>
-                      <ArrowUpDown className="ml-2 h-4 w-4" />
+                      <Trash />
                     </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('email_supplier')}
-                      className="text-foreground"
-                    >
-                      <strong>Correo</strong>
-                      <ArrowUpDown className="ml-2 h-4 w-4 " />
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('phone_supplier')}
-                      className="text-foreground"
-                    >
-                      <strong>Teléfono</strong>
-                      <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('address_supplier')}
-                      className="text-foreground"
-                    >
-                      <strong>Dirección</strong>
-                      <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <strong className="text-foreground">Acciones</strong>
-                  </TableHead>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredSuppliers.map((supplier) => (
-                  <TableRow key={supplier.rut_supplier}>
-                    <TableCell>{supplier.rut_supplier}</TableCell>
-                    <TableCell>{supplier.name_supplier}</TableCell>
-                    <TableCell>{supplier.email_supplier}</TableCell>
-                    <TableCell>{supplier.phone_supplier}</TableCell>
-                    <TableCell>{supplier.address_supplier}</TableCell>
-                    <TableCell>
-                      <Button
-                        className="bg-red-500 hover:bg-red-600 p-1"
-                        onClick={() => handleDeleteClick(supplier.rut_supplier)}
-                      >
-                        <Trash />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
-      {isDialogOpen && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <AddSupplierDialog onClose={handleCloseDialog} />
-        </div>
+      {ModDialogOpen && (
+        <ModifySupplierDialog
+          isOpen={ModDialogOpen}
+          onClose={() => setModDialogOpen(false)}
+          supplier={supplierToModify}
+          fetchSuppliers={fetchSuppliers}
+        />
       )}
       <ConfirmationDialog
         open={DialogOpen}

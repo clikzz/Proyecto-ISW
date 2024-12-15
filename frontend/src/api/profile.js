@@ -2,18 +2,16 @@ import axios from 'axios';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const api = axios.create({
-  baseURL: `${API_URL}/profile`, 
+  baseURL: `${API_URL}/profile`,
 });
 
 export const getProfile = async () => {
   try {
-    console.log("Iniciando solicitud para obtener el perfil...");
     const response = await api.get('/getProfile', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-    console.log("Perfil obtenido:", response.data);
     return response.data;
   } catch (error) {
     console.error(

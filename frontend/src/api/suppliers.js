@@ -59,3 +59,20 @@ export const deleteSupplier = async (rut) => {
     throw error;
   }
 };
+
+export const updateSupplier = async (rut, data) => {
+  try {
+    const response = await api.put(`/update/${rut}`, data, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      'Error al modificar proveedor:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
