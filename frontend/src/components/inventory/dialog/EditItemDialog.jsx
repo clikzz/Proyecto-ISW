@@ -6,149 +6,135 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { updateItem } from '@/api/inventory';
 import { Textarea } from '@/components/ui/textarea';
 import { useAlert } from '@/context/alertContext';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { editItemValidation} from '@/validations/modifyItem';
 
 const EditItemDialog = ({ isOpen, onClose, item, onUpdateItem }) => {
-  const [editedItem, setEditedItem] = useState({});
   const { showAlert } = useAlert();
-
-  useEffect(() => {
-    if (item) {
-      setEditedItem({ ...item });
-    }
-  }, [item]);
 
   if (!item) return null;
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditedItem((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSave = async () => {
+  const handleFormikSubmit = async (values, { setSubmitting }) => {
     try {
-      // Filtrar solo los campos que han sido editados
       const updatedFields = {};
-      for (const key in editedItem) {
-        if (editedItem[key] !== item[key]) {
-          updatedFields[key] = editedItem[key];
+      for (const key in values) {
+        if (values[key] !== item[key]) {
+          updatedFields[key] = values[key];
         }
       }
-  
-      // Enviar solo los campos actualizados
-      const response = await updateItem(item.id_item, updatedFields);
-  
-      if (response) {
-        onUpdateItem(); // Actualizar el elemento en la tabla
+
+      if (Object.keys(updatedFields).length > 0) {
+        await updateItem(item.id_item, updatedFields);
+        onUpdateItem();
+        showAlert('Ítem actualizado correctamente', 'success');
+      } else {
+        showAlert('No se realizaron cambios.', 'info');
       }
       onClose();
-      showAlert('Ítem actualizado correctamente', 'success');
     } catch (error) {
       console.error('Error al actualizar el ítem:', error);
-      showAlert('Ocurrió un error al actualizar el ítem', 'error');
+      showAlert('Error al actualizar el ítem', 'error');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <DialogContent className="border-none text-foreground max-w-2xl mx-auto p-8">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-gray-800">Editar Producto</DialogTitle>
+          <DialogTitle>Editar Producto</DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-2 gap-6 mt-4">
-          {/* Columna izquierda */}
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">Nombre</label>
-              <input
-                type="text"
-                name="name_item"
-                value={editedItem.name_item}
-                onChange={handleInputChange}
-                className="p-2 border rounded-md w-full"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">Categoría</label>
-              <Select
-                value={editedItem.category}
-                onValueChange={(value) =>
-                  setEditedItem((prev) => ({ ...prev, category: value }))
-                }
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Seleccionar categoría" />
-                </SelectTrigger>
-                <SelectContent>
-                  {[
-                    'Accesorios',
-                    'Bicicletas',
-                    'Componentes',
-                    'Equipamiento',
-                    'Electrónica',
-                    'Herramientas',
-                    'Limpieza',
-                    'Repuestos',
-                    'Otros',
-                  ].map((category) => (
-                    <SelectItem key={category} value={category.toLowerCase()}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">Stock</label>
-              <input
-                type="number"
-                name="stock"
-                value={editedItem.stock}
-                onChange={handleInputChange}
-                className="p-2 border rounded-md w-full"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">Precio de Venta</label>
-              <input
-                type="number"
-                name="selling_price"
-                value={editedItem.selling_price}
-                onChange={handleInputChange}
-                className="p-2 border rounded-md w-full"
-              />
-            </div>
-          </div>
+        <Formik
+          initialValues={{
+            name_item: item.name_item || '',
+            category: item.category || '',
+            stock: item.stock || 0,
+            selling_price: item.selling_price || 0,
+            description: item.description || '',
+          }}
+          validationSchema={editItemValidation}
+          onSubmit={handleFormikSubmit}
+          enableReinitialize
+        >
+          {({ values, setFieldValue, isSubmitting }) => (
+            <Form>
+              <div className="grid grid-cols-2 gap-6 mt-4">
+                {/* Columna izquierda */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold">Nombre</label>
+                    <Field as={Input} name="name_item" placeholder="Nombre del producto" />
+                    <ErrorMessage name="name_item" component="div" className="text-red-500 text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Categoría</label>
+                    <Select
+                      value={values.category}
+                      onValueChange={(value) => setFieldValue('category', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar categoría" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[
+                          'Accesorios',
+                          'Bicicletas',
+                          'Componentes',
+                          'Equipamiento',
+                          'Electrónica',
+                          'Herramientas',
+                          'Limpieza',
+                          'Repuestos',
+                          'Otros',
+                        ].map((category) => (
+                          <SelectItem key={category} value={category.toLowerCase()}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <ErrorMessage name="category" component="div" className="text-red-500 text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Stock</label>
+                    <Field as={Input} name="stock" placeholder="Stock disponible" />
+                    <ErrorMessage name="stock" component="div" className="text-red-500 text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Precio de Venta</label>
+                    <Field as={Input} name="selling_price" type="number" placeholder="Precio de venta" />
+                    <ErrorMessage name="selling_price" component="div" className="text-red-500 text-sm" />
+                  </div>
+                </div>
 
-          {/* Columna derecha */}
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">Descripción</label>
-              <Textarea
-                name="description"
-                value={editedItem.description || ''}
-                onChange={handleInputChange}
-                className="p-2 border rounded-md w-full"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="mt-6 flex justify-end space-x-4">
-          <button
-            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-            onClick={onClose}
-          >
-            Cancelar
-          </button>
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            onClick={handleSave}
-          >
-            Guardar
-          </button>
-        </div>
+                {/* Columna derecha */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold">Descripción</label>
+                    <Field as={Textarea} name="description" placeholder="Descripción del producto" />
+                    <ErrorMessage name="description" component="div" className="text-red-500 text-sm" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Botones */}
+              <div className="mt-6 flex justify-end space-x-4">
+                <Button type="button" onClick={onClose} variant="outline">
+                  Cancelar
+                </Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'Guardando...' : 'Guardar'}
+                </Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </DialogContent>
     </Dialog>
   );

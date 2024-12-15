@@ -10,171 +10,193 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { updateSale } from '@/api/inventory';
 import { useAlert } from '@/context/alertContext';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { editSaleValidation } from '@/validations/modifySale';
+import { Button } from "@components/ui/button";
 
 const EditSaleDialog = ({ isOpen, onClose, sale, onUpdateSale }) => {
-  const [editedSale, setEditedSale] = useState({});
-  const [total, setTotal] = useState(0);
   const { showAlert } = useAlert();
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     if (sale) {
-      setEditedSale({
-        ...sale,
-        quantity_item: sale.quantity_item,
-        payment_method: sale.payment_method,
-        description: sale.description || generateDescription(sale.quantity_item, sale.name_item),
-      });
       setTotal(sale.quantity_item * sale.unit_price);
     }
   }, [sale]);
 
-  // Recalcula el total y actualiza la descripción cuando cambia la cantidad
-  useEffect(() => {
-    if (editedSale.quantity_item && sale) {
-      setTotal(editedSale.quantity_item * sale.unit_price);
-      setEditedSale((prev) => ({
-        ...prev,
-        description: generateDescription(editedSale.quantity_item, sale.name_item),
-      }));
-    }
-  }, [editedSale.quantity_item, sale]);
-
   if (!sale) return null;
 
-  // Función para generar la descripción dinámica
   const generateDescription = (quantity, productName) => {
     return `Venta de ${quantity || 1} unidades de ${productName || 'producto'}`;
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditedSale((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSave = async () => {
+  const handleFormikSubmit = async (values, { setSubmitting }) => {
     try {
-      const unitPrice = sale.unit_price || editedSale.unit_price;
-      const totalAmount = editedSale.quantity_item * sale.unit_price;
+      const unitPrice = sale.unit_price || values.unit_price;
+      const totalAmount = values.quantity_item * unitPrice;
 
       const updatedFields = {
         items: [
           {
             id_transaction_item: sale.id_transaction_item,
-            quantity_item: editedSale.quantity_item,
+            quantity_item: values.quantity_item,
             unit_price: unitPrice,
           },
         ],
         details: {
           amount: totalAmount,
-          payment_method: editedSale.payment_method,
-          description: editedSale.description,
+          payment_method: values.payment_method,
+          description: values.description,
         },
       };
 
-      const response = await updateSale(sale.id_transaction, updatedFields);
-      if (response) {
-        onUpdateSale(response);
-      }
-      onClose();
+      await updateSale(sale.id_transaction, updatedFields);
+      onUpdateSale(updatedFields);
       showAlert('Venta actualizada correctamente', 'success');
+      onClose();
     } catch (error) {
       console.error('Error al actualizar la venta:', error);
-      showAlert('Ocurrió un error al actualizar la venta', 'error');
+      showAlert('Error al actualizar la venta', 'error');
+    } finally {
+      setSubmitting(false);
     }
   };
 
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-semibold text-gray-800">
+      <DialogContent className="border-none text-foreground max-w-2xl mx-auto p-8">
+        <DialogHeader className="flex justify-between items-center">
+          <DialogTitle>
             Editar Venta
           </DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-2 gap-6 mt-4">
-          {/* Columna izquierda */}
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">Producto</label>
-              <Input
-                value={`${sale.name_item} - $${sale.unit_price}`}
-                readOnly
-                className="p-2 border rounded-md w-full bg-gray-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">Método de Pago</label>
-              <Select
-                value={editedSale.payment_method}
-                onValueChange={(value) =>
-                  setEditedSale((prev) => ({ ...prev, payment_method: value }))
-                }
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Seleccionar método de pago" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="efectivo">Efectivo</SelectItem>
-                  <SelectItem value="tarjeta">Tarjeta</SelectItem>
-                  <SelectItem value="transferencia">Transferencia</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">Cantidad vendida</label>
-              <Input
-                type="number"
-                name="quantity_item"
-                value={editedSale.quantity_item}
-                onChange={handleInputChange}
-                min={1}
-                className="p-2 border rounded-md w-full"
-              />
-            </div>
-          </div>
+        <Formik
+          initialValues={{
+            payment_method: sale.payment_method || '',
+            quantity_item: sale.quantity_item || 1,
+            description: sale.description || generateDescription(sale.quantity_item, sale.name_item),
+          }}
+          validationSchema={editSaleValidation}
+          onSubmit={handleFormikSubmit}
+          enableReinitialize
+        >
+          {({ values, setFieldValue, isSubmitting }) => {
+            useEffect(() => {
+              setTotal(values.quantity_item * sale.unit_price);
+              setFieldValue(
+                'description',
+                generateDescription(values.quantity_item, sale.name_item)
+              );
+            }, [values.quantity_item]);
 
-          {/* Columna derecha */}
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">Monto Total</label>
-              <Input
-                value={`$${total.toLocaleString('es-CL')}`}
-                readOnly
-                className="p-2 border rounded-md w-full bg-gray-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">Descripción</label>
-              <Textarea
-                name="description"
-                value={editedSale.description}
-                onChange={handleInputChange}
-                className="p-2 border rounded-md w-full"
-              />
-            </div>
-          </div>
-        </div>
+            return (
+              <Form>
+                <div className="grid grid-cols-2 gap-6 mt-4">
+                  {/* Columna izquierda */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-semibold">
+                        Producto
+                      </label>
+                      <Input
+                        value={`${sale.name_item} - $${sale.unit_price}`}
+                        readOnly
+                        className="p-2 border rounded-md w-full"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold">
+                        Método de Pago
+                      </label>
+                      <Select
+                        value={values.payment_method}
+                        onValueChange={(value) => setFieldValue('payment_method', value)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Seleccionar método de pago" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="efectivo">Efectivo</SelectItem>
+                          <SelectItem value="tarjeta">Tarjeta</SelectItem>
+                          <SelectItem value="transferencia">Transferencia</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <ErrorMessage
+                        name="payment_method"
+                        component="div"
+                        className="text-red-500 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold">
+                        Cantidad Vendida
+                      </label>
+                      <Field
+                        as={Input}
+                        type="number"
+                        name="quantity_item"
+                        min={1}
+                        className="p-2 border rounded-md w-full"
+                      />
+                      <ErrorMessage
+                        name="quantity_item"
+                        component="div"
+                        className="text-red-500 text-sm"
+                      />
+                    </div>
+                  </div>
 
-        {/* Botones */}
-        <div className="mt-6 flex justify-end space-x-4">
-          <button
-            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-            onClick={onClose}
-          >
-            Cancelar
-          </button>
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            onClick={handleSave}
-          >
-            Guardar Cambios
-          </button>
-        </div>
+                  {/* Columna derecha */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-semibold">
+                        Monto Total
+                      </label>
+                      <Input
+                        value={`$${total.toLocaleString('es-CL')}`}
+                        readOnly
+                        className="p-2 border rounded-md w-full"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold">
+                        Descripción
+                      </label>
+                      <Field
+                        as={Textarea}
+                        name="description"
+                        className="p-2 border rounded-md w-full"
+                      />
+                      <ErrorMessage
+                        name="description"
+                        component="div"
+                        className="text-red-500 text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botones */}
+                <div className="mt-6 flex justify-end space-x-4">
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={onClose}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Guardando...' : 'Guardar Cambios'}
+                  </Button>
+                </div>
+              </Form>
+            );
+          }}
+        </Formik>
       </DialogContent>
     </Dialog>
   );

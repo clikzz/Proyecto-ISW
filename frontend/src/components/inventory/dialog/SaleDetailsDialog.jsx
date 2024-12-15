@@ -7,15 +7,16 @@ import {
 } from '@/components/ui/dialog';
 import { formatDateTime } from '@/helpers/dates';
 import { capitalize } from '@/helpers/capitalize';
+import { Button } from '@/components/ui/button';
 
 const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
   if (!sale) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <DialogContent className="border-none text-foreground max-w-2xl mx-auto p-8">
         <DialogHeader className="flex justify-between items-center">
-          <DialogTitle className="text-xl font-bold text-gray-800">
+          <DialogTitle>
             Detalles de la Venta
           </DialogTitle>
         </DialogHeader>
@@ -24,16 +25,16 @@ const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
           {/* Columna izquierda */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700">Producto</label>
-              <p className="p-2 bg-gray-100 rounded-md">{sale.name_item}</p>
+              <label className="block text-sm font-semibold">Producto</label>
+              <p className="p-2 rounded-md border dark:border-gray-800">{sale.name_item}</p>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700">Método de Pago</label>
-              <p className="p-2 bg-gray-100 rounded-md">{capitalize(sale.payment_method)}</p>
+              <label className="block text-sm font-semibold">Método de Pago</label>
+              <p className="p-2 rounded-md border dark:border-gray-800">{capitalize(sale.payment_method)}</p>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700">Cantidad vendida</label>
-              <div className="p-2 bg-gray-100 rounded-md">
+              <label className="block text-sm font-semibold">Cantidad vendida</label>
+              <div className="p-2 rounded-md border dark:border-gray-800">
                 {sale.quantity_item > 0 ? (
                   <p>{sale.quantity_item}</p>
                 ) : (
@@ -46,12 +47,12 @@ const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
           {/* Columna derecha */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700">Monto Total</label>
-              <p className="p-2 bg-gray-100 rounded-md">$ {sale.amount?.toLocaleString('es-CL')}</p>
+              <label className="block text-sm font-semibold">Monto Total</label>
+              <p className="p-2 rounded-md border dark:border-gray-800">$ {sale.amount?.toLocaleString('es-CL')}</p>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700">Descripción</label>
-              <p className="p-2 bg-gray-100 rounded-md">
+              <label className="block text-sm font-semibold">Descripción</label>
+              <p className="p-2 rounded-md border dark:border-gray-800">
                 {sale.description || 'Sin descripción'}
               </p>
             </div>
@@ -67,14 +68,14 @@ const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
             Modificado el{' '}
             <span className="font-semibold">{formatDateTime(sale.updated_at)}</span>
           </p>
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200"
+          <Button
+            type="submit"
             onClick={() => {
               onEdit(sale);
             }}
           >
             Editar
-          </button>
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

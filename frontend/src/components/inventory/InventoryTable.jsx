@@ -313,7 +313,11 @@ const InventoryTable = () => {
         isOpen={isDetailsDialogOpen}
         onClose={() => setIsDetailsDialogOpen(false)}
         item={selectedItem}
-        onUpdateItem={fetchItems}
+        onEdit={(item) => {
+          setSelectedItem(item);
+          setIsDetailsDialogOpen(false);
+          setIsEditDialogOpen(true);
+        }}
       />
 
       <ConfirmationDialog
