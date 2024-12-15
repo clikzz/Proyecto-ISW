@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { ShoppingCart } from 'lucide-react';
 import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { getInventoryItems, recordPurchase } from '@/api/inventory';
@@ -118,11 +119,14 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-blue-500 text-white">Añadir Compra</Button>
+        <Button className="bg-blue-500 text-white">
+          <ShoppingCart size="16" />
+          Añadir Compra
+        </Button>
       </DialogTrigger>
       <DialogContent className="border-none text-foreground">
         <DialogHeader>
-          <DialogTitle>Añadir Compra</DialogTitle>
+          <DialogTitle>Formulario de Compra</DialogTitle>
         </DialogHeader>
         <div className="flex gap-4 mb-4">
           <Button variant={section === 'existing' ? 'solid' : 'outline'} onClick={() => setSection('existing')}>

@@ -9,7 +9,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart } from 'lucide-react';
+import { Handshake } from 'lucide-react';
 import { useAlert } from '@/context/alertContext';
 import { getInventoryItems, recordSale } from '@/api/inventory';
 import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select';
@@ -87,7 +87,7 @@ export default function SellItemDialog({ fetchSales }) {
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2 bg-green-500 text-white">
-          <ShoppingCart size="16" />
+          <Handshake size="16" />
           Registrar Venta
         </Button>
       </DialogTrigger>
@@ -147,7 +147,7 @@ export default function SellItemDialog({ fetchSales }) {
           </div>
           <div>
             <Label htmlFor="total">Monto Total</Label>
-            <Input id="total" type="text" value={`$${total.toFixed(2)}`} readOnly />
+            <Input id="total" type="text" value={`$${total?.toLocaleString('es-CL')}`} readOnly />
           </div>
           <Button type="submit" className="bg-blue-500 text-white">
             Confirmar Venta

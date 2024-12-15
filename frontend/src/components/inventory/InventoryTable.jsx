@@ -3,7 +3,7 @@ import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { getInventoryItems, getItemById, deleteItem } from '@/api/inventory';
-import { Info, Search, ArrowUpDown, EllipsisVertical, Filter } from 'lucide-react';
+import { Search, ArrowUpDown, EllipsisVertical, Filter } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatDateTime } from '@/helpers/dates';
