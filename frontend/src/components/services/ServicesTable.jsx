@@ -15,22 +15,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { getServices, deleteService } from '@/api/service';
 import { capitalize } from '@/helpers/capitalize';
 import ExportButtons from '@/components/services/ExportButtons';
-import ServiceDetailsDialog from '@/components/services/ServiceDetailsDialog';
+import ServiceDetailsDialog from '@/components/services/dialog/ServiceDetailsDialog';
+import EditServiceDialog from '@/components/services/dialog/EditServiceDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import AddServiceDialog from '@/components/services/ServicesDialog';
+import AddServiceDialog from '@/components/services/dialog/ServicesDialog';
 import { useAlert } from '@/context/alertContext';
 
 export default function ServicesTable() {
   const [services, setServices] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('todas');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState(null); 
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
   const { showAlert } = useAlert();
 
   useEffect(() => {
@@ -45,7 +47,7 @@ export default function ServicesTable() {
     };
     fetchServices();
   }, []);
-  
+
 
   const handleAddService = (newService) => {
     setServices((prev) => [...prev, newService]);
@@ -55,7 +57,7 @@ export default function ServicesTable() {
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este servicio?');
     if (!confirmDelete) return;
-  
+
     try {
       await deleteService(id);
       setServices((prev) => prev.filter((service) => service.id_service !== id));
@@ -64,20 +66,19 @@ export default function ServicesTable() {
       showAlert('Error al eliminar el servicio', 'error');
     }
   };
-  
+
 
   const handleView = (service) => {
     setSelectedService(service);
-    setIsDialogOpen(true);
-    console.log('Ver información:', service);
+    setIsDetailsOpen(true);
   };
 
 
   const handleEdit = (service) => {
     setSelectedService(service);
-    setIsDialogOpen(true);
-    console.log('Editar servicio:', service);
+    setIsEditOpen(true);
   };
+
 
 
   const handleUpdateService = (updatedService) => {
@@ -86,8 +87,7 @@ export default function ServicesTable() {
         service.id_service === updatedService.id_service ? updatedService : service
       )
     );
-    setSelectedService(null);
-    setIsDialogOpen(false);   
+    setIsEditOpen(false);
   };
 
 
@@ -101,7 +101,7 @@ export default function ServicesTable() {
     return matchesSearch && matchesCategory;
   });
 
-  
+
   return (
     <div className="container mx-auto py-4">
       <div className="mb-4 flex flex-col md:flex-row gap-4 items-center">
@@ -205,14 +205,25 @@ export default function ServicesTable() {
           </Table>
         </CardContent>
       </Card>
-      
-    {/* Dialog para ver/editar detalles del servicio */}
-    <ServiceDetailsDialog
-      isOpen={isDialogOpen}
-      onClose={() => setIsDialogOpen(false)}
-      service={selectedService}
-      onUpdateService={handleUpdateService}
-    />
+
+      {/* Diálogo de ver detalles */}
+      <ServiceDetailsDialog
+        isOpen={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        service={selectedService}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onUpdateService={handleUpdateService} // <- Añadido aquí
+      />
+
+
+      {/* Diálogo de editar servicio */}
+      <EditServiceDialog
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        service={selectedService}
+        onUpdateService={handleUpdateService}
+      />
     </div>
   );
 }
