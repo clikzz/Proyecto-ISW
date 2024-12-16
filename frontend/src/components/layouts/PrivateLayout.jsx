@@ -112,14 +112,14 @@ export default function PrivateLayout({ children }) {
             <NavLink href="/services" icon={<Wrench className="h-6 w-6" />}>
               Servicios
             </NavLink>
+            <NavLink
+              href="/tasks"
+              icon={<ClipboardCheck className="h-6 w-6" />}
+            >
+              Tareas
+            </NavLink>
             {role === 'admin' && (
               <>
-                <NavLink
-                  href="/tasks"
-                  icon={<ClipboardCheck className="h-6 w-6" />}
-                >
-                  Tareas
-                </NavLink>
                 <NavLink href="/users" icon={<Users className="h-6 w-6" />}>
                   Usuarios
                 </NavLink>
