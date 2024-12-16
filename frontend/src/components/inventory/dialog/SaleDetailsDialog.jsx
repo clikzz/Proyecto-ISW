@@ -29,6 +29,10 @@ const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
               <p className="p-2 rounded-md border dark:border-gray-800">{sale.name_item}</p>
             </div>
             <div>
+              <label className="block text-sm font-semibold">Categoría</label>
+              <p className="p-2 rounded-md border dark:border-gray-800">{capitalize(sale.category)}</p>
+            </div>
+            <div>
               <label className="block text-sm font-semibold">Método de Pago</label>
               <p className="p-2 rounded-md border dark:border-gray-800">{capitalize(sale.payment_method)}</p>
             </div>

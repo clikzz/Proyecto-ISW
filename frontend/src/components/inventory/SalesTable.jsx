@@ -2,7 +2,8 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { getSales } from '@/api/inventory';
-import { Info, Search, ArrowUpDown, EllipsisVertical } from 'lucide-react';
+import { Filter, Search, ArrowUpDown, EllipsisVertical } from 'lucide-react';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatDateTime } from '@/helpers/dates';
@@ -29,6 +30,7 @@ const SalesTable = () => {
   const [selectedSale, setSelectedSale] = useState(null);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('todas');
   const { showAlert } = useAlert();
 
   const [sortConfig, setSortConfig] = useState({
@@ -53,12 +55,14 @@ const SalesTable = () => {
 
   useEffect(() => {
     const lowercasedSearch = search.toLowerCase();
-    setFilteredSales(
-      sales.filter((sale) =>
-        sale.description && sale.description.toLowerCase().includes(lowercasedSearch)
-      )
-    );
-  }, [search, sales]);
+    const filtered = sales.filter((sale) => {
+      const matchesSearch = sale.name_item.toLowerCase().includes(lowercasedSearch);
+      const matchesCategory =
+        selectedCategory === 'todas' || sale.category.toLowerCase() === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+    setFilteredSales(filtered);
+  }, [search, sales, selectedCategory]);
 
   const handleSort = (key) => {
     let direction = 'ascending';
@@ -155,6 +159,25 @@ const SalesTable = () => {
             className="max-w-full"
           />
           <Search className="ml-2 h-5 w-5 text-gray-500" />
+          <div className="ml-5">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-[150px]">
+                <Filter className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Categoría" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todas">Todas</SelectItem>
+                <SelectItem value="bicicletas">Bicicletas</SelectItem>
+                <SelectItem value="repuestos">Repuestos</SelectItem>
+                <SelectItem value="componentes">Componentes</SelectItem>
+                <SelectItem value="herramientas">Herramientas</SelectItem>
+                <SelectItem value="limpieza">Limpieza</SelectItem>
+                <SelectItem value="equipamiento">Equipamiento</SelectItem>
+                <SelectItem value="electrónica">Electrónica</SelectItem>
+                <SelectItem value="otros">Otros</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <SellItemDialog fetchSales={fetchSales} />
       </div>
@@ -172,6 +195,16 @@ const SalesTable = () => {
                       className="text-foreground"
                     >
                       <strong>Producto</strong>
+                      <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort('category')}
+                      className="text-foreground"
+                    >
+                      <strong>Categoría</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
@@ -224,6 +257,7 @@ const SalesTable = () => {
                 {sortedSales.map((sale) => (
                   <TableRow key={sale.id_transaction}>
                     <TableCell>{sale.name_item}</TableCell>
+                    <TableCell>{capitalize(sale.category)}</TableCell>
                     <TableCell>{sale.quantity_item}</TableCell>
                     <TableCell>$ {sale.amount?.toLocaleString('es-CL')}</TableCell>
                     <TableCell>{capitalize(sale.payment_method)}</TableCell>

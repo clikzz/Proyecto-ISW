@@ -2,13 +2,14 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { getPurchases } from '@/api/inventory';
-import { Info, Search, ArrowUpDown, EllipsisVertical } from 'lucide-react';
+import { Filter, Search, ArrowUpDown, EllipsisVertical } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatDateTime } from '@/helpers/dates';
 import { capitalize } from '@/helpers/capitalize';
 import AddPurchaseDialog from '@/components/inventory/dialog/AddPurchaseDialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import { deletePurchase } from '@/api/inventory';
 import EditPurchaseDialog from '@/components/inventory/dialog/EditPurchaseDialog';
@@ -25,6 +26,7 @@ const PurchasesTable = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedPurchase, setSelectedPurchase] = useState(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('todas');
   const { showAlert } = useAlert();
 
   const [sortConfig, setSortConfig] = useState({
@@ -49,11 +51,13 @@ const PurchasesTable = () => {
   useEffect(() => {
     const lowercasedSearch = search.toLowerCase();
     const filtered = purchases.filter((purchase) => {
-      const description = purchase.name_item || '';
-      return description.toLowerCase().includes(lowercasedSearch);
+      const matchesSearch = purchase.name_item.toLowerCase().includes(lowercasedSearch);
+      const matchesCategory =
+        selectedCategory === 'todas' || purchase.category.toLowerCase() === selectedCategory;
+      return matchesSearch && matchesCategory;
     });
     setFilteredPurchases(filtered);
-  }, [search, purchases]);
+  }, [search, purchases, selectedCategory]);
 
   const handleSort = (key) => {
     let direction = 'ascending';
@@ -142,6 +146,25 @@ const PurchasesTable = () => {
             className="max-w-full"
           />
           <Search className="ml-2 h-5 w-5 text-gray-500" />
+          <div className="ml-5">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-[150px]">
+                <Filter className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Categoría" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todas">Todas</SelectItem>
+                <SelectItem value="bicicletas">Bicicletas</SelectItem>
+                <SelectItem value="repuestos">Repuestos</SelectItem>
+                <SelectItem value="componentes">Componentes</SelectItem>
+                <SelectItem value="herramientas">Herramientas</SelectItem>
+                <SelectItem value="limpieza">Limpieza</SelectItem>
+                <SelectItem value="equipamiento">Equipamiento</SelectItem>
+                <SelectItem value="electrónica">Electrónica</SelectItem>
+                <SelectItem value="otros">Otros</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <AddPurchaseDialog fetchPurchases={fetchPurchases} />
       </div>
@@ -159,6 +182,16 @@ const PurchasesTable = () => {
                       className="text-foreground"
                     >
                       <strong>Producto</strong>
+                      <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort('category')}
+                      className="text-foreground"
+                    >
+                      <strong>Categoría</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
@@ -221,6 +254,7 @@ const PurchasesTable = () => {
                 {sortedPurchases.map((purchase) => (
                   <TableRow key={purchase.id_transaction}>
                     <TableCell>{purchase.name_item}</TableCell>
+                    <TableCell>{capitalize(purchase.category)}</TableCell>
                     <TableCell>{purchase.quantity_item}</TableCell>
                     <TableCell>$ {purchase.amount?.toLocaleString('es-CL')}</TableCell>
                     <TableCell>{capitalize(purchase.payment_method)}</TableCell>
