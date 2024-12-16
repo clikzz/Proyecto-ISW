@@ -1,30 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { updateService } from '@/api/service';
 import { useAlert } from '@/context/alertContext';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { newServiceValidation } from '@/validations/newService';
 
 const EditServiceDialog = ({ isOpen, onClose, service, onUpdateService }) => {
-  const [editedService, setEditedService] = useState({});
   const { showAlert } = useAlert();
 
-  useEffect(() => {
-    if (service) {
-      setEditedService({ ...service });
-    }
-  }, [service]);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditedService((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSave = async () => {
+  const handleSubmit = async (values) => {
     try {
-      const updatedFields = Object.keys(editedService).reduce((changes, key) => {
-        if (editedService[key] !== service[key]) {
-          changes[key] = editedService[key];
+      const updatedFields = Object.keys(values).reduce((changes, key) => {
+        if (values[key] !== service[key]) {
+          changes[key] = values[key];
         }
         return changes;
       }, {});
@@ -49,76 +41,134 @@ const EditServiceDialog = ({ isOpen, onClose, service, onUpdateService }) => {
         <DialogHeader>
           <DialogTitle>Editar Servicio</DialogTitle>
         </DialogHeader>
-        <div>
-          <label>Nombre</label>
-          <input
-            name="name_service"
-            value={editedService.name_service || ''}
-            onChange={handleInputChange}
-            className="p-2 border rounded-md w-full mb-4"
-          />
-          
-          <label>Categoría</label>
-          <Select
-            value={editedService.category || ''}
-            onValueChange={(value) => setEditedService((prev) => ({ ...prev, category: value }))}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar categoría" />
-            </SelectTrigger>
-            <SelectContent>
-              {['Reparación', 'Mantenimiento', 'Personalización', 'Otro'].map((cat) => (
-                <SelectItem key={cat} value={cat.toLowerCase()}>
-                  {cat}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
 
-          <label>Método de Pago</label>
-          <Select
-            value={editedService.payment_method_service || ''}
-            onValueChange={(value) =>
-              setEditedService((prev) => ({ ...prev, payment_method_service: value }))
-            }
+        {service && (
+          <Formik
+            initialValues={{
+              name_service: service.name_service || '',
+              description_service: service.description_service || '',
+              price_service: service.price_service || '',
+              category: service.category || '',
+              payment_method_service: service.payment_method_service || '',
+            }}
+            validationSchema={newServiceValidation}
+            onSubmit={handleSubmit}
           >
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar método de pago" />
-            </SelectTrigger>
-            <SelectContent>
-              {['Efectivo', 'Tarjeta', 'Transferencia'].map((method) => (
-                <SelectItem key={method} value={method.toLowerCase()}>
-                  {method}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            {({ setFieldValue, values }) => (
+              <Form className="space-y-4">
+                {/* Nombre */}
+                <div>
+                  <label htmlFor="name_service">Nombre</label>
+                  <Field
+                    as={Input}
+                    name="name_service"
+                    id="name_service"
+                    placeholder="Nombre del servicio"
+                  />
+                  <ErrorMessage
+                    name="name_service"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
 
-          <label>Precio</label>
-          <input
-            name="price_service"
-            type="number"
-            value={editedService.price_service || ''}
-            onChange={handleInputChange}
-            className="p-2 border rounded-md w-full mb-4"
-          />
-          
-          <label>Descripción</label>
-          <Textarea
-            name="description_service"
-            value={editedService.description_service || ''}
-            onChange={handleInputChange}
-            className="p-2 border rounded-md w-full mb-4"
-          />
-        </div>
-        <div className="flex justify-end space-x-4">
-          <button className="px-4 py-2 bg-gray-500 text-white rounded-lg" onClick={onClose}>
-            Cancelar
-          </button>
-          <button className="px-4 py-2 bg-blue-500 text-white rounded-lg" onClick={handleSave}>
-            Guardar
-          </button>
-        </div>
+                {/* Categoría */}
+                <div>
+                  <label htmlFor="category">Categoría</label>
+                  <Select
+                    value={values.category}
+                    onValueChange={(value) => setFieldValue('category', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar categoría" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="reparación">Reparación</SelectItem>
+                      <SelectItem value="mantenimiento">Mantenimiento</SelectItem>
+                      <SelectItem value="personalización">Personalización</SelectItem>
+                      <SelectItem value="otro">Otro</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <ErrorMessage
+                    name="category"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
+
+                {/* Método de Pago */}
+                <div>
+                  <label htmlFor="payment_method_service">Método de Pago</label>
+                  <Select
+                    value={values.payment_method_service}
+                    onValueChange={(value) => setFieldValue('payment_method_service', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar método de pago" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="efectivo">Efectivo</SelectItem>
+                      <SelectItem value="tarjeta">Tarjeta</SelectItem>
+                      <SelectItem value="transferencia">Transferencia</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <ErrorMessage
+                    name="payment_method_service"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
+
+                {/* Precio */}
+                <div>
+                  <label htmlFor="price_service">Precio</label>
+                  <Field
+                    as={Input}
+                    type="number"
+                    name="price_service"
+                    id="price_service"
+                    placeholder="Precio del servicio"
+                  />
+                  <ErrorMessage
+                    name="price_service"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
+
+                {/* Descripción */}
+                <div>
+                  <label htmlFor="description_service">Descripción</label>
+                  <Field
+                    as={Textarea}
+                    name="description_service"
+                    id="description_service"
+                    placeholder="Descripción del servicio"
+                  />
+                  <ErrorMessage
+                    name="description_service"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
+
+                {/* Botones */}
+                <div className="flex justify-end space-x-4">
+                  <Button
+                    type="button"
+                    className="bg-red-500 hover:bg-red-600"
+                    onClick={onClose}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button type="submit">
+                    Guardar
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        )}
       </DialogContent>
     </Dialog>
   );
