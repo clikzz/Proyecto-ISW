@@ -2,6 +2,7 @@ import { utils, writeFile } from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { capitalize } from '@/helpers/capitalize';
+import { formatDateTime } from '@/helpers/dates';
 
 export const exportToExcel = (sales) => {
   // Mapeo de los datos de las ventas
@@ -11,8 +12,9 @@ export const exportToExcel = (sales) => {
     Cantidad: sale.quantity_item,
     Monto: `$${sale.amount?.toLocaleString('es-CL')}`,
     'Método de Pago': capitalize(sale.payment_method),
-    Fecha: new Date(sale.transaction_date).toLocaleDateString(),
-    Modificado: new Date(sale.updated_at).toLocaleDateString(),
+    Descripción: capitalize(sale.description) || 'Sin descripción',
+    Fecha: formatDateTime(sale.transaction_date),
+    Modificado: formatDateTime(sale.updated_at),
   }));
 
   // Crear hoja de Excel
@@ -25,6 +27,7 @@ export const exportToExcel = (sales) => {
     { wch: 10 }, // Cantidad
     { wch: 15 }, // Monto
     { wch: 20 }, // Método de Pago
+    { wch: 30 }, // Descripción
     { wch: 15 }, // Fecha
     { wch: 15 }, // Modificado
   ];
@@ -33,7 +36,7 @@ export const exportToExcel = (sales) => {
   // Agregar encabezados manualmente
   utils.sheet_add_aoa(
     worksheet,
-    [['Producto', 'Categoría', 'Cantidad', 'Monto', 'Método de Pago', 'Fecha', 'Modificado']],
+    [['Producto', 'Categoría', 'Cantidad', 'Monto', 'Método de Pago', 'Descripción', 'Fecha', 'Modificado']],
     { origin: 'A1' }
   );
 
@@ -62,13 +65,14 @@ export const exportToPDF = (sales) => {
     sale.quantity_item,
     `$${sale.amount?.toLocaleString('es-CL')}`,
     capitalize(sale.payment_method),
-    new Date(sale.transaction_date).toLocaleDateString(),
-    new Date(sale.updated_at).toLocaleDateString(),
+    capitalize(sale.description) || 'Sin descripción',
+    formatDateTime(sale.transaction_date),
+    formatDateTime(sale.updated_at),
   ]);
 
   // Crear tabla en el PDF
   autoTable(doc, {
-    head: [['Producto', 'Categoría', 'Cantidad', 'Monto', 'Método de Pago', 'Fecha', 'Modificado']],
+    head: [['Producto', 'Categoría', 'Cantidad', 'Monto', 'Método de Pago', 'Descripción', 'Fecha', 'Modificado']],
     body: tableData,
     startY: 40,
     styles: {
