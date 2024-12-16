@@ -64,8 +64,8 @@ export default function SellItemDialog({ fetchSales }) {
       resetForm();
       fetchSales();
     } catch (error) {
-      console.error('Error al registrar la venta:', error);
-      showAlert('Error al registrar la venta', 'error');
+      console.error('Error al registrar la venta:', error.message);
+      showAlert(error.message, 'error');
     } finally {
       setSubmitting(false);
     }

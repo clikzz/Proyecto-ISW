@@ -31,7 +31,8 @@ const InventoryTable = () => {
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('todas');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSupplier, setSelectedSupplier] = useState('');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { showAlert } = useAlert();
   const { role, loading } = useAuth();
@@ -107,13 +108,26 @@ const InventoryTable = () => {
     setSortConfig({ key, direction });
   };
 
+  const uniqueSuppliers = useMemo(() => {
+    const allSuppliers = items.flatMap((item) => item.suppliers?.length > 0 ? item.suppliers : ['No Registrado']);
+    return ['todos', ...new Set(allSuppliers)];
+  }, [items]);
+  
+
   const filteredAndSortedItems = useMemo(() => {
     const lowercasedSearch = search.toLowerCase();
     let filtered = items.filter((item) => {
       const matchesSearch = item.name_item.toLowerCase().includes(lowercasedSearch);
       const matchesCategory =
-        selectedCategory === 'todas' || item.category.toLowerCase() === selectedCategory;
-      return matchesSearch && matchesCategory;
+        selectedCategory === '' || 
+        selectedCategory === 'todas' || 
+        item.category.toLowerCase() === selectedCategory;
+      const matchesSupplier =
+        selectedSupplier === '' ||
+        selectedSupplier === 'todos' ||
+        (item.suppliers?.length > 0 && item.suppliers.includes(selectedSupplier)) ||
+        (item.suppliers?.length === 0 && selectedSupplier === 'No Registrado');
+      return matchesSearch && matchesCategory && matchesSupplier;
     });
   
     if (sortConfig.key !== null) {
@@ -132,7 +146,7 @@ const InventoryTable = () => {
     }
   
     return filtered;
-  }, [items, search, selectedCategory, sortConfig]);
+  }, [items, search, selectedCategory, selectedSupplier, sortConfig]);
 
   return (
     <div className="container mx-auto py-4">
@@ -141,17 +155,17 @@ const InventoryTable = () => {
       </div>
 
       <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center max-w-sm">
+        <div className="flex items-center max-w-l">
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por nombre..."
             className="max-w-full"
           />
-          <Search className="ml-2 h-5 w-5 text-gray-500" />
+          <Search className="ml-2 h-10 w-10 text-gray-500" />
           <div className="ml-5">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-[160px]">
                 <Filter className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Categoría" />
               </SelectTrigger>
@@ -165,6 +179,21 @@ const InventoryTable = () => {
                 <SelectItem value="equipamiento">Equipamiento</SelectItem>
                 <SelectItem value="electrónica">Electrónica</SelectItem>
                 <SelectItem value="otros">Otros</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="ml-5">
+            <Select value={selectedSupplier} onValueChange={setSelectedSupplier}>
+              <SelectTrigger className="w-[160px]">
+                <Filter className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Proveedor" />
+              </SelectTrigger>
+              <SelectContent>
+                {uniqueSuppliers.map((supplier) => (
+                  <SelectItem key={supplier} value={supplier}>
+                    {capitalize(supplier)}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
