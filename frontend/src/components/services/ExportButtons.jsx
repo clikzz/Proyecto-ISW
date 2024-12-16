@@ -16,7 +16,6 @@ export default function ExportButtons({ servicios }) {
     <div className="flex gap-2">
       <Button
         onClick={handleExportExcel}
-        variant="excel"
         title="Exportar a Excel"
       >
         <FileSpreadsheet className="mr-2 h-4 w-4" />
