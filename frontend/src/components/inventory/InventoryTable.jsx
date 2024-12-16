@@ -21,6 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/context/authContext';
 
 const InventoryTable = () => {
   const [items, setItems] = useState([]);
@@ -33,6 +34,7 @@ const InventoryTable = () => {
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { showAlert } = useAlert();
+  const { role, loading } = useAuth();
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -93,6 +95,10 @@ const InventoryTable = () => {
   useEffect(() => {
     fetchItems();
   }, []);
+
+  if (loading) {
+    return <div>Cargando...</div>;
+  }
 
   const handleSort = (key) => {
     let direction = 'ascending';
@@ -300,12 +306,15 @@ const InventoryTable = () => {
                           >
                             Editar
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="hover:bg-red-100 dark:hover:bg-red-700 px-4 py-2 cursor-pointer text-red-600 dark:text-red-400"
-                            onClick={() => openConfirmationDialog(item.id_item)}
-                          >
-                            Eliminar
-                          </DropdownMenuItem>
+                          {/* Botón de eliminar: visible solo si el rol es "admin" */}
+                          {role === 'admin' && (
+                            <DropdownMenuItem
+                              className="hover:bg-red-100 dark:hover:bg-red-700 px-4 py-2 cursor-pointer text-red-600 dark:text-red-400"
+                              onClick={() => openConfirmationDialog(item.id_item)}
+                            >
+                              Eliminar
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
