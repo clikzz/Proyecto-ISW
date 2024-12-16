@@ -1,6 +1,7 @@
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { formatDate } from '@/helpers/dates';
+import { capitalize } from '@/helpers/capitalize';
 
 const formatoPesoChileno = (valor) => {
   return new Intl.NumberFormat('es-CL', {
@@ -19,11 +20,11 @@ export const exportTransactionsToPDF = (transactions) => {
   const tableColumn = ["Fecha", "Tipo", "Descripción", "Monto", "Método de Pago", "RUT"];
   const tableRows = transactions.map(t => [
     formatDate(t.transaction_date),
-    t.transaction_type,
-    t.description,
+    capitalize(t.transaction_type),
+    capitalize(t.description),
     formatoPesoChileno(t.amount),
-    t.payment_method,
-    t.rut
+    capitalize(t.payment_method),
+    t.rut || 'Sin asignar'
   ]);
 
   doc.autoTable(tableColumn, tableRows, {
@@ -48,4 +49,3 @@ export const exportTransactionsToPDF = (transactions) => {
   });
   doc.save("transacciones.pdf");
 };
-
