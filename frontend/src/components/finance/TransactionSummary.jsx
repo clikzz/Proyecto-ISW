@@ -8,6 +8,7 @@ import NewTransactionForm from './NewTransactionForm';
 import { useAlert } from '@context/alertContext';
 import { getServices } from '@/api/service';
 import { formatDate } from '@/helpers/dates';
+import { capitalize } from '@/helpers/capitalize';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 
 const formatoPesoChileno = (valor) => {
@@ -44,8 +45,7 @@ export default function TransactionSummary({ transactions, onTransactionUpdated 
             ...service,
             id: service.id_service,
             transaction_type: 'servicio',
-            description: `${service.name_service}`,
-            type: 'servicio',
+            description: service.name_service,
             amount: service.price_service,
             payment_method: service.payment_method_service,
             transaction_date: service.created_at
@@ -95,14 +95,6 @@ export default function TransactionSummary({ transactions, onTransactionUpdated 
     setEditingTransaction(transaction);
   };
 
-  const getTransactionColor = (type) => {
-    if (['ingreso', 'venta', 'servicio'].includes(type)) {
-      return 'text-green-500';
-    } else if (['egreso', 'compra'].includes(type)) {
-      return 'text-red-500';
-    }
-    return 'text-gray-500'; // default color for unknown types
-  };
 
   return (
     <>
@@ -122,12 +114,24 @@ export default function TransactionSummary({ transactions, onTransactionUpdated 
                     {t.description}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {formatDate(t.transaction_date)} - {t.transaction_type} - {t.payment_method}
+                    {formatDate(t.transaction_date)} - {capitalize(t.transaction_type)} - {capitalize(t.payment_method)}
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className={`text-lg font-semibold ${getTransactionColor(t.transaction_type)}`}>
-                    {['ingreso', 'venta', 'servicio'].includes(t.transaction_type) ? '+' : '-'}
+                <div
+                    className={`text-lg font-semibold ${
+                      t.transaction_type === "ingreso" ||
+                      t.transaction_type === "venta" ||
+                      t.transaction_type === "servicio"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {t.transaction_type === "ingreso" ||
+                    t.type === "venta" ||
+                    t.transaction_type === "servicio"
+                      ? "+"
+                      : "-"}
                     {formatoPesoChileno(t.amount)}
                   </div>
                   <button
