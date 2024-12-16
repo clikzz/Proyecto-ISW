@@ -152,6 +152,26 @@ class User {
     const result = await db.query(query, [resetToken]);
     return result.rows[0];
   }
+
+  static async updatePassword(rut, newPassword) {
+    const query = `
+      UPDATE "users"
+      SET password_user = $1, updated_at = NOW() AT TIME ZONE 'America/Santiago'
+      WHERE rut = $2
+      RETURNING rut, name_user, email, role_user, updated_at;
+    `;
+    const result = await db.query(query, [newPassword, rut]);
+    return result.rows[0];
+  }
+
+  static async clearResetToken(rut) {
+    const query = `
+      UPDATE "users"
+      SET reset_token = NULL, reset_token_expiry = NULL
+      WHERE rut = $1
+    `;
+    await db.query(query, [rut]);
+  }
 }
 
 module.exports = User;
