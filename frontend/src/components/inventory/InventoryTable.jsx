@@ -284,7 +284,7 @@ const InventoryTable = () => {
                   <TableRow key={item.id_item}>
                     <TableCell>{item.name_item}</TableCell>
                     <TableCell>{capitalize(item.category)}</TableCell>
-                    <TableCell>{item.stock}</TableCell>
+                    <TableCell>{item.stock === 0 ? 'Sin stock' : item.stock}</TableCell>
                     <TableCell>$ {item.selling_price?.toLocaleString('es-CL')}</TableCell>
                     <TableCell>
                       {item.suppliers && item.suppliers.length > 0 ? (
