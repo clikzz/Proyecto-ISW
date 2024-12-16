@@ -11,6 +11,8 @@ import AddItemDialog from '@/components/inventory/dialog/AddItemDialog';
 import ItemDetailsDialog from '@/components/inventory/dialog/ItemDetailsDialog';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import EditItemDialog from '@/components/inventory/dialog/EditItemDialog';
+import ExportButtons from '@/components/inventory/ExportButtons';
+import { exportToExcel, exportToPDF } from '@/helpers/exportInventory';
 import { capitalize } from '@/helpers/capitalize';
 import { useAlert } from '@/context/alertContext';
 import {
@@ -19,6 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/context/authContext';
 
 const InventoryTable = () => {
   const [items, setItems] = useState([]);
@@ -31,6 +34,7 @@ const InventoryTable = () => {
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { showAlert } = useAlert();
+  const { role, loading } = useAuth();
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -91,6 +95,10 @@ const InventoryTable = () => {
   useEffect(() => {
     fetchItems();
   }, []);
+
+  if (loading) {
+    return <div>Cargando...</div>;
+  }
 
   const handleSort = (key) => {
     let direction = 'ascending';
@@ -162,7 +170,14 @@ const InventoryTable = () => {
             </Select>
           </div>
         </div>
-        <AddItemDialog fetchItems={fetchItems} />
+        <div className="flex gap-2">
+          <ExportButtons 
+            data={filteredAndSortedItems}
+            handleExportExcel={exportToExcel}
+            handleExportPDF={exportToPDF}
+          />
+          <AddItemDialog fetchItems={fetchItems} />
+        </div>
       </div>
 
       <Card className="border-none pt-4">
@@ -291,12 +306,15 @@ const InventoryTable = () => {
                           >
                             Editar
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="hover:bg-red-100 dark:hover:bg-red-700 px-4 py-2 cursor-pointer text-red-600 dark:text-red-400"
-                            onClick={() => openConfirmationDialog(item.id_item)}
-                          >
-                            Eliminar
-                          </DropdownMenuItem>
+                          {/* Botón de eliminar: visible solo si el rol es "admin" */}
+                          {role === 'admin' && (
+                            <DropdownMenuItem
+                              className="hover:bg-red-100 dark:hover:bg-red-700 px-4 py-2 cursor-pointer text-red-600 dark:text-red-400"
+                              onClick={() => openConfirmationDialog(item.id_item)}
+                            >
+                              Eliminar
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>

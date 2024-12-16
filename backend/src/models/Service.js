@@ -33,6 +33,7 @@ class Service {
         s.updated_at,
         s.is_deleted,
         u.name_user AS employee_name,
+        u.profile_picture,
         s.status_service
       FROM service s
       LEFT JOIN users u ON s.rut_user = u.rut
@@ -41,7 +42,6 @@ class Service {
     const result = await db.query(query);
     return result.rows;
   }
-
 
   static async findById(id) {
     const query = `

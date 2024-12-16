@@ -32,6 +32,7 @@ export default function TaskColumn({
   tasks,
   fetchTasks,
   updateTaskStatus,
+  userRole
 }) {
   const config = columnConfig[columnId];
   if (!config) {
@@ -69,6 +70,7 @@ export default function TaskColumn({
                 index={index}
                 fetchTasks={fetchTasks}
                 updateTaskStatus={updateTaskStatus}
+                userRole={userRole}
               />
             ))}
             {provided.placeholder}
@@ -83,3 +85,4 @@ export default function TaskColumn({
     </motion.div>
   );
 }
+

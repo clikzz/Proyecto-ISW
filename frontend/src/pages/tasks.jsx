@@ -6,12 +6,45 @@ import { ClipboardCheck } from 'lucide-react';
 import { getServices } from '@/api/service';
 import { updateTaskStatus as updTaskStatus } from '@/api/task';
 
+const getUserRole = () => {
+  console.log('Role:', localStorage.getItem('role'));
+
+  return localStorage.getItem('role') || 'employee';
+};
+
+const getUserRut = () => {
+  const token = localStorage.getItem('token');
+  if (!token) return '';
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    console.log('RUT:', payload.rut);
+    return payload.rut || '';
+  } catch (error) {
+    console.error('Error parsing token:', error);
+    return '';
+  }
+};
+
 export default function TareasPage() {
   const [tasks, setTasks] = useState([]);
+  const [userRole, setUserRole] = useState(getUserRole());
+  const [userRut, setUserRut] = useState(getUserRut());
+
+  useEffect(() => {
+    setUserRole(getUserRole());
+    setUserRut(getUserRut());
+  }, []);
 
   const fetchTasks = async () => {
-    const tasks = await getServices();
-    setTasks(tasks);
+    if (userRole === 'admin') {
+      const tasks = await getServices();
+      setTasks(tasks);
+    } else {
+      const tasks = await getServices();
+      console.log(tasks);
+      const filteredTasks = tasks.filter((task) => task.rut_user === userRut);
+      setTasks(filteredTasks);
+    }
   };
 
   useEffect(() => {
@@ -92,6 +125,7 @@ export default function TareasPage() {
           tasks={tasks}
           fetchTasks={fetchTasks}
           updateTaskStatus={updateTaskStatus}
+          userRole={userRole}
         />
       </DragDropContext>
     </motion.div>
