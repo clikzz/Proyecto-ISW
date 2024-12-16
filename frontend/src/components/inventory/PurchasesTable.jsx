@@ -29,7 +29,7 @@ const PurchasesTable = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedPurchase, setSelectedPurchase] = useState(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('todas');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const { showAlert } = useAlert();
   const { role, loading } = useAuth();
 
@@ -57,7 +57,7 @@ const PurchasesTable = () => {
     const filtered = purchases.filter((purchase) => {
       const matchesSearch = purchase.name_item.toLowerCase().includes(lowercasedSearch);
       const matchesCategory =
-        selectedCategory === 'todas' || purchase.category.toLowerCase() === selectedCategory;
+        selectedCategory === 'todas' || selectedCategory === '' || purchase.category.toLowerCase() === selectedCategory;
       return matchesSearch && matchesCategory;
     });
     setFilteredPurchases(filtered);
@@ -142,14 +142,14 @@ const PurchasesTable = () => {
       </div>
 
       <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center max-w-sm">
+        <div className="flex items-center max-w-l">
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por producto..."
             className="max-w-full"
           />
-          <Search className="ml-2 h-5 w-5 text-gray-500" />
+          <Search className="ml-2 h-7 w-7 text-gray-500" />
           <div className="ml-5">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger className="w-[150px]">
