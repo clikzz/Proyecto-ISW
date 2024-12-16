@@ -3,7 +3,16 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { User, DollarSign, Tag, Calendar, Clock, CreditCard, Info, UserPlus } from 'lucide-react';
+import {
+  User,
+  DollarSign,
+  Tag,
+  Calendar,
+  Clock,
+  CreditCard,
+  Info,
+  UserPlus,
+} from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -76,7 +85,11 @@ export default function TaskCard({
                     {task.name_service}
                   </CardTitle>
                   <div className="flex flex-col sm:flex-row space-x-2 items-center text-xs justify-between w-full sm:w-auto">
-                    <Button size="sm" className="ml-auto" onClick={() => setIsDialogOpen(true)}>
+                    <Button
+                      size="sm"
+                      className="ml-auto"
+                      onClick={() => setIsDialogOpen(true)}
+                    >
                       <Info className="h-4 w-4 mr-1" />
                       <span className="hidden sm:inline">Detalles</span>
                     </Button>
@@ -115,7 +128,9 @@ export default function TaskCard({
                           >
                             <div className="flex items-center space-x-2">
                               <Avatar className="h-6 w-6">
-                                <AvatarImage src={staffMember.profile_picture} />
+                                <AvatarImage
+                                  src={staffMember.profile_picture}
+                                />
                                 <AvatarFallback>
                                   {staffMember.name_user.charAt(0)}
                                 </AvatarFallback>

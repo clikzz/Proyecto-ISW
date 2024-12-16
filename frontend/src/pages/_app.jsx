@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import { AlertProvider } from '@context/alertContext';
 import { ThemeProvider } from 'next-themes';
 import { useEffect, useState } from 'react';
-import { Metadata } from 'next';
 import '@styles/globals.css';
 import 'cropperjs/dist/cropper.css';
 import Head from 'next/head';

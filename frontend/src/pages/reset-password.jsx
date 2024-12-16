@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Key, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { resetPassword } from '@api/auth';
@@ -12,10 +12,24 @@ export default function ResetPassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
+
+  useEffect(() => {
+    if (token === null) {
+      console.log('No token provided');
+    } else {
+      console.log('Token:', token);
+      setLoading(false);
+    }
+  }, [token]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();

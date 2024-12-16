@@ -28,7 +28,7 @@ export default function TaskDetailsDialog({
 }) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-background text-foreground border-transparent">
         <DialogHeader>
           <DialogTitle>{task.name_service}</DialogTitle>
           <DialogDescription>Detalles completos de la tarea</DialogDescription>
