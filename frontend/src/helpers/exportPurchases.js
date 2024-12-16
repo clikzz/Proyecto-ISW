@@ -2,6 +2,7 @@ import { utils, writeFile } from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { capitalize } from '@/helpers/capitalize';
+import { formatDateTime } from '@/helpers/dates';
 
 export const exportToExcel = (purchases) => {
   // Mapeo de los datos de las compras
@@ -13,8 +14,8 @@ export const exportToExcel = (purchases) => {
     'Método de Pago': capitalize(purchase.payment_method),
     Descripción: capitalize(purchase.description) || 'Sin descripción',
     Proveedor: purchase.name_supplier || 'Desconocido',
-    Fecha: new Date(purchase.transaction_date).toLocaleDateString(),
-    Modificado: new Date(purchase.updated_at).toLocaleDateString(),
+    Fecha: formatDateTime(purchase.transaction_date),
+    Modificado: formatDateTime(purchase.updated_at),
   }));
 
   // Crear hoja de Excel
@@ -68,8 +69,8 @@ export const exportToPDF = (purchases) => {
     capitalize(purchase.payment_method),
     capitalize(purchase.description) || 'Sin descripción',
     purchase.name_supplier || 'Desconocido',
-    new Date(purchase.transaction_date).toLocaleDateString(),
-    new Date(purchase.updated_at).toLocaleDateString(),
+    formatDateTime(purchase.transaction_date),
+    formatDateTime(purchase.updated_at),
   ]);
 
   // Crear tabla en el PDF
