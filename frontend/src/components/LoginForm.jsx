@@ -43,7 +43,7 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await loginUser(rut, password);
+      const response = await loginUser(rut.toUpperCase(), password);
       login(response.token, response.role);
       showAlert(response.message, 'success');
       router.push('/home');
