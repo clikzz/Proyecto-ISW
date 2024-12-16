@@ -22,6 +22,7 @@ import { useAlert } from '@/context/alertContext';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import { exportToExcel, exportToPDF } from '@/helpers/exportSales';
 import ExportButtons from '@/components/inventory/ExportButtons';
+import { useAuth } from '@/context/authContext';
 
 const SalesTable = () => {
   const [sales, setSales] = useState([]);
@@ -34,6 +35,7 @@ const SalesTable = () => {
   const [saleToDelete, setSaleToDelete] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const { showAlert } = useAlert();
+  const { role, loading } = useAuth();
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -295,12 +297,15 @@ const SalesTable = () => {
                           >
                             Editar
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="hover:bg-red-100 px-4 py-2 cursor-pointer text-red-600"
-                            onClick={() => openConfirmationDialog(sale.id_transaction)}
-                          >
-                            Eliminar
-                          </DropdownMenuItem>
+                          {/* Botón de eliminar: visible solo si el rol es "admin" */}
+                          {role === 'admin' && (
+                            <DropdownMenuItem
+                              className="hover:bg-red-100 px-4 py-2 cursor-pointer text-red-600"
+                              onClick={() => openConfirmationDialog(sale.id_transaction)}
+                            >
+                              Eliminar
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>

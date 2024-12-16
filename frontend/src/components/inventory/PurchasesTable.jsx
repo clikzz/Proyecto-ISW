@@ -17,6 +17,7 @@ import PurchaseDetailsDialog from '@/components/inventory/dialog/PurchaseDetails
 import { exportToExcel, exportToPDF } from '@/helpers/exportPurchases';
 import ExportButtons from '@/components/inventory/ExportButtons';
 import { useAlert } from '@/context/alertContext';
+import { useAuth } from '@/context/authContext';
 
 const PurchasesTable = () => {
   const [purchases, setPurchases] = useState([]);
@@ -30,6 +31,7 @@ const PurchasesTable = () => {
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const { showAlert } = useAlert();
+  const { role, loading } = useAuth();
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -293,12 +295,15 @@ const PurchasesTable = () => {
                           >
                             Editar
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="hover:bg-red-100 px-4 py-2 cursor-pointer text-red-600"
-                            onClick={() => openConfirmationDialog(purchase.id_transaction)}
-                          >
-                            Eliminar
-                          </DropdownMenuItem>
+                          {/* Botón de eliminar: visible solo si el rol es "admin" */}
+                          {role === 'admin' && (
+                            <DropdownMenuItem
+                              className="hover:bg-red-100 px-4 py-2 cursor-pointer text-red-600"
+                              onClick={() => openConfirmationDialog(purchase.id_transaction)}
+                            >
+                              Eliminar
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
