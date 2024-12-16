@@ -7,25 +7,21 @@ const bcrypt = require('bcrypt');
 const cloudinary = require('../config/cloudinary');
 const fs = require('fs');
 
-// Actualizar perfil
+
 exports.updateProfile = async (req, res) => {
   try {
     const { name_user, phone_user } = req.body;
-    const rut = req.user.rut; // El rut del usuario autenticado
+    const rut = req.user.rut; 
 
-    // Construir el objeto de actualización solo con los campos proporcionados
     const updates = {};
     if (name_user) updates.name_user = name_user;
     if (phone_user) updates.phone_user = phone_user;
 
-    // Verificar que al menos un campo esté presente
     if (Object.keys(updates).length === 0) {
       return res
         .status(400)
         .json({ message: 'No se proporcionaron datos para actualizar' });
     }
-
-    // Llamar al servicio para actualizar el perfil del usuario
     const updatedUser = await updateUserProfile(rut, updates);
 
     if (!updatedUser) {
@@ -42,20 +38,17 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// Cambiar contraseña
 exports.changePassword = async (req, res) => {
   try {
-    const rut = req.user.rut; // El rut del usuario autenticado
+    const rut = req.user.rut; 
     const { currentPassword, newPassword } = req.body;
 
-    // Validación: Verificar que las contraseñas estén presentes
     if (!currentPassword || !newPassword) {
       return res.status(400).json({
         message: 'La contraseña actual y la nueva contraseña son obligatorias',
       });
     }
 
-    // Llamar al servicio para cambiar la contraseña del usuario
     await changeUserPassword(rut, currentPassword, newPassword);
 
     res.json({ message: 'Contraseña actualizada correctamente' });
