@@ -58,10 +58,8 @@ export default function Charts({ transactions }) {
             ...service,
             id: service.id_service,
             transaction_type: 'servicio',
-            description: `${service.name_service}`,
             type: 'servicio',
             amount: service.price_service,
-            payment_method: service.payment_method_service,
             transaction_date: service.created_at
           }));
 
@@ -135,16 +133,16 @@ export default function Charts({ transactions }) {
         {
           label: "Ingresos",
           data: ingresos,
-          borderColor: "rgb(152,251,152)",
-          backgroundColor: "rgb(152,251,152)",
+          borderColor: "rgba(152,251,152, 1)",
+          backgroundColor: "rgba(152,251,152, 1)",
           fill: false,
           spanGaps: true,
         },
         {
           label: "Egresos",
           data: egresos,
-          borderColor: "rgba(240,128,128)",
-          backgroundColor: "rgba(240,128,128)",
+          borderColor: "rgba(240,128,128, 1)",
+          backgroundColor: "rgba(240,128,128, 1)",
           fill: false,
           spanGaps: true,
         },
@@ -158,7 +156,8 @@ export default function Charts({ transactions }) {
     datasets: [
       {
         data: [summary.ingresos, summary.egresos],
-        backgroundColor: ["rgba(152,251,152, 0.8)", "rgb(240,128,128)"],
+        backgroundColor: ["rgba(152,251,152, 1)", "rgb(240,128,128, 1)"],
+        borderColor: ["rgba(152,251,152, 1)", "rgb(240,128,128, 1)"],
         hoverBackgroundColor: ["rgba(152,251,152, 1)", "rgb(240,128,128, 1)"],
       },
     ],
