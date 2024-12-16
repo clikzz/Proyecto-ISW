@@ -1,5 +1,5 @@
-const db = require("../config/db");
-const bcrypt = require("bcrypt");
+const db = require('../config/db');
+const bcrypt = require('bcrypt');
 
 class User {
   static async create(
@@ -7,7 +7,7 @@ class User {
     name_user,
     email,
     password_user,
-    role_user = "employee"
+    role_user = 'employee'
   ) {
     const hashedPassword = await bcrypt.hash(password_user, 10);
     const query = `
@@ -27,7 +27,7 @@ class User {
     name_user,
     email,
     password_user,
-    role_user = "employee"
+    role_user = 'employee'
   ) {
     const hashedPassword = await bcrypt.hash(password_user, 10);
     const query = `
@@ -101,7 +101,7 @@ class User {
         AND status = 'enabled'
       ORDER BY created_at DESC
     `;
-    const result = await db.query(query, ["employee", "admin"]);
+    const result = await db.query(query, ['employee', 'admin']);
     return result.rows;
   }
 
@@ -135,6 +135,21 @@ class User {
       RETURNING rut, name_user, email, role_user
     `;
     const result = await db.query(query, [status, password, rut]);
+    return result.rows[0];
+  }
+
+  static async setResetToken(rut, resetToken, resetTokenExpiry) {
+    const query = `
+      UPDATE "users"
+      SET reset_token = $1, reset_token_expiry = $2
+      WHERE rut = $3
+    `;
+    await db.query(query, [resetToken, resetTokenExpiry, rut]);
+  }
+
+  static async findByResetToken(resetToken) {
+    const query = 'SELECT * FROM "users" WHERE reset_token = $1';
+    const result = await db.query(query, [resetToken]);
     return result.rows[0];
   }
 }
