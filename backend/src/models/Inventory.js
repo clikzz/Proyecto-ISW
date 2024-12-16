@@ -198,13 +198,15 @@ class Inventory {
         t.amount, 
         t.transaction_date, 
         t.payment_method, 
+        t.updated_at,
         COALESCE(t.description, '') AS description,
         ti.id_item, 
         ti.quantity_item, 
         ti.unit_price,
         ti.id_transaction_item,
         s.name_supplier,
-        i.name_item
+        i.name_item,
+        i.category
       FROM 
         transaction t
       LEFT JOIN transaction_item ti ON t.id_transaction = ti.id_transaction
@@ -233,7 +235,8 @@ class Inventory {
         ti.unit_price, 
         ti.id_transaction_item,
         i.name_item,
-        t.updated_at
+        t.updated_at,
+        i.category
       FROM 
         transaction t
       JOIN 

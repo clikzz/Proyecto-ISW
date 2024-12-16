@@ -9,6 +9,7 @@ export const exportToExcel = (services) => {
     Precio: service.price_service,
     Categoría: service.category,
     'Método de Pago': service.payment_method_service,
+    Empleado: service.employee_name || 'Sin asignar',
   }));
 
   const worksheet = utils.json_to_sheet(mappedServices);
@@ -19,12 +20,13 @@ export const exportToExcel = (services) => {
     { wch: 15 }, // Precio
     { wch: 20 }, // Categoría
     { wch: 20 }, // Método de Pago
+    { wch: 30 }, // Empleado
   ];
   worksheet['!cols'] = colWidths;
 
   utils.sheet_add_aoa(
     worksheet,
-    [['Nombre', 'Descripción', 'Precio', 'Categoría', 'Método de Pago']],
+    [['Nombre', 'Descripción', 'Precio', 'Categoría', 'Método de Pago', 'Empleado']],
     { origin: 'A1' }
   );
 
@@ -52,12 +54,13 @@ export const exportToPDF = (services) => {
     service.price_service,
     service.category,
     service.payment_method_service,
+    service.employee_name || 'Sin asignar',
     new Date(service.date_service).toLocaleDateString(),
   ]);
 
   // Crear tabla
   autoTable(doc, {
-    head: [['Nombre', 'Descripción', 'Precio', 'Categoría', 'Método de Pago']],
+    head: [['Nombre', 'Descripción', 'Precio', 'Categoría', 'Método de Pago', 'Empleado']],
     body: tableData,
     startY: 40,
     styles: {

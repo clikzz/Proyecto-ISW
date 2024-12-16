@@ -31,11 +31,8 @@ export default function BalanceCards({ transactions }) {
           ...service,
           id: service.id_service,
           transaction_type: 'servicio',
-          description: `${service.name_service}`,
           type: 'servicio',
-          amount: service.price_service,
-          payment_method: service.payment_method_service,
-          transaction_date: service.created_at
+          amount: service.price_service
         }));
 
       const combinedData = [

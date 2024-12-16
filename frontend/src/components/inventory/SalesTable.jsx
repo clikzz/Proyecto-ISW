@@ -2,7 +2,8 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { getSales } from '@/api/inventory';
-import { Info, Search, ArrowUpDown, EllipsisVertical } from 'lucide-react';
+import { Filter, Search, ArrowUpDown, EllipsisVertical } from 'lucide-react';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatDateTime } from '@/helpers/dates';
@@ -19,6 +20,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAlert } from '@/context/alertContext';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
+import { exportToExcel, exportToPDF } from '@/helpers/exportSales';
+import ExportButtons from '@/components/inventory/ExportButtons';
 
 const SalesTable = () => {
   const [sales, setSales] = useState([]);
@@ -29,6 +32,7 @@ const SalesTable = () => {
   const [selectedSale, setSelectedSale] = useState(null);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('todas');
   const { showAlert } = useAlert();
 
   const [sortConfig, setSortConfig] = useState({
@@ -39,6 +43,7 @@ const SalesTable = () => {
   const fetchSales = async () => {
     try {
       const data = await getSales();
+      console.log('Ventas:', data);
       setSales(data);
       setFilteredSales(data);
     } catch (error) {
@@ -52,12 +57,14 @@ const SalesTable = () => {
 
   useEffect(() => {
     const lowercasedSearch = search.toLowerCase();
-    setFilteredSales(
-      sales.filter((sale) =>
-        sale.description && sale.description.toLowerCase().includes(lowercasedSearch)
-      )
-    );
-  }, [search, sales]);
+    const filtered = sales.filter((sale) => {
+      const matchesSearch = sale.name_item.toLowerCase().includes(lowercasedSearch);
+      const matchesCategory =
+        selectedCategory === 'todas' || sale.category.toLowerCase() === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+    setFilteredSales(filtered);
+  }, [search, sales, selectedCategory]);
 
   const handleSort = (key) => {
     let direction = 'ascending';
@@ -71,7 +78,7 @@ const SalesTable = () => {
     if (saleToDelete) {
       try {
         await deleteSale(saleToDelete);
-        await fetchSales(); // Refresca la lista de ventas
+        await fetchSales();
         showAlert('Venta eliminada exitosamente', 'success');
       } catch (error) {
         console.error('Error al eliminar la venta:', error);
@@ -92,9 +99,11 @@ const SalesTable = () => {
     setIsConfirmationDialogOpen(false);
   };
 
+  // Función para abrir el diálogo de edición (desde cualquier parte)
   const openEditSaleDialog = (sale) => {
     setSelectedSale(sale);
     setIsEditSaleDialogOpen(true);
+    setIsDetailsDialogOpen(false); // Cierra el diálogo de detalles
   };
   
   const closeEditSaleDialog = () => {
@@ -112,12 +121,10 @@ const SalesTable = () => {
     setIsDetailsDialogOpen(false);
   };
   
-  const handleUpdateSale = (updatedSale) => {
-    setSales((prevSales) =>
-      prevSales.map((sale) =>
-        sale.id_transaction === updatedSale.id_transaction ? updatedSale : sale
-      )
-    );
+  // Función para actualizar ventas después de edición
+  const handleUpdateSale = async () => {
+    await fetchSales();
+    closeEditSaleDialog();
   };
 
   const sortedSales = useMemo(() => {
@@ -154,8 +161,34 @@ const SalesTable = () => {
             className="max-w-full"
           />
           <Search className="ml-2 h-5 w-5 text-gray-500" />
+          <div className="ml-5">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-[150px]">
+                <Filter className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Categoría" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todas">Todas</SelectItem>
+                <SelectItem value="bicicletas">Bicicletas</SelectItem>
+                <SelectItem value="repuestos">Repuestos</SelectItem>
+                <SelectItem value="componentes">Componentes</SelectItem>
+                <SelectItem value="herramientas">Herramientas</SelectItem>
+                <SelectItem value="limpieza">Limpieza</SelectItem>
+                <SelectItem value="equipamiento">Equipamiento</SelectItem>
+                <SelectItem value="electrónica">Electrónica</SelectItem>
+                <SelectItem value="otros">Otros</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <SellItemDialog fetchSales={fetchSales} />
+        <div className="flex gap-2">
+          <ExportButtons
+            data={filteredSales}
+            handleExportExcel={exportToExcel}
+            handleExportPDF={exportToPDF}
+          />
+          <SellItemDialog fetchSales={fetchSales} />
+        </div>
       </div>
 
       <Card className="border-none pt-4">
@@ -171,6 +204,16 @@ const SalesTable = () => {
                       className="text-foreground"
                     >
                       <strong>Producto</strong>
+                      <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort('category')}
+                      className="text-foreground"
+                    >
+                      <strong>Categoría</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
@@ -223,6 +266,7 @@ const SalesTable = () => {
                 {sortedSales.map((sale) => (
                   <TableRow key={sale.id_transaction}>
                     <TableCell>{sale.name_item}</TableCell>
+                    <TableCell>{capitalize(sale.category)}</TableCell>
                     <TableCell>{sale.quantity_item}</TableCell>
                     <TableCell>$ {sale.amount?.toLocaleString('es-CL')}</TableCell>
                     <TableCell>{capitalize(sale.payment_method)}</TableCell>
@@ -272,12 +316,13 @@ const SalesTable = () => {
         isOpen={isEditSaleDialogOpen}
         onClose={closeEditSaleDialog}
         sale={selectedSale}
-        onUpdateSale={fetchSales}
+        onUpdateSale={handleUpdateSale}
       />
 
       <SaleDetailsDialog
         isOpen={isDetailsDialogOpen}
         onClose={closeDetailsDialog}
+        onEdit={openEditSaleDialog}
         sale={selectedSale}
       />
 

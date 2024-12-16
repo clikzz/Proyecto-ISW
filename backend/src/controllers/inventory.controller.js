@@ -1,7 +1,6 @@
 const inventoryService = require('../services/inventory.service');
 
 exports.createPurchase = async (req, res) => {
-  console.log('Datos recibidos (compra):', req.body);
   const { items, details } = req.body;
 
   try {
@@ -19,7 +18,6 @@ exports.createPurchase = async (req, res) => {
 };
 
 exports.createSale = async (req, res) => {
-  console.log('Datos recibidos (venta):', req.body);
   const { items, details } = req.body;
 
   try {
@@ -71,6 +69,23 @@ exports.deletePurchase = async (req, res) => {
   }
 };
 
+exports.updatePurchase = async (req, res) => {
+  const { id_transaction } = req.params;
+  const { details, items } = req.body;
+
+  try {
+    // Llamar al servicio para procesar la actualización
+    const updatedPurchase = await inventoryService.updatePurchase(id_transaction, details, items);
+
+    res.status(200).json({
+      message: 'Compra actualizada exitosamente',
+      updatedPurchase,
+    });
+  } catch (error) {
+    console.error('Error al actualizar la compra:', error);
+    res.status(500).json({ message: 'Error al actualizar la compra', error: error.message });
+  }
+};
 
 exports.deleteSale = async (req, res) => {
   const { id } = req.params;

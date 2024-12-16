@@ -10,7 +10,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart } from 'lucide-react';
+import { PackagePlus } from 'lucide-react';
 import { addItem } from '@api/inventory';
 import { getSuppliers } from '@/api/suppliers';
 import { useAlert } from '@context/alertContext';
@@ -79,13 +79,13 @@ export default function AddItemDialog({ fetchItems }) {
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button className="items-center gap-2 bg-blue-500 text-white">
-          <ShoppingCart size="16" />
-          Añadir Item
+          <PackagePlus size="16" />
+          Añadir Producto
         </Button>
       </DialogTrigger>
       <DialogContent className="border-none text-foreground">
         <DialogHeader>
-          <DialogTitle>Añadir nuevo producto</DialogTitle>
+          <DialogTitle>Formulario de Nuevo Producto</DialogTitle>
         </DialogHeader>
         <Formik
           initialValues={newItem}
@@ -152,7 +152,7 @@ export default function AddItemDialog({ fetchItems }) {
                   id="selling_price"
                   name="selling_price"
                   type="number"
-                  placeholder="Precio de venta"
+                  placeholder="Establecer precio de venta"
                   required
                   onChange={(e) => handleInputChange(e, setFieldValue)}
                 />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileSpreadsheet, FileText, Plus } from 'lucide-react';
+import { FileSpreadsheet, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { exportToExcel, exportToPDF } from '@/helpers/exportServices';
 
@@ -16,7 +16,6 @@ export default function ExportButtons({ servicios }) {
     <div className="flex gap-2">
       <Button
         onClick={handleExportExcel}
-        className="bg-green-600 hover:bg-green-700"
         title="Exportar a Excel"
       >
         <FileSpreadsheet className="mr-2 h-4 w-4" />
@@ -24,7 +23,7 @@ export default function ExportButtons({ servicios }) {
       </Button>
       <Button
         onClick={handleExportPDF}
-        className="bg-red-600 hover:bg-red-700"
+        variant="pdf"
         title="Exportar a PDF"
       >
         <FileText className="mr-2 h-4 w-4" />

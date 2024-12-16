@@ -3,7 +3,7 @@ import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { getInventoryItems, getItemById, deleteItem } from '@/api/inventory';
-import { Info, Search, ArrowUpDown, EllipsisVertical, Filter } from 'lucide-react';
+import { Search, ArrowUpDown, EllipsisVertical, Filter } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatDateTime } from '@/helpers/dates';
@@ -11,7 +11,10 @@ import AddItemDialog from '@/components/inventory/dialog/AddItemDialog';
 import ItemDetailsDialog from '@/components/inventory/dialog/ItemDetailsDialog';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import EditItemDialog from '@/components/inventory/dialog/EditItemDialog';
+import ExportButtons from '@/components/inventory/ExportButtons';
+import { exportToExcel, exportToPDF } from '@/helpers/exportInventory';
 import { capitalize } from '@/helpers/capitalize';
+import { useAlert } from '@/context/alertContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,6 +32,7 @@ const InventoryTable = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { showAlert } = useAlert();
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -76,9 +80,10 @@ const InventoryTable = () => {
         setFilteredItems((prevItems) =>
           prevItems.filter((item) => item.id_item !== itemToDelete)
         );
+        showAlert('Ítem eliminado correctamente', 'success');
       } catch (error) {
         console.error('Error al eliminar el item:', error);
-        alert('No se pudo eliminar el item.');
+        showAlert('Ocurrió un error al eliminar el ítem', 'error');
       } finally {
         closeConfirmationDialog();
       }
@@ -159,7 +164,14 @@ const InventoryTable = () => {
             </Select>
           </div>
         </div>
-        <AddItemDialog fetchItems={fetchItems} />
+        <div className="flex gap-2">
+          <ExportButtons 
+            data={filteredAndSortedItems}
+            handleExportExcel={exportToExcel}
+            handleExportPDF={exportToPDF}
+          />
+          <AddItemDialog fetchItems={fetchItems} />
+        </div>
       </div>
 
       <Card className="border-none pt-4">
@@ -243,7 +255,6 @@ const InventoryTable = () => {
                     <TableCell>
                       {item.suppliers && item.suppliers.length > 0 ? (
                         (() => {
-                          // Filtrar duplicados usando un conjunto (Set)
                           const uniqueSuppliers = [...new Set(item.suppliers)];
                           // Renderizar el primer proveedor y el contador de adicionales
                           return (
@@ -273,15 +284,15 @@ const InventoryTable = () => {
                             <EllipsisVertical className="h-5 w-5 text-gray-600" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-white border rounded-md shadow-lg z-50 w-48">
+                        <DropdownMenuContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 w-48">
                           <DropdownMenuItem
-                            className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 cursor-pointer text-gray-700 dark:text-gray-300"
                             onClick={() => fetchItemDetails(item.id_item)}
                           >
                             Ver información
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 cursor-pointer text-gray-700 dark:text-gray-300"
                             onClick={() => {
                               setSelectedItem(item);
                               setIsEditDialogOpen(true);
@@ -290,7 +301,7 @@ const InventoryTable = () => {
                             Editar
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            className="hover:bg-red-100 px-4 py-2 cursor-pointer text-red-600"
+                            className="hover:bg-red-100 dark:hover:bg-red-700 px-4 py-2 cursor-pointer text-red-600 dark:text-red-400"
                             onClick={() => openConfirmationDialog(item.id_item)}
                           >
                             Eliminar
@@ -310,7 +321,11 @@ const InventoryTable = () => {
         isOpen={isDetailsDialogOpen}
         onClose={() => setIsDetailsDialogOpen(false)}
         item={selectedItem}
-        onUpdateItem={fetchItems}
+        onEdit={(item) => {
+          setSelectedItem(item);
+          setIsDetailsDialogOpen(false);
+          setIsEditDialogOpen(true);
+        }}
       />
 
       <ConfirmationDialog
