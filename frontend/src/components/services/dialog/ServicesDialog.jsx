@@ -60,7 +60,7 @@ export default function AddServiceDialog({ onAddService }) {
           {({ values, setFieldValue }) => (
             <Form className="space-y-4">
               <div>
-                <Label htmlFor="name_service">Nombre</Label>
+                <Label htmlFor="name_service">Nombre <span className="text-red-500">*</span></Label>
                 <Field
                   as={Input}
                   id="name_service"
@@ -88,7 +88,7 @@ export default function AddServiceDialog({ onAddService }) {
                 />
               </div>
               <div>
-                <Label htmlFor="category">Categoría</Label>
+                <Label htmlFor="category">Categoría <span className="text-red-500">*</span></Label>
                 <Select
                   value={values.category}
                   onValueChange={(value) => setFieldValue('category', value)}
@@ -110,7 +110,7 @@ export default function AddServiceDialog({ onAddService }) {
                 />
               </div>
               <div>
-                <Label htmlFor="price_service">Precio</Label>
+                <Label htmlFor="price_service">Precio <span className="text-red-500">*</span></Label>
                 <Field
                   as={Input}
                   id="price_service"
@@ -125,7 +125,7 @@ export default function AddServiceDialog({ onAddService }) {
                 />
               </div>
               <div>
-                <Label htmlFor="payment_method_service">Método de Pago</Label>
+                <Label htmlFor="payment_method_service">Método de Pago <span className="text-red-500">*</span></Label>
                 <Select
                   value={values.payment_method_service}
                   onValueChange={(value) =>
