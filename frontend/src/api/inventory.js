@@ -96,6 +96,21 @@ export const recordPurchase = async (purchase) => {
   }
 };
 
+// Actualizar una compra
+export const updatePurchase = async (id, updatedFields) => {
+  try {
+    const response = await api.put(`inventory/purchases/update/${id}`, updatedFields, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar la compra:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
 // Registrar una venta
 export const recordSale = async (sale) => {
   try {

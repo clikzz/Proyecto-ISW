@@ -3,7 +3,7 @@ import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { getInventoryItems, getItemById, deleteItem } from '@/api/inventory';
-import { Info, Search, ArrowUpDown, EllipsisVertical, Filter } from 'lucide-react';
+import { Search, ArrowUpDown, EllipsisVertical, Filter } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatDateTime } from '@/helpers/dates';
@@ -12,6 +12,7 @@ import ItemDetailsDialog from '@/components/inventory/dialog/ItemDetailsDialog';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import EditItemDialog from '@/components/inventory/dialog/EditItemDialog';
 import { capitalize } from '@/helpers/capitalize';
+import { useAlert } from '@/context/alertContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,6 +30,7 @@ const InventoryTable = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { showAlert } = useAlert();
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -76,9 +78,10 @@ const InventoryTable = () => {
         setFilteredItems((prevItems) =>
           prevItems.filter((item) => item.id_item !== itemToDelete)
         );
+        showAlert('Ítem eliminado correctamente', 'success');
       } catch (error) {
         console.error('Error al eliminar el item:', error);
-        alert('No se pudo eliminar el item.');
+        showAlert('Ocurrió un error al eliminar el ítem', 'error');
       } finally {
         closeConfirmationDialog();
       }
@@ -243,7 +246,6 @@ const InventoryTable = () => {
                     <TableCell>
                       {item.suppliers && item.suppliers.length > 0 ? (
                         (() => {
-                          // Filtrar duplicados usando un conjunto (Set)
                           const uniqueSuppliers = [...new Set(item.suppliers)];
                           // Renderizar el primer proveedor y el contador de adicionales
                           return (
@@ -310,7 +312,11 @@ const InventoryTable = () => {
         isOpen={isDetailsDialogOpen}
         onClose={() => setIsDetailsDialogOpen(false)}
         item={selectedItem}
-        onUpdateItem={fetchItems}
+        onEdit={(item) => {
+          setSelectedItem(item);
+          setIsDetailsDialogOpen(false);
+          setIsEditDialogOpen(true);
+        }}
       />
 
       <ConfirmationDialog

@@ -11,6 +11,8 @@ import AddPurchaseDialog from '@/components/inventory/dialog/AddPurchaseDialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import { deletePurchase } from '@/api/inventory';
+import EditPurchaseDialog from '@/components/inventory/dialog/EditPurchaseDialog';
+import PurchaseDetailsDialog from '@/components/inventory/dialog/PurchaseDetailsDialog';
 import { useAlert } from '@/context/alertContext';
 
 const PurchasesTable = () => {
@@ -19,6 +21,10 @@ const PurchasesTable = () => {
   const [search, setSearch] = useState('');
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [purchaseToDelete, setPurchaseToDelete] = useState(null);
+  const [purchaseToEdit, setPurchaseToEdit] = useState(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedPurchase, setSelectedPurchase] = useState(null);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const { showAlert } = useAlert();
 
   const [sortConfig, setSortConfig] = useState({
@@ -67,12 +73,31 @@ const PurchasesTable = () => {
     setIsConfirmationDialogOpen(false);
   };
 
+  const openEditDialog = (purchase) => {
+    setPurchaseToEdit(purchase);
+    setIsEditDialogOpen(true);
+  };
+
+  const closeEditDialog = () => {
+    setPurchaseToEdit(null);
+    setIsEditDialogOpen(false);
+  };
+
+  const handleUpdatePurchase = async (updatedPurchase) => {
+    await fetchPurchases();
+  };
+
+  const handleViewDetails = (purchase) => {
+    setSelectedPurchase(purchase);
+    setIsDetailsDialogOpen(true);
+  };
+
   const handleConfirmDelete = async () => {
     if (purchaseToDelete) {
       try {
         console.log('ID de la compra a eliminar en el front:', purchaseToDelete);
         await deletePurchase(purchaseToDelete);
-        await fetchPurchases(); // Refresca la lista de compras
+        await fetchPurchases();
         showAlert('Compra eliminada correctamente', 'success');
       } catch (error) {
         console.error('Error al eliminar la compra:', error);
@@ -215,11 +240,13 @@ const PurchasesTable = () => {
                         <DropdownMenuContent className="bg-white border rounded-md shadow-lg z-50 w-48">
                           <DropdownMenuItem
                             className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                            onClick={() => handleViewDetails(purchase)}
                           >
                             Ver información
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                            onClick={() => openEditDialog(purchase)}
                           >
                             Editar
                           </DropdownMenuItem>
@@ -245,6 +272,22 @@ const PurchasesTable = () => {
         handleClose={closeConfirmationDialog}
         handleConfirm={handleConfirmDelete}
       />
+
+      <PurchaseDetailsDialog
+        isOpen={isDetailsDialogOpen}
+        onClose={() => setIsDetailsDialogOpen(false)}
+        onEdit={openEditDialog}
+        purchase={selectedPurchase}
+      />
+
+      {purchaseToEdit && (
+        <EditPurchaseDialog
+          isOpen={isEditDialogOpen}
+          onClose={closeEditDialog}
+          purchase={purchaseToEdit}
+          onUpdatePurchase={handleUpdatePurchase}
+        />
+      )}
     </div>
   );
 };

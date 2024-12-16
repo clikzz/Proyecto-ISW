@@ -39,6 +39,7 @@ const SalesTable = () => {
   const fetchSales = async () => {
     try {
       const data = await getSales();
+      console.log('Ventas:', data);
       setSales(data);
       setFilteredSales(data);
     } catch (error) {
@@ -71,7 +72,7 @@ const SalesTable = () => {
     if (saleToDelete) {
       try {
         await deleteSale(saleToDelete);
-        await fetchSales(); // Refresca la lista de ventas
+        await fetchSales();
         showAlert('Venta eliminada exitosamente', 'success');
       } catch (error) {
         console.error('Error al eliminar la venta:', error);
@@ -92,9 +93,11 @@ const SalesTable = () => {
     setIsConfirmationDialogOpen(false);
   };
 
+  // Función para abrir el diálogo de edición (desde cualquier parte)
   const openEditSaleDialog = (sale) => {
     setSelectedSale(sale);
     setIsEditSaleDialogOpen(true);
+    setIsDetailsDialogOpen(false); // Cierra el diálogo de detalles
   };
   
   const closeEditSaleDialog = () => {
@@ -112,12 +115,10 @@ const SalesTable = () => {
     setIsDetailsDialogOpen(false);
   };
   
-  const handleUpdateSale = (updatedSale) => {
-    setSales((prevSales) =>
-      prevSales.map((sale) =>
-        sale.id_transaction === updatedSale.id_transaction ? updatedSale : sale
-      )
-    );
+  // Función para actualizar ventas después de edición
+  const handleUpdateSale = async () => {
+    await fetchSales();
+    closeEditSaleDialog();
   };
 
   const sortedSales = useMemo(() => {
@@ -272,12 +273,13 @@ const SalesTable = () => {
         isOpen={isEditSaleDialogOpen}
         onClose={closeEditSaleDialog}
         sale={selectedSale}
-        onUpdateSale={fetchSales}
+        onUpdateSale={handleUpdateSale}
       />
 
       <SaleDetailsDialog
         isOpen={isDetailsDialogOpen}
         onClose={closeDetailsDialog}
+        onEdit={openEditSaleDialog}
         sale={selectedSale}
       />
 

@@ -198,6 +198,7 @@ class Inventory {
         t.amount, 
         t.transaction_date, 
         t.payment_method, 
+        t.updated_at,
         COALESCE(t.description, '') AS description,
         ti.id_item, 
         ti.quantity_item, 
