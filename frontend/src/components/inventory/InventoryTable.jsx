@@ -275,15 +275,15 @@ const InventoryTable = () => {
                             <EllipsisVertical className="h-5 w-5 text-gray-600" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-white border rounded-md shadow-lg z-50 w-48">
+                        <DropdownMenuContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 w-48">
                           <DropdownMenuItem
-                            className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 cursor-pointer text-gray-700 dark:text-gray-300"
                             onClick={() => fetchItemDetails(item.id_item)}
                           >
                             Ver información
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            className="hover:bg-gray-100 px-4 py-2 cursor-pointer text-gray-700"
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 cursor-pointer text-gray-700 dark:text-gray-300"
                             onClick={() => {
                               setSelectedItem(item);
                               setIsEditDialogOpen(true);
@@ -292,7 +292,7 @@ const InventoryTable = () => {
                             Editar
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            className="hover:bg-red-100 px-4 py-2 cursor-pointer text-red-600"
+                            className="hover:bg-red-100 dark:hover:bg-red-700 px-4 py-2 cursor-pointer text-red-600 dark:text-red-400"
                             onClick={() => openConfirmationDialog(item.id_item)}
                           >
                             Eliminar
