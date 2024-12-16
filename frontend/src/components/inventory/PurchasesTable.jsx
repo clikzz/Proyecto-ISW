@@ -14,6 +14,8 @@ import ConfirmationDialog from '@/components/ConfirmationDialog';
 import { deletePurchase } from '@/api/inventory';
 import EditPurchaseDialog from '@/components/inventory/dialog/EditPurchaseDialog';
 import PurchaseDetailsDialog from '@/components/inventory/dialog/PurchaseDetailsDialog';
+import { exportToExcel, exportToPDF } from '@/helpers/exportPurchases';
+import ExportButtons from '@/components/inventory/ExportButtons';
 import { useAlert } from '@/context/alertContext';
 
 const PurchasesTable = () => {
@@ -166,7 +168,14 @@ const PurchasesTable = () => {
             </Select>
           </div>
         </div>
-        <AddPurchaseDialog fetchPurchases={fetchPurchases} />
+        <div className="flex gap-2">
+          <ExportButtons
+            data={filteredPurchases}
+            handleExportExcel={exportToExcel}
+            handleExportPDF={exportToPDF}
+          />
+          <AddPurchaseDialog fetchPurchases={fetchPurchases} />
+        </div>
       </div>
 
       <Card className="border-none pt-4">

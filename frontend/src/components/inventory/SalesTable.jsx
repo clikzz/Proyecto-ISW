@@ -20,6 +20,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAlert } from '@/context/alertContext';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
+import { exportToExcel, exportToPDF } from '@/helpers/exportSales';
+import ExportButtons from '@/components/inventory/ExportButtons';
 
 const SalesTable = () => {
   const [sales, setSales] = useState([]);
@@ -179,7 +181,14 @@ const SalesTable = () => {
             </Select>
           </div>
         </div>
-        <SellItemDialog fetchSales={fetchSales} />
+        <div className="flex gap-2">
+          <ExportButtons
+            data={filteredSales}
+            handleExportExcel={exportToExcel}
+            handleExportPDF={exportToPDF}
+          />
+          <SellItemDialog fetchSales={fetchSales} />
+        </div>
       </div>
 
       <Card className="border-none pt-4">

@@ -11,6 +11,8 @@ import AddItemDialog from '@/components/inventory/dialog/AddItemDialog';
 import ItemDetailsDialog from '@/components/inventory/dialog/ItemDetailsDialog';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import EditItemDialog from '@/components/inventory/dialog/EditItemDialog';
+import ExportButtons from '@/components/inventory/ExportButtons';
+import { exportToExcel, exportToPDF } from '@/helpers/exportInventory';
 import { capitalize } from '@/helpers/capitalize';
 import { useAlert } from '@/context/alertContext';
 import {
@@ -162,7 +164,14 @@ const InventoryTable = () => {
             </Select>
           </div>
         </div>
-        <AddItemDialog fetchItems={fetchItems} />
+        <div className="flex gap-2">
+          <ExportButtons 
+            data={filteredAndSortedItems}
+            handleExportExcel={exportToExcel}
+            handleExportPDF={exportToPDF}
+          />
+          <AddItemDialog fetchItems={fetchItems} />
+        </div>
       </div>
 
       <Card className="border-none pt-4">
