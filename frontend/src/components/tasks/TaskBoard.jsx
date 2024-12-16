@@ -3,7 +3,10 @@ import { motion } from 'framer-motion';
 import TaskColumn from './TaskColumn';
 import { useAlert } from '@context/alertContext';
 
-const columnsOrder = ['unassigned', 'in_progress', 'done'];
+const columnsOrder = {
+  admin: ['unassigned', 'in_progress', 'done'],
+  employee: ['in_progress', 'done']
+};
 
 const container = {
   hidden: { opacity: 0 },
@@ -15,7 +18,7 @@ const container = {
   },
 };
 
-export default function TaskBoard({ tasks, fetchTasks, updateTaskStatus }) {
+export default function TaskBoard({ tasks, fetchTasks, updateTaskStatus, userRole }) {
   const { showAlert } = useAlert();
   const getColumnTasks = (columnId) => {
     return tasks.filter((task) => task.status_service === columnId);
@@ -89,16 +92,18 @@ export default function TaskBoard({ tasks, fetchTasks, updateTaskStatus }) {
         animate="show"
         className="grid grid-cols-1 md:grid-cols-3 gap-4"
       >
-        {columnsOrder.map((columnId) => (
+        {columnsOrder[userRole].map((columnId) => (
           <TaskColumn
             key={columnId}
             columnId={columnId}
             tasks={getColumnTasks(columnId)}
             fetchTasks={fetchTasks}
             updateTaskStatus={updateTaskStatus}
+            userRole={userRole}
           />
         ))}
       </motion.div>
     </DragDropContext>
   );
 }
+

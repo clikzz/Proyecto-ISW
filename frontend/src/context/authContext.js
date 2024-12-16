@@ -40,12 +40,14 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogin = (token, role) => {
     localStorage.setItem('token', token);
+    localStorage.setItem('role', role);
     setIsAuthenticated(true);
     setRole(role);
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
     setIsAuthenticated(false);
     setRole(null);
     router.push('/');
