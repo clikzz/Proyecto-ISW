@@ -26,6 +26,8 @@ import {
 import AddServiceDialog from '@/components/services/dialog/ServicesDialog';
 import { useAlert } from '@/context/alertContext';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
+import { useAuth } from '@/context/authContext';
+
 
 export default function ServicesTable() {
   const [services, setServices] = useState([]);
@@ -41,6 +43,8 @@ export default function ServicesTable() {
     direction: 'ascending',
   });
   const { showAlert } = useAlert();
+  const { role, loading } = useAuth();
+
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -338,12 +342,15 @@ export default function ServicesTable() {
                           >
                             Editar
                           </DropdownMenuItem>
+                          {role === 'admin' && (
                           <DropdownMenuItem
-                            className="hover:bg-red-100 dark:hover:bg-red-700 px-4 py-2 cursor-pointer text-red-600 dark:text-red-400"
+                            className={`hover:bg-red-100 dark:hover:bg-red-700 px-4 py-2 cursor-pointer ${role !== 'admin' ? 'opacity-50 cursor-not-allowed' : 'text-red-600 dark:text-red-400'
+                              }`}
                             onClick={() => openConfirmationDialog(service.id_service)}
                           >
                             Eliminar
                           </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>

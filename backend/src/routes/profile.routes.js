@@ -13,7 +13,6 @@ const router = express.Router();
 router.use(authMiddleware);
 router.use(authorizationMiddleware(['admin', 'employee']));
 
-// Configuración de multer para almacenar los archivos temporalmente en la carpeta 'uploads'
 const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
