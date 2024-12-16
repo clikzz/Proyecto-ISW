@@ -44,7 +44,6 @@ const InventoryTable = () => {
   const fetchItems = async () => {
     try {
       const data = await getInventoryItems();
-      console.log('Datos del inventario:', data);
       setItems(data);
       setFilteredItems(data);
     } catch (error) {
@@ -209,20 +208,20 @@ const InventoryTable = () => {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('selling_price')}
+                      onClick={() => handleSort('stock')}
                       className="text-foreground"
                     >
-                      <strong>Precio Venta</strong>
+                      <strong>Stock</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort('stock')}
+                      onClick={() => handleSort('selling_price')}
                       className="text-foreground"
                     >
-                      <strong>Stock</strong>
+                      <strong>Precio Venta</strong>
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                   </TableHead>
@@ -256,8 +255,8 @@ const InventoryTable = () => {
                   <TableRow key={item.id_item}>
                     <TableCell>{item.name_item}</TableCell>
                     <TableCell>{capitalize(item.category)}</TableCell>
-                    <TableCell>$ {item.selling_price?.toLocaleString('es-CL')}</TableCell>
                     <TableCell>{item.stock}</TableCell>
+                    <TableCell>$ {item.selling_price?.toLocaleString('es-CL')}</TableCell>
                     <TableCell>
                       {item.suppliers && item.suppliers.length > 0 ? (
                         (() => {

@@ -11,6 +11,7 @@ export const exportToExcel = (purchases) => {
     Cantidad: purchase.quantity_item,
     Monto: `$${purchase.amount?.toLocaleString('es-CL')}`,
     'Método de Pago': capitalize(purchase.payment_method),
+    Descripción: capitalize(purchase.description) || 'Sin descripción',
     Proveedor: purchase.name_supplier || 'Desconocido',
     Fecha: new Date(purchase.transaction_date).toLocaleDateString(),
     Modificado: new Date(purchase.updated_at).toLocaleDateString(),
@@ -26,6 +27,7 @@ export const exportToExcel = (purchases) => {
     { wch: 10 }, // Cantidad
     { wch: 15 }, // Monto
     { wch: 20 }, // Método de Pago
+    { wch: 30 }, // Descripción
     { wch: 25 }, // Proveedor
     { wch: 15 }, // Fecha
     { wch: 15 }, // Modificado
@@ -35,7 +37,7 @@ export const exportToExcel = (purchases) => {
   // Agregar encabezados manualmente
   utils.sheet_add_aoa(
     worksheet,
-    [['Producto', 'Categoría', 'Cantidad', 'Monto', 'Método de Pago', 'Proveedor', 'Fecha', 'Modificado']],
+    [['Producto', 'Categoría', 'Cantidad', 'Monto', 'Método de Pago', 'Descripción', 'Proveedor', 'Fecha', 'Modificado']],
     { origin: 'A1' }
   );
 
@@ -64,6 +66,7 @@ export const exportToPDF = (purchases) => {
     purchase.quantity_item,
     `$${purchase.amount?.toLocaleString('es-CL')}`,
     capitalize(purchase.payment_method),
+    capitalize(purchase.description) || 'Sin descripción',
     purchase.name_supplier || 'Desconocido',
     new Date(purchase.transaction_date).toLocaleDateString(),
     new Date(purchase.updated_at).toLocaleDateString(),
@@ -71,7 +74,7 @@ export const exportToPDF = (purchases) => {
 
   // Crear tabla en el PDF
   autoTable(doc, {
-    head: [['Producto', 'Categoría', 'Cantidad', 'Monto', 'Método de Pago', 'Proveedor', 'Fecha', 'Modificado']],
+    head: [['Producto', 'Categoría', 'Cantidad', 'Monto', 'Método de Pago', 'Descripción', 'Proveedor', 'Fecha', 'Modificado']],
     body: tableData,
     startY: 40,
     styles: {

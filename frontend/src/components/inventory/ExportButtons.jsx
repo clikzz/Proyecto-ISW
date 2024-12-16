@@ -7,11 +7,11 @@ const ExportButtons = ({ data, handleExportExcel, handleExportPDF }) => {
     <div className="flex gap-2">
       <Button onClick={() => handleExportExcel(data)} variant="excel">
         <FileSpreadsheet className="mr-2 h-4 w-4" />
-        Exportar a Excel
+        Excel
       </Button>
       <Button onClick={() => handleExportPDF(data)} variant="pdf">
         <FileText className="mr-2 h-4 w-4" />
-        Exportar a PDF
+        PDF
       </Button>
     </div>
   );
