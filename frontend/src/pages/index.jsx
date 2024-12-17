@@ -51,8 +51,8 @@ const features = [
     icon: Users,
     title: 'Gestión de Proveedores',
     description: 'Mantén un registro detallado de tus proveedores y sus productos.',
-    imageLight: '/images/supplier-light',
-    imageDark: '/images/supplier-dark',
+    imageLight: '/images/supplier-light.png',
+    imageDark: '/images/supplier-dark.png',
   },
 ];
 
@@ -85,42 +85,38 @@ export default function LandingPage() {
         transition={{ type: 'spring', stiffness: 100 }}
         className="pt-14"
       >
-        <section
-          className="h-screen w-full flex items-center justify-center bg-background text-foreground"
-        >
-          <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 px-4">
-            {/* Texto a la izquierda */}
-            <motion.div
-              className="flex flex-col justify-center space-y-6"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <h1 className="text-5xl md:text-6xl font-bold tracking-tighter">
-                Revoluciona tu Taller de Bicicletas con{' '}
-                <span className="text-primary">bikefy</span>
-              </h1>
-              <p className="text-lg text-muted-foreground max-w-md">
-                Optimiza tu negocio, aumenta la satisfacción de tus clientes y pedalea
-                hacia el éxito con nuestra solución integral.
-              </p>
-            </motion.div>
-
-            {/* Imagen a la derecha */}
-            <motion.div
-              className="flex items-center justify-center"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <Image
-                src="/bodoque.gif"
-                width={500}
-                height={500}
-                alt="Imagen de bicicleta"
-                className="rounded-full object-cover shadow-lg"
-              />
-            </motion.div>
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 px-4">
+          <div className="container mx-auto">
+            <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
+              <motion.div
+                className="flex flex-col justify-center space-y-4"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                  Revoluciona tu Taller de Bicicletas con{' '}
+                  <span className="text-primary">bikefy</span>
+                </h1>
+                <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                  Optimiza tu negocio, aumenta la satisfacción de tus clientes y
+                  pedalea hacia el strong con nuestra solución integral.
+                </p>
+              </motion.div>
+              <motion.div
+                className="flex items-center justify-center"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <Image
+                  src="/bodoque.gif"
+                  width={400}
+                  height={400}
+                  className="rounded-full animate-float"
+                />
+              </motion.div>
+            </div>
           </div>
         </section>
 
@@ -218,14 +214,10 @@ export default function LandingPage() {
               {features.map((feature, index) => (
                 <motion.div
                   key={index}
-                  className={`p-6 rounded-lg cursor-pointer transition-all ${activeFeature === index ? 'shadow-md' : 'hover:shadow-lg'
+                  className={`p-6 rounded-lg cursor-pointer transition-all ${activeFeature === index
+                    ? 'shadow-md bg-gray-200 dark:bg-gray-700 text-black dark:text-white'
+                    : 'hover:shadow-lg'
                     }`}
-                  style={{
-                    backgroundColor: `hsl(var(${activeFeature === index ? '--accent' : '--card'
-                      }))`,
-                    color: `hsl(var(${activeFeature === index ? '--accent-foreground' : '--card-foreground'
-                      }))`,
-                  }}
                   onClick={() => setActiveFeature(index)}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
@@ -238,6 +230,7 @@ export default function LandingPage() {
                 </motion.div>
               ))}
             </div>
+
 
             {/* Imagen dinámica */}
             <div className="relative w-full h-[500px] rounded-lg overflow-hidden">
@@ -257,7 +250,7 @@ export default function LandingPage() {
                     width={800}
                     height={500}
                     objectFit="contain"
-                    className="block dark:hidden"
+                    className="block dark:hidden rounded-2xl"
                   />
                   {/* Imagen para modo oscuro */}
                   <Image
@@ -266,7 +259,7 @@ export default function LandingPage() {
                     width={800}
                     height={500}
                     objectFit="contain"
-                    className="hidden dark:block"
+                    className="hidden dark:block rounded-2xl"
                   />
                 </motion.div>
               </AnimatePresence>
@@ -274,7 +267,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
 
 
       <footer className="w-full py-6 bg-background border-t border-border">
