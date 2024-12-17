@@ -55,7 +55,7 @@ const PurchasesTable = () => {
   useEffect(() => {
     const lowercasedSearch = search.toLowerCase();
     const filtered = purchases.filter((purchase) => {
-      const matchesSearch = purchase.name_item.toLowerCase().includes(lowercasedSearch);
+      const matchesSearch = purchase.name_item?.toLowerCase().includes(lowercasedSearch) ?? false;
       const matchesCategory =
         selectedCategory === 'todas' || selectedCategory === '' || purchase.category.toLowerCase() === selectedCategory;
       return matchesSearch && matchesCategory;
