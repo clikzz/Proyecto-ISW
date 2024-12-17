@@ -106,9 +106,6 @@ export default function PrivateLayout({ children }) {
             <NavLink href="/inventory" icon={<Package className="h-6 w-6" />}>
               Inventario
             </NavLink>
-            <NavLink href="/suppliers" icon={<Truck className="h-6 w-6" />}>
-              Proveedores
-            </NavLink>
             <NavLink href="/services" icon={<Wrench className="h-6 w-6" />}>
               Servicios
             </NavLink>
@@ -120,6 +117,9 @@ export default function PrivateLayout({ children }) {
             </NavLink>
             {role === 'admin' && (
               <>
+                <NavLink href="/suppliers" icon={<Truck className="h-6 w-6" />}>
+                  Proveedores
+                </NavLink>
                 <NavLink href="/users" icon={<Users className="h-6 w-6" />}>
                   Usuarios
                 </NavLink>

@@ -106,6 +106,10 @@ export default function SupplierTable() {
     supplier.name_supplier.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const renderCellContent = (content) => {
+    return content === '' ? '(Sin registrar)' : content;
+  };
+
   return (
     <div className="container mx-auto py-10 text-foreground relative">
       <div className="flex justify-between items-center py-4">
@@ -186,11 +190,11 @@ export default function SupplierTable() {
             <TableBody>
               {filteredSuppliers.map((supplier) => (
                 <TableRow key={supplier.rut_supplier}>
-                  <TableCell>{supplier.rut_supplier}</TableCell>
-                  <TableCell>{supplier.name_supplier}</TableCell>
-                  <TableCell>{supplier.phone_supplier}</TableCell>
-                  <TableCell>{supplier.email_supplier}</TableCell>
-                  <TableCell>{supplier.address_supplier}</TableCell>
+                  <TableCell>{renderCellContent(supplier.rut_supplier)}</TableCell>
+                  <TableCell>{renderCellContent(supplier.name_supplier)}</TableCell>
+                  <TableCell>{renderCellContent(supplier.phone_supplier)}</TableCell>
+                  <TableCell>{renderCellContent(supplier.email_supplier)}</TableCell>
+                  <TableCell>{renderCellContent(supplier.address_supplier)}</TableCell>
                   <TableCell>
                     <Button onClick={() => handleModifyClick(supplier)}>
                       <Edit />

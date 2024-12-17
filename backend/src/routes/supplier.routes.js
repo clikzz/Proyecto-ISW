@@ -9,7 +9,7 @@ const {
 } = require('../middleware/supplier.middleware');
 
 router.use(authMiddleware);
-router.use(authorizationMiddleware(['admin', 'employee']));
+router.use(authorizationMiddleware(['admin']));
 
 router.post(
   '/create',

@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { useAuth } from "@context/authContext";
-import { getUsers, updateUserRole, deleteUser } from "@api/user";
-import { ArrowUpDown, Search, Trash } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import React, { useState, useEffect, useMemo } from 'react';
+import { useAuth } from '@context/authContext';
+import { getUsers, updateUserRole, deleteUser } from '@api/user';
+import { ArrowUpDown, Search, Trash } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -20,15 +20,15 @@ import {
   SelectItem,
   SelectTrigger,
   SelectContent,
-} from "@/components/ui/select";
-import ConfirmationDialog from "@/components/ConfirmationDialog";
+} from '@/components/ui/select';
+import ConfirmationDialog from '@/components/ConfirmationDialog';
 
 export default function UsersTable() {
   const [users, setUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({
     key: null,
-    direction: "ascending",
+    direction: 'ascending',
   });
   const { isAuthenticated } = useAuth();
   const { showAlert } = useAlert();
@@ -40,18 +40,15 @@ export default function UsersTable() {
     try {
       const response = await getUsers();
       response.forEach((user) => {
-        if (!user.phone_user) {
-          user.phone_user = "SIN REGISTRAR";
-        }
-        if (user.role_user === "admin") {
-          user.role = "Administrador";
+        if (user.role_user === 'admin') {
+          user.role = 'Administrador';
         } else {
-          user.role = "Empleado";
+          user.role = 'Empleado';
         }
       });
       setUsers(response);
     } catch (error) {
-      showAlert("Error al obtener la lista de empleados", "error");
+      showAlert('Error al obtener la lista de empleados', 'error');
     }
   };
 
@@ -60,9 +57,9 @@ export default function UsersTable() {
   };
 
   const handleSort = (key) => {
-    let direction = "ascending";
-    if (sortConfig.key === key && sortConfig.direction === "ascending") {
-      direction = "descending";
+    let direction = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
     }
     setSortConfig({ key, direction });
   };
@@ -77,7 +74,7 @@ export default function UsersTable() {
       await deleteUser(userToDelete);
       fetchUsers();
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.error('Error deleting user:', error);
     } finally {
       setDialogOpen(false);
       setUserToDelete(null);
@@ -94,7 +91,7 @@ export default function UsersTable() {
       await updateUserRole(rut, newRole);
       fetchUsers();
     } catch (error) {
-      console.error("Error updating user role:", error);
+      console.error('Error updating user role:', error);
     }
   };
 
@@ -106,15 +103,19 @@ export default function UsersTable() {
     setExpandedImage(null);
   };
 
+  const renderCellContent = (content) => {
+    return content === '' ? '(Sin registrar)' : content;
+  };
+
   const sortedUsers = useMemo(() => {
     let sortableUsers = [...users];
     if (sortConfig.key !== null) {
       sortableUsers.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? -1 : 1;
+          return sortConfig.direction === 'ascending' ? -1 : 1;
         }
         if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? 1 : -1;
+          return sortConfig.direction === 'ascending' ? 1 : -1;
         }
         return 0;
       });
@@ -156,7 +157,7 @@ export default function UsersTable() {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort("name_user")}
+                      onClick={() => handleSort('name_user')}
                       className="text-foreground"
                     >
                       <strong>Nombre</strong>
@@ -166,7 +167,7 @@ export default function UsersTable() {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort("rut")}
+                      onClick={() => handleSort('rut')}
                       className="text-foreground"
                     >
                       <strong>RUT</strong>
@@ -176,7 +177,7 @@ export default function UsersTable() {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort("phone_user")}
+                      onClick={() => handleSort('phone_user')}
                       className="text-foreground"
                     >
                       <strong>Teléfono</strong>
@@ -186,7 +187,7 @@ export default function UsersTable() {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort("email")}
+                      onClick={() => handleSort('email')}
                       className="text-foreground"
                     >
                       <strong>Email</strong>
@@ -196,7 +197,7 @@ export default function UsersTable() {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      onClick={() => handleSort("role")}
+                      onClick={() => handleSort('role')}
                       className="text-foreground"
                     >
                       <strong>Rol</strong>
@@ -226,7 +227,7 @@ export default function UsersTable() {
                     </TableCell>
                     <TableCell>{user.name_user}</TableCell>
                     <TableCell>{user.rut}</TableCell>
-                    <TableCell>{user.phone_user}</TableCell>
+                    <TableCell>{renderCellContent(user.phone_user)}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
                       <Select

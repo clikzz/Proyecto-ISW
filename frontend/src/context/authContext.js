@@ -27,26 +27,17 @@ export const AuthProvider = ({ children }) => {
   ];
 
   const checkAuth = async () => {
-    console.log('Current route:', router.pathname); // Verificar que router.pathname esté definido
-
-    console.log('Inside checkAuth function');
     const token = localStorage.getItem('token');
     if (token) {
-      console.log('Token found:', token);
       const { isValid, role: fetchedRole } = await validateToken(token);
       if (isValid) {
-        console.log('Token is valid');
         setIsAuthenticated(true);
         setRole(fetchedRole);
       } else {
-        console.log('Token inválido');
         handleLogout();
       }
     } else {
-      console.log('No token found');
       if (!publicRoutes.includes(router.pathname)) {
-        console.log('Redirecting to login', router.pathname);
-
         handleLogout();
       }
     }
@@ -54,7 +45,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log('Executing checkAuth');
     checkAuth();
   }, [router.pathname]);
 
