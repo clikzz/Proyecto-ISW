@@ -53,7 +53,6 @@ exports.updateService = async (req, res) => {
   try {
     const { error } = updateServiceSchema.validate(req.body);
     if (error) {
-      console.error('Error de validación:', error.details[0].message);
       return res.status(400).json({ message: error.details[0].message });
     }
 
@@ -63,7 +62,6 @@ exports.updateService = async (req, res) => {
     }
     res.json(updatedService);
   } catch (err) {
-    console.error('Error al actualizar el servicio:', err.message);
     res.status(500).json({ message: 'Error al actualizar el servicio', error: err.message });
   }
 };
@@ -77,7 +75,6 @@ exports.deleteService = async (req, res) => {
     }
     res.json({ message: 'Servicio eliminado correctamente', service: deletedService });
   } catch (err) {
-    console.error('Error al eliminar el servicio:', err.message);
     res.status(500).json({ message: 'Error al eliminar el servicio', error: err.message });
   }
 };
