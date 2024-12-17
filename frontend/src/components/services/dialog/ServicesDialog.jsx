@@ -74,7 +74,7 @@ export default function AddServiceDialog({ onAddService }) {
                 />
               </div>
               <div>
-                <Label htmlFor="description_service">Descripción</Label>
+                <Label htmlFor="description_service">Descripción (opcional)</Label>
                 <Field
                   as={Textarea}
                   id="description_service"
