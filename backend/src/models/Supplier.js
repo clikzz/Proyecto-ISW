@@ -34,9 +34,6 @@ class Supplier {
   }
 
   static async update(rut, data) {
-    console.log(rut);
-
-    // Check if the supplier exists
     const checkQuery =
       'SELECT * FROM supplier WHERE rut_supplier = $1 AND is_deleted = FALSE';
     const checkResult = await db.query(checkQuery, [rut]);
@@ -59,8 +56,6 @@ class Supplier {
       rut,
     ];
     const result = await db.query(query, values);
-    console.log(result.rows[0]);
-
     return result.rows[0];
   }
 
@@ -73,6 +68,21 @@ class Supplier {
     `;
     const result = await db.query(query, [id]);
     return result.rows[0];
+  }
+
+  static async findItems(rut) {
+    const query = `
+      SELECT DISTINCT
+        i.*
+      FROM
+        item_supplier item_supp
+      JOIN
+        item i ON item_supp.id_item = i.id_item
+      WHERE
+        item_supp.rut_supplier = $1 AND item_supp.is_deleted = FALSE
+    `;
+    const result = await db.query(query, [rut]);
+    return result.rows;
   }
 }
 

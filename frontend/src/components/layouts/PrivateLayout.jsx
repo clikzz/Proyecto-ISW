@@ -3,14 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import {
   Bike,
-  Bell,
   Home,
   Package,
   User,
   LogOut,
   Users,
   Truck,
-  TrendingUp,
   DollarSign,
   ChevronLeft,
   ChevronRight,
@@ -20,7 +18,6 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/authContext';
-import Notificaciones from '@/components/Notification';
 import { AnimatePresence, motion } from 'framer-motion';
 import ThemeToggle from '@/components/ThemeToggle';
 
@@ -50,7 +47,6 @@ export default function PrivateLayout({ children }) {
       router.push('/login');
     }
   }, [loading, isAuthenticated, router, role]);
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -86,7 +82,6 @@ export default function PrivateLayout({ children }) {
           isExpanded ? 'ml-64' : 'ml-20'
         } transition-all duration-300`}
       >
-        {/* Sidebar */}
         <aside
           className={`fixed left-8 top-8 bottom-8 rounded-3xl ${
             isExpanded ? 'w-64' : 'w-24'
@@ -98,7 +93,6 @@ export default function PrivateLayout({ children }) {
               <span className="text-xl font-semibold">bikefy</span>
             )}
           </Link>
-
           <nav className="space-y-4 w-full">
             <NavLink href="/home" icon={<Home className="h-6 w-6" />}>
               Home
@@ -145,7 +139,6 @@ export default function PrivateLayout({ children }) {
               Cerrar Sesion
             </NavLink>
           </nav>
-
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="mt-auto p-2 rounded-full hover:bg-accent"
@@ -158,20 +151,10 @@ export default function PrivateLayout({ children }) {
             )}
           </button>
         </aside>
-
-        {/* Main Content */}
         <div className="flex-1 flex flex-col">
           <header className="h-14 flex items-center justify-between px-6">
             <div className="ml-auto flex items-center space-x-4">
               <ThemeToggle />
-              <Notificaciones>
-                <button
-                  className="p-2 rounded-full hover:bg-accent"
-                  aria-label="Notificaciones"
-                >
-                  <Bell size={24} />
-                </button>
-              </Notificaciones>
             </div>
           </header>
 

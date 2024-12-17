@@ -76,3 +76,20 @@ export const updateSupplier = async (rut, data) => {
     throw error;
   }
 };
+
+export const getSupplierItems = async (rut) => {
+  try {
+    const response = await api.get(`/items/${rut}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      'Error al obtener items del proveedor:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};

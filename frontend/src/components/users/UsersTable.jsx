@@ -104,7 +104,9 @@ export default function UsersTable() {
   };
 
   const renderCellContent = (content) => {
-    return content === '' ? '(Sin registrar)' : content;
+    console.log(content);
+
+    return content === null ? '(Sin registrar)' : content;
   };
 
   const sortedUsers = useMemo(() => {

@@ -11,11 +11,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent } from '@/components/ui/card';
-import { getSuppliers, deleteSupplier } from '@api/suppliers';
+import { getSuppliers, deleteSupplier, getSupplierItems } from '@api/suppliers';
 import ConfirmationDialog from '@components/ConfirmationDialog';
 import AddSupplierDialog from '@/components/suppliers/AddSupplierDialog';
 import ModifySupplierDialog from '@/components/suppliers/ModifySupplierDialog';
 import ExportButtons from './ExportButtons';
+import SupplierItemsDialog from '@/components/suppliers/SupplierItemsDialog';
 
 export default function SupplierTable() {
   const [suppliers, setSuppliers] = useState([]);
@@ -29,6 +30,9 @@ export default function SupplierTable() {
   const [ModDialogOpen, setModDialogOpen] = useState(false);
   const [supplierToModify, setSupplierToModify] = useState(null);
   const [supplierToDelete, setSupplierToDelete] = useState(null);
+  const [supplierItems, setSupplierItems] = useState([]);
+  const [isItemsDialogOpen, setIsItemsDialogOpen] = useState(false);
+  const [currentSupplier, setCurrentSupplier] = useState(null);
 
   const handleDeleteClick = (rut) => {
     setSupplierToDelete(rut);
@@ -86,6 +90,17 @@ export default function SupplierTable() {
     }
   };
 
+  const handleViewItems = async (supplier) => {
+    try {
+      const items = await getSupplierItems(supplier.rut_supplier);
+      setSupplierItems(items);
+      setCurrentSupplier(supplier);
+      setIsItemsDialogOpen(true);
+    } catch (error) {
+      console.error('Error al obtener productos del proveedor:', error);
+    }
+  };
+
   const sortedSuppliers = useMemo(() => {
     let sortableSuppliers = [...suppliers];
     if (sortConfig.key !== null) {
@@ -128,8 +143,8 @@ export default function SupplierTable() {
         </div>
       </div>
       <Card className="border-none pt-4">
-        <CardContent>
-          <Table>
+        <CardContent className="overflow-x-auto">
+          <Table className="min-w-full">
             <TableHeader>
               <TableRow>
                 <TableHead>
@@ -190,17 +205,33 @@ export default function SupplierTable() {
             <TableBody>
               {filteredSuppliers.map((supplier) => (
                 <TableRow key={supplier.rut_supplier}>
-                  <TableCell>{renderCellContent(supplier.rut_supplier)}</TableCell>
-                  <TableCell>{renderCellContent(supplier.name_supplier)}</TableCell>
-                  <TableCell>{renderCellContent(supplier.phone_supplier)}</TableCell>
-                  <TableCell>{renderCellContent(supplier.email_supplier)}</TableCell>
-                  <TableCell>{renderCellContent(supplier.address_supplier)}</TableCell>
                   <TableCell>
-                    <Button onClick={() => handleModifyClick(supplier)}>
+                    {renderCellContent(supplier.rut_supplier)}
+                  </TableCell>
+                  <TableCell>
+                    {renderCellContent(supplier.name_supplier)}
+                  </TableCell>
+                  <TableCell>
+                    {renderCellContent(supplier.phone_supplier)}
+                  </TableCell>
+                  <TableCell>
+                    {renderCellContent(supplier.email_supplier)}
+                  </TableCell>
+                  <TableCell>
+                    {renderCellContent(supplier.address_supplier)}
+                  </TableCell>
+                  <TableCell className="flex items-center">
+                    <Button onClick={() => handleViewItems(supplier)}>
+                      Productos
+                    </Button>
+                    <Button
+                      className="ml-2"
+                      onClick={() => handleModifyClick(supplier)}
+                    >
                       <Edit />
                     </Button>
                     <Button
-                      className="ml-2 bg-red-500 hover:bg-red-600 p-1"
+                      className="ml-2 bg-red-500 hover:bg-red-600"
                       onClick={() => handleDeleteClick(supplier.rut_supplier)}
                     >
                       <Trash />
@@ -225,6 +256,12 @@ export default function SupplierTable() {
         handleClose={handleCloseConfirmationDialog}
         handleConfirm={handleConfirmDelete}
         className="bg-background text-foreground"
+      />
+      <SupplierItemsDialog
+        items={supplierItems}
+        isOpen={isItemsDialogOpen}
+        onClose={() => setIsItemsDialogOpen(false)}
+        supplierName={currentSupplier?.name_supplier}
       />
     </div>
   );
