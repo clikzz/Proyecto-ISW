@@ -3,9 +3,6 @@ const Joi = require('joi');
 const createServiceSchema = Joi.object({
   name_service: Joi.string()
     .max(255).required(),
-  description_service: Joi.string()
-    .max(500)
-    .optional(),
   category: Joi.string()
     .valid('reparación', 'mantenimiento', 'personalización', 'otro')
     .required(),
@@ -34,7 +31,8 @@ const updateServiceSchema = Joi.object({
     .optional(),
   description_service: Joi.string()
     .max(500)
-    .optional(),
+    .optional()
+    .allow(''),
   price_service: Joi.number()
     .positive()
     .optional()
