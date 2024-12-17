@@ -46,9 +46,9 @@ const EditItemDialog = ({ isOpen, onClose, item, onUpdateItem }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="border-none text-foreground max-w-2xl mx-auto p-8">
+      <DialogContent className="border-none bg-card text-card-foreground max-w-2xl mx-auto p-8">
         <DialogHeader>
-          <DialogTitle>Editar Producto</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Editar Producto</DialogTitle>
         </DialogHeader>
         <Formik
           initialValues={{
