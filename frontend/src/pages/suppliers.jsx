@@ -3,7 +3,7 @@ import SupplierTable from '@components/suppliers/SupplierTable';
 import { Truck } from 'lucide-react';
 
 export default function SuppliersPage() {
-  const isAuthorized = useAuthRedirect(['admin', 'employee']);
+  const isAuthorized = useAuthRedirect(['admin']);
 
   if (!isAuthorized) {
     return null;
