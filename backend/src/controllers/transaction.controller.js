@@ -12,10 +12,9 @@ const getAllTransactions = async (req, res) => {
 
 const createTransaction = async (req, res) => {
   try {
-    const { rut } = req.user; // Obtenemos el RUT del usuario autenticado
+    const { rut } = req.user; 
     const transactionData = { ...req.body, rut };
 
-    console.log('Datos de la transacción antes de la validación:', transactionData);
 
     const { error } = createTransactionSchema.validate(transactionData);
     if (error) {

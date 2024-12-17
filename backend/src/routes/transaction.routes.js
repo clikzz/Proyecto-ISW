@@ -8,10 +8,10 @@ const authorizationMiddleware = require('../middleware/authorization.middleware'
 router.use(authMiddleware);
 router.use(authorizationMiddleware(['admin']));
 
-router.get('/', getAllTransactions); // Ruta para obtener todas las transacciones
-router.post('/', validateTransaction, createTransaction); // Ruta para crear una nueva transacción
-router.get('/summary', getTransactionsSummary); // Ruta para obtener el resumen de transacciones
-router.put('/:id_transaction', validateTransaction, updateTransaction); // Ruta para actualizar una transacción específica
-router.delete('/:id_transaction', deleteTransaction); // Ruta para eliminar una transacción específica
+router.get('/', getAllTransactions);
+router.post('/', validateTransaction, createTransaction);
+router.get('/summary', getTransactionsSummary);
+router.put('/:id_transaction', validateTransaction, updateTransaction);
+router.delete('/:id_transaction', deleteTransaction);
 
 module.exports = router;
