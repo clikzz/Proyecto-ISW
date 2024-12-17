@@ -68,6 +68,7 @@ const ItemDetailsDialog = ({ isOpen, onClose, item, onEdit }) => {
                       as={Input}
                       type="number"
                       name="stock"
+                      disabled
                     />
                     <ErrorMessage name="stock" component="div" className="text-red-500 text-sm" />
                   </div>
@@ -78,6 +79,7 @@ const ItemDetailsDialog = ({ isOpen, onClose, item, onEdit }) => {
                       type="text"
                       name="selling_price"
                       value={`$ ${Number(values.selling_price).toLocaleString('es-CL')}`}
+                      disabled
                     />
                     <ErrorMessage name="selling_price" component="div" className="text-red-500 text-sm" />
                   </div>
@@ -108,6 +110,7 @@ const ItemDetailsDialog = ({ isOpen, onClose, item, onEdit }) => {
                     <Field
                       as={Textarea}
                       name="description"
+                      disabled
                     />
                     <ErrorMessage name="description" component="div" className="text-red-500 text-sm" />
                   </div>

@@ -35,7 +35,6 @@ const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
           <DialogTitle className="text-xl font-bold">Detalles de la Venta</DialogTitle>
         </DialogHeader>
 
-        {/* Formik para el formulario */}
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
           {({ values, handleChange, handleBlur }) => (
             <Form>
@@ -78,6 +77,7 @@ const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
                       type="number"
                       name="quantity_item"
                       placeholder="Cantidad vendida"
+                      disabled
                     />
                     <ErrorMessage name="quantity_item" component="div" className="text-red-500 text-sm" />
                   </div>
@@ -103,6 +103,7 @@ const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
                       as={Textarea}
                       name="description"
                       placeholder="Descripción"
+                      disabled
                     />
                     <ErrorMessage name="description" component="div" className="text-red-500 text-sm" />
                   </div>

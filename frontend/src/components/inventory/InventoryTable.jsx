@@ -82,7 +82,7 @@ const InventoryTable = () => {
         setFilteredItems((prevItems) =>
           prevItems.filter((item) => item.id_item !== itemToDelete)
         );
-        showAlert('Ítem eliminado correctamente', 'success');
+        showAlert('Producto eliminado correctamente', 'success');
       } catch (error) {
         console.error('Error al eliminar el item:', error);
         showAlert('Ocurrió un error al eliminar el ítem', 'error');

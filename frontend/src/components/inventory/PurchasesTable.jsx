@@ -103,7 +103,6 @@ const PurchasesTable = () => {
   const handleConfirmDelete = async () => {
     if (purchaseToDelete) {
       try {
-        console.log('ID de la compra a eliminar en el front:', purchaseToDelete);
         await deletePurchase(purchaseToDelete);
         await fetchPurchases();
         showAlert('Compra eliminada correctamente', 'success');

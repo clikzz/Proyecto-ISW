@@ -40,7 +40,7 @@ export default function AddItemDialog({ fetchItems }) {
   const handleFormikSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
       await addItem(values);
-      showAlert('Item añadido', 'success');
+      showAlert('Producto añadido correctamente', 'success');
       setIsDialogOpen(false);
 
       setNewItem({

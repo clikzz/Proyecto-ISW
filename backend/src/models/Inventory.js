@@ -20,7 +20,6 @@ class Inventory {
   }
 
   static async createTransactionDetails(transactionId, item, type) {
-    console.log('Item antes de insertar en la BD:', item);
     const query = `
       INSERT INTO transaction_item (id_transaction, id_item, quantity_item, unit_price, rut_supplier)
       VALUES ($1, $2, $3, $4, $5);

@@ -76,6 +76,7 @@ const PurchaseDetailsDialog = ({ isOpen, onClose, onEdit, purchase }) => {
                       as={Input}
                       type="number"
                       name="quantity_item"
+                      disabled
                     />
                     <ErrorMessage name="quantity_item" component="div" className="text-red-500 text-sm" />
                   </div>
@@ -106,6 +107,7 @@ const PurchaseDetailsDialog = ({ isOpen, onClose, onEdit, purchase }) => {
                     <Field
                       as={Textarea}
                       name="description"
+                      disabled
                     />
                     <ErrorMessage name="description" component="div" className="text-red-500 text-sm" />
                   </div>

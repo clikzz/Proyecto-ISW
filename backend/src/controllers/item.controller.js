@@ -33,8 +33,6 @@ exports.getItemById = async (req, res) => {
 };
 
 exports.updateItem = async (req, res) => {
-  console.log('Datos recibidos para actualizar:', req.body);
-
   const { error } = updateItem.validate(req.body);
   if (error) return res.status(400).json({ message: error.details[0].message });
 
