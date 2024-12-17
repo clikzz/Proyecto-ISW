@@ -106,7 +106,7 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
           Registrar Compra
         </Button>
       </DialogTrigger>
-      <DialogContent className="border-none bg-card text-card-foreground max-w-2xl mx-auto p-8">
+      <DialogContent className="border-none bg-card text-card-foreground max-w-3xl mx-auto p-8">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">Formulario de Compra</DialogTitle>
         </DialogHeader>

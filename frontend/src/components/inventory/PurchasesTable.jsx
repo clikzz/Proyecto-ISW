@@ -295,7 +295,6 @@ const PurchasesTable = () => {
                           >
                             Editar
                           </DropdownMenuItem>
-                          {/* Botón de eliminar: visible solo si el rol es "admin" */}
                           {role === 'admin' && (
                             <DropdownMenuItem
                               className="hover:bg-red-100 px-4 py-2 cursor-pointer text-red-600"

@@ -101,11 +101,10 @@ const SalesTable = () => {
     setIsConfirmationDialogOpen(false);
   };
 
-  // Función para abrir el diálogo de edición (desde cualquier parte)
   const openEditSaleDialog = (sale) => {
     setSelectedSale(sale);
     setIsEditSaleDialogOpen(true);
-    setIsDetailsDialogOpen(false); // Cierra el diálogo de detalles
+    setIsDetailsDialogOpen(false);
   };
   
   const closeEditSaleDialog = () => {
@@ -123,7 +122,6 @@ const SalesTable = () => {
     setIsDetailsDialogOpen(false);
   };
   
-  // Función para actualizar ventas después de edición
   const handleUpdateSale = async () => {
     await fetchSales();
     closeEditSaleDialog();
@@ -297,7 +295,6 @@ const SalesTable = () => {
                           >
                             Editar
                           </DropdownMenuItem>
-                          {/* Botón de eliminar: visible solo si el rol es "admin" */}
                           {role === 'admin' && (
                             <DropdownMenuItem
                               className="hover:bg-red-100 px-4 py-2 cursor-pointer text-red-600"
