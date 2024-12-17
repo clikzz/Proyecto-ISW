@@ -79,3 +79,15 @@ exports.deleteSupplier = async (req, res) => {
       .json({ message: 'Error al eliminar el proveedor', error: err.message });
   }
 };
+
+exports.getSupplierItems = async (req, res) => {
+  try {
+    const items = await supplierService.getSupplierItems(req.params.rut);
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({
+      message: 'Error al obtener los items del proveedor',
+      error: err.message,
+    });
+  }
+};

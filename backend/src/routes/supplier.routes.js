@@ -28,4 +28,6 @@ router.put(
 );
 router.delete('/delete/:rut', supplierController.deleteSupplier);
 
+router.get('/items/:rut', supplierController.getSupplierItems);
+
 module.exports = router;

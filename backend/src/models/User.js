@@ -17,8 +17,6 @@ class User {
     `;
     const values = [rut, name_user, email, hashedPassword, role_user];
     const result = await db.query(query, values);
-    console.log(result.rows[0]);
-
     return result.rows[0];
   }
 
@@ -38,8 +36,6 @@ class User {
     `;
     const values = [rut, name_user, email, hashedPassword, role_user];
     const result = await db.query(query, values);
-    console.log(result.rows[0]);
-
     return result.rows[0];
   }
 
