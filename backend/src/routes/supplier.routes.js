@@ -9,25 +9,42 @@ const {
 } = require('../middleware/supplier.middleware');
 
 router.use(authMiddleware);
-router.use(authorizationMiddleware(['admin']));
 
 router.post(
   '/create',
+  authorizationMiddleware(['admin']),
   validateCreateSupplier,
   supplierController.createSupplier
 );
 
-router.get('/all', supplierController.getSuppliers);
+router.get(
+  '/all',
+  authorizationMiddleware(['admin', 'employee']),
+  supplierController.getSuppliers
+);
 
-router.get('/get/:rut', supplierController.getSupplierById);
+router.get(
+  '/get/:rut',
+  authorizationMiddleware(['admin']),
+  supplierController.getSupplierById
+);
 
 router.put(
   '/update/:rut',
+  authorizationMiddleware(['admin']),
   validateUpdateSupplier,
   supplierController.updateSupplier
 );
-router.delete('/delete/:rut', supplierController.deleteSupplier);
+router.delete(
+  '/delete/:rut',
+  authorizationMiddleware(['admin']),
+  supplierController.deleteSupplier
+);
 
-router.get('/items/:rut', supplierController.getSupplierItems);
+router.get(
+  '/items/:rut',
+  authorizationMiddleware(['admin']),
+  supplierController.getSupplierItems
+);
 
 module.exports = router;
