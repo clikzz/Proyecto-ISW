@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import { getAllTransactions, getTransactionsSummary } from "../api/transaction";
 import BalanceCards from "@/components/finance/BalanceCards";
