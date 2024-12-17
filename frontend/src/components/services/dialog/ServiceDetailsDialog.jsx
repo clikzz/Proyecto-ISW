@@ -43,8 +43,6 @@ const ServiceDetailsDialog = ({ isOpen, onClose, service, onEdit }) => {
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">Detalles del Servicio</DialogTitle>
         </DialogHeader>
-
-        {/* Información del servicio con Formik */}
         <Formik
           initialValues={{
             name_service: service.name_service || '',
