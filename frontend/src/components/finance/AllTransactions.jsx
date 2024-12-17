@@ -74,7 +74,7 @@ export default function AllTransactions({
     if (isOpen) {
       fetchAllTransactions();
     }
-  }, [isOpen, transactions, showAlert, refreshTrigger]); // Added refreshTrigger to dependencies
+  }, [isOpen, transactions, showAlert, refreshTrigger]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -108,7 +108,7 @@ export default function AllTransactions({
         );
         showAlert("Transacción eliminada con éxito", "success");
         if (onTransactionUpdated) {
-          onTransactionUpdated(); // Notificar al componente padre
+          onTransactionUpdated(); 
         }
       } catch (error) {
         console.error("Error al eliminar la transacción:", error);
@@ -283,4 +283,3 @@ export default function AllTransactions({
     </div>
   );
 }
-

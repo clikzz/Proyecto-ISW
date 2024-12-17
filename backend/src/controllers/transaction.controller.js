@@ -12,7 +12,7 @@ const getAllTransactions = async (req, res) => {
 
 const createTransaction = async (req, res) => {
   try {
-    const { rut } = req.user; // Obtenemos el RUT del usuario autenticado
+    const { rut } = req.user; 
     const transactionData = { ...req.body, rut };
 
 
