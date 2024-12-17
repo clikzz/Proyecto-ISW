@@ -85,6 +85,5 @@ export const exportToPDF = (purchases) => {
     headStyles: { fillColor: [41, 128, 185] }, // Azul claro para encabezado
   });
 
-  // Guardar PDF
   doc.save('Compras.pdf');
 };

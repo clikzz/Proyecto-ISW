@@ -313,12 +313,12 @@ const InventoryTable = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="p-2 hover:bg-gray-100 rounded-md"
+                            className="p-2 hover:bg-gray-100 rounded-md dark:hover:bg-gray-700"
                           >
-                            <EllipsisVertical className="h-5 w-5 text-gray-600" />
+                            <EllipsisVertical className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 w-48">
+                        <DropdownMenuContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-48 dark:border-gray-700 dark:bg-gray-900">
                           <DropdownMenuItem
                             className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 cursor-pointer text-gray-700 dark:text-gray-300"
                             onClick={() => fetchItemDetails(item.id_item)}
@@ -334,7 +334,6 @@ const InventoryTable = () => {
                           >
                             Editar
                           </DropdownMenuItem>
-                          {/* Botón de eliminar: visible solo si el rol es "admin" */}
                           {role === 'admin' && (
                             <DropdownMenuItem
                               className="hover:bg-red-100 dark:hover:bg-red-700 px-4 py-2 cursor-pointer text-red-600 dark:text-red-400"
