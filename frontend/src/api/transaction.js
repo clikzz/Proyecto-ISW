@@ -69,19 +69,12 @@ export const getTransactionsSummary = async () => {
 
 const handleApiError = (error) => {
   if (error.response) {
-    console.error('Error response:', error.response.data);
-    console.error('Error status:', error.response.status);
-    console.error('Error headers:', error.response.headers);
-    if (error.response.status === 404) {
-      console.error('Resource not found (404)');
-      return { message: 'Resource not found (404)' };
-    }
+    console.error(`API Error: ${error.response.status} - ${error.response.data.message || 'Unknown error'}`);
   } else if (error.request) {
-    console.error('Error request:', error.request);
+    console.error('Network Error: No response received');
   } else {
-    console.error('Error message:', error.message);
+    console.error('Error:', error.message);
   }
-  console.error('Error config:', error.config);
   throw error;
 };
 
