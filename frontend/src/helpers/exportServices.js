@@ -49,7 +49,7 @@ export const exportToPDF = (services) => {
   doc.text('Lista de Servicios', 14, 20);
 
   doc.setFontSize(10);
-  doc.text(`Generado el: ${new Date().toLocaleDateString()}`, 14, 30);
+  doc.text(`Generado el: ${formatDateTime(new Date())}`, 14, 30);
 
   const tableData = services.map((service) => [
     capitalize(service.name_service),
