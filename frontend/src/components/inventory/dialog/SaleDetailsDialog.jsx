@@ -78,6 +78,7 @@ const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
                       type="number"
                       name="quantity_item"
                       placeholder="Cantidad vendida"
+                      disabled
                     />
                     <ErrorMessage name="quantity_item" component="div" className="text-red-500 text-sm" />
                   </div>
@@ -103,6 +104,7 @@ const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
                       as={Textarea}
                       name="description"
                       placeholder="Descripción"
+                      disabled
                     />
                     <ErrorMessage name="description" component="div" className="text-red-500 text-sm" />
                   </div>

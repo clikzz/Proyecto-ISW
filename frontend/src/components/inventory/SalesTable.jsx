@@ -45,7 +45,6 @@ const SalesTable = () => {
   const fetchSales = async () => {
     try {
       const data = await getSales();
-      console.log('Ventas:', data);
       setSales(data);
       setFilteredSales(data);
     } catch (error) {
