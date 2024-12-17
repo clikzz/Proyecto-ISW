@@ -35,7 +35,6 @@ const SaleDetailsDialog = ({ isOpen, onClose, onEdit, sale }) => {
           <DialogTitle className="text-xl font-bold">Detalles de la Venta</DialogTitle>
         </DialogHeader>
 
-        {/* Formik para el formulario */}
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
           {({ values, handleChange, handleBlur }) => (
             <Form>
