@@ -1,5 +1,4 @@
 const db = require('../config/db');
-const ItemSupplier = require('./ItemSupplier');
 
 class Item {
   static async create(data) {

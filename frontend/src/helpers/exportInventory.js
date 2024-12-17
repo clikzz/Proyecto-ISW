@@ -5,7 +5,6 @@ import { capitalize } from '@/helpers/capitalize';
 import { formatDateTime } from '@/helpers/dates';
 
 export const exportToExcel = (items) => {
-  // Mapeo de los datos del inventario
   const mappedItems = items.map((item) => ({
     Nombre: item.name_item,
     Categoría: capitalize(item.category),
@@ -17,30 +16,26 @@ export const exportToExcel = (items) => {
     Modificado: formatDateTime(item.updated_at),
   }));
 
-  // Crear hoja de Excel
   const worksheet = utils.json_to_sheet(mappedItems);
 
-  // Definir anchos de columnas
   const colWidths = [
-    { wch: 20 }, // Nombre
-    { wch: 20 }, // Categoría
-    { wch: 10 }, // Stock
-    { wch: 20 }, // Precio Venta
-    { wch: 30 }, // Descripción
-    { wch: 30 }, // Proveedor
-    { wch: 20 }, // Registrado
-    { wch: 20 }, // Modificado
+    { wch: 20 },
+    { wch: 20 },
+    { wch: 10 },
+    { wch: 20 },
+    { wch: 30 },
+    { wch: 30 },
+    { wch: 20 },
+    { wch: 20 },
   ];
   worksheet['!cols'] = colWidths;
 
-  // Agregar encabezados manualmente
   utils.sheet_add_aoa(
     worksheet,
     [['Nombre', 'Categoría', 'Stock', 'Precio Venta', 'Descripción', 'Proveedor', 'Registrado', 'Modificado']],
     { origin: 'A1' }
   );
 
-  // Crear libro de trabajo y exportar
   const workbook = utils.book_new();
   utils.book_append_sheet(workbook, worksheet, 'Inventario');
 
@@ -50,15 +45,12 @@ export const exportToExcel = (items) => {
 export const exportToPDF = (items) => {
   const doc = new jsPDF();
 
-  // Título del documento
   doc.setFontSize(20);
   doc.text('Inventario de Productos', 14, 20);
 
-  // Fecha de generación
   doc.setFontSize(10);
-  doc.text(`Generado el: ${new Date().toLocaleDateString()}`, 14, 30);
+  doc.text(`Generado el: ${formatDateTime(new Date())}`, 14, 30);
 
-  // Preparar datos para la tabla
   const tableData = items.map((item) => [
     item.name_item,
     capitalize(item.category),
@@ -70,7 +62,6 @@ export const exportToPDF = (items) => {
     formatDateTime(item.updated_at),
   ]);
 
-  // Crear tabla en el PDF
   autoTable(doc, {
     head: [['Nombre', 'Categoría', 'Stock', 'Precio Venta', 'Descripción', 'Proveedor', 'Registrado', 'Modificado']],
     body: tableData,
@@ -79,7 +70,7 @@ export const exportToPDF = (items) => {
       fontSize: 8,
       cellPadding: 3,
     },
-    headStyles: { fillColor: [22, 160, 133] }, // Verde claro para encabezado
+    headStyles: { fillColor: [22, 160, 133] },
   });
 
   doc.save('Inventario.pdf');
