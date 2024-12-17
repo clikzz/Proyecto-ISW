@@ -35,6 +35,12 @@ export function NewTransactionDialog({ isOpen, onClose, onTransactionAdded }) {
     }
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'e' || event.key === 'E' || event.key === '+' || event.key === '-') {
+      event.preventDefault();
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-card text-card-foreground border-none">
@@ -74,6 +80,7 @@ export function NewTransactionDialog({ isOpen, onClose, onTransactionAdded }) {
                     id="amount"
                     name="amount"
                     placeholder="Ingrese el monto"
+                    onKeyDown={handleKeyDown}
                   />
                   <ErrorMessage name="amount" component="div" className="text-red-500 text-sm" />
                 </div>
@@ -120,4 +127,3 @@ export function NewTransactionDialog({ isOpen, onClose, onTransactionAdded }) {
     </Dialog>
   );
 }
-
