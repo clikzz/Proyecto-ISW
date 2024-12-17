@@ -23,7 +23,6 @@ const updateService = async (id, data) => {
   try {
     const service = await Service.findById(id);
     if (!service) {
-      console.error(`Servicio con ID ${id} no encontrado.`);
       throw new Error('Servicio no encontrado.');
     }
 
@@ -38,7 +37,6 @@ const updateService = async (id, data) => {
 
     return updatedService;
   } catch (error) {
-    console.error('Error al actualizar el servicio:', error.message);
     throw error;
   }
 };

@@ -32,7 +32,7 @@ import { useAuth } from '@/context/authContext';
 export default function ServicesTable() {
   const [services, setServices] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('todas');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
@@ -95,7 +95,6 @@ export default function ServicesTable() {
   };
 
 
-
   const handleView = (service) => {
     setSelectedService(service);
     setIsDetailsOpen(true);
@@ -152,6 +151,7 @@ export default function ServicesTable() {
         .includes(searchTerm.toLowerCase());
       const matchesCategory =
         selectedCategory === 'todas' ||
+        selectedCategory === '' ||
         service.category.toLowerCase() === selectedCategory.toLowerCase();
       return matchesSearch && matchesCategory;
     });

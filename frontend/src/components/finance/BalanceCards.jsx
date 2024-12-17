@@ -1,67 +1,60 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 import { getServices } from '@/api/service';
 
-const formatoPesoChileno = (valor) => {
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0,
-  }).format(valor);
-};
-
 export default function BalanceCards({ transactions }) {
-  const [summary, setSummary] = useState({ ingresos: 0, egresos: 0, balance: 0 });
+  const [services, setServices] = useState([]);
 
-  const fetchSummary = async () => {
+  const fetchServices = async () => {
     try {
       const services = await getServices();
-
-      const formattedTransactions = transactions
-        .filter(transaction => !transaction.is_deleted)
-        .map(transaction => ({
-          ...transaction,
-          type: transaction.transaction_type
-        }));
-
-      const formattedServices = services
-        .filter(service => !service.is_deleted)
-        .map(service => ({
-          ...service,
-          id: service.id_service,
-          transaction_type: 'servicio',
-          type: 'servicio',
-          amount: service.price_service
-        }));
-
-      const combinedData = [
-        ...formattedTransactions,
-        ...formattedServices
-      ];
-
-      const ingresos = combinedData
-        .filter(t => t.transaction_type === 'ingreso' || t.transaction_type === 'venta' || t.transaction_type === 'servicio')
-        .reduce((total, t) => total + Number(t.amount || 0), 0);
-
-      const egresos = combinedData
-        .filter(t => t.transaction_type === 'egreso' || t.transaction_type === 'compra')
-        .reduce((total, t) => total + Number(t.amount || 0), 0);
-
-      setSummary({
-        ingresos: ingresos,
-        egresos: egresos,
-        balance: ingresos - egresos
-      });
+      setServices(services);
     } catch (error) {
-      console.error('Error al obtener el resumen:', error);
-      setSummary({ ingresos: 0, egresos: 0, balance: 0 });
+      console.error('Error al obtener los servicios:', error);
     }
   };
 
   useEffect(() => {
-    fetchSummary();
-  }, [transactions]);
+    fetchServices();
+  }, []);
+
+  const summary = useMemo(() => {
+    const formattedTransactions = transactions
+      .filter(transaction => !transaction.is_deleted)
+      .map(transaction => ({
+        ...transaction,
+        type: transaction.transaction_type
+      }));
+
+    const formattedServices = services
+      .filter(service => !service.is_deleted)
+      .map(service => ({
+        ...service,
+        transaction_type: 'servicio',
+        type: 'servicio',
+        amount: service.price_service
+      }));
+
+    const combinedData = [
+      ...formattedTransactions,
+      ...formattedServices
+    ];
+
+    const ingresos = combinedData
+      .filter(t => t.transaction_type === 'ingreso' || t.transaction_type === 'venta' || t.transaction_type === 'servicio')
+      .reduce((total, t) => total + Number(t.amount || 0), 0);
+
+    const egresos = combinedData
+      .filter(t => t.transaction_type === 'egreso' || t.transaction_type === 'compra')
+      .reduce((total, t) => total + Number(t.amount || 0), 0);
+
+    return {
+      ingresos: ingresos,
+      egresos: egresos,
+      balance: ingresos - egresos
+    };
+  }, [transactions, services]);
 
   const cards = [
     { title: 'Balance Total', value: summary.balance, icon: DollarSign },
@@ -77,7 +70,7 @@ export default function BalanceCards({ transactions }) {
             <div className="flex flex-col justify-between space-y-0">
               <h3 className="text-sm font-medium mb-2">{card.title}</h3>
               <div className={`text-2xl font-bold ${card.color ? `text-${card.color}-500` : ''}`}>
-                {formatoPesoChileno(card.value)}
+                ${card.value?.toLocaleString('es-CL')}
               </div>
               <p className="text-xs text-muted-foreground">
                 {index === 0 ? 'Actualizado al momento' : `Total de ${card.title.toLowerCase()}`}

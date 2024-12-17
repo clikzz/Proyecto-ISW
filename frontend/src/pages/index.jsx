@@ -30,22 +30,29 @@ const features = [
     icon: Wrench,
     title: 'Gestión de Servicios',
     description: 'Organiza reparaciones y mantenimientos de forma eficiente.',
+    imageLight: '/images/service-light.png',
+    imageDark: '/images/service-dark.png',
   },
   {
     icon: BarChart2,
     title: 'Análisis Financiero',
     description: 'Visualiza ingresos, gastos y ganancias en tiempo real.',
+    imageLight: '/images/finance-light.png',
+    imageDark: '/images/finance-dark.png',
   },
   {
     icon: Package,
     title: 'Control de Inventario',
     description: 'Gestiona piezas y accesorios con facilidad.',
+    imageLight: '/images/inventory-light.png',
+    imageDark: '/images/inventory-dark.png',
   },
   {
     icon: Users,
     title: 'Gestión de Proveedores',
-    description:
-      'Mantén un registro detallado de tus proveedores y sus productos.',
+    description: 'Mantén un registro detallado de tus proveedores y sus productos.',
+    imageLight: '/images/supplier-light.png',
+    imageDark: '/images/supplier-dark.png',
   },
 ];
 
@@ -202,67 +209,65 @@ export default function LandingPage() {
             Características Principales
           </h2>
           <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Lista de características */}
             <div className="space-y-8">
               {features.map((feature, index) => (
                 <motion.div
                   key={index}
-                  className={`p-6 rounded-lg cursor-pointer transition-all ${
-                    activeFeature === index ? 'shadow-md' : 'hover:shadow-lg'
-                  }`}
-                  style={{
-                    backgroundColor: `hsl(var(${
-                      activeFeature === index
-                        ? document.documentElement.classList.contains('dark')
-                          ? '220, 40%, 30%'
-                          : '210, 80%, 90%'
-                        : '--card'
-                    }))`,
-                    color: `hsl(var(${
-                      activeFeature === index
-                        ? document.documentElement.classList.contains('dark')
-                          ? '220, 60%, 70%'
-                          : '210, 50%, 20%'
-                        : '--card-foreground'
-                    }))`,
-                  }}
+                  className={`p-6 rounded-lg cursor-pointer transition-all ${activeFeature === index
+                    ? 'shadow-md bg-gray-200 dark:bg-gray-700 text-black dark:text-white'
+                    : 'hover:shadow-lg'
+                    }`}
                   onClick={() => setActiveFeature(index)}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <div className="flex items-center space-x-4">
-                    <feature.icon className="w-8 h-8" />
+                    <feature.icon className="w-8 h-8 text-primary" />
                     <h3 className="text-xl font-semibold">{feature.title}</h3>
                   </div>
-                  <p
-                    className="mt-2"
-                    style={{ color: 'hsl(var(--muted-foreground))' }}
-                  >
-                    {feature.description}
-                  </p>
+                  <p className="mt-2 text-muted-foreground">{feature.description}</p>
                 </motion.div>
               ))}
             </div>
-            <div
-              className="relative h-[400px] rounded-lg overflow-hidden"
-              style={{ backgroundColor: 'hsl(var(--muted))' }}
-            >
+
+
+            {/* Imagen dinámica */}
+            <div className="relative w-full h-[500px] rounded-lg overflow-hidden">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeFeature}
-                  className="absolute inset-0 flex items-center justify-center text-4xl font-bold"
-                  style={{ color: 'hsl(var(--primary))' }}
+                  className="absolute w-full h-full flex items-center justify-center"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.5 }}
                 >
-                  {features[activeFeature].title}
+                  {/* Imagen para modo claro */}
+                  <Image
+                    src={features[activeFeature].imageLight}
+                    alt={features[activeFeature].title}
+                    width={800}
+                    height={500}
+                    objectFit="contain"
+                    className="block dark:hidden rounded-2xl"
+                  />
+                  {/* Imagen para modo oscuro */}
+                  <Image
+                    src={features[activeFeature].imageDark}
+                    alt={features[activeFeature].title}
+                    width={800}
+                    height={500}
+                    objectFit="contain"
+                    className="hidden dark:block rounded-2xl"
+                  />
                 </motion.div>
               </AnimatePresence>
             </div>
           </div>
         </div>
       </section>
+
 
       <footer className="w-full py-6 bg-background border-t border-border">
         <div className="container mx-auto px-4">

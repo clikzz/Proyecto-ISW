@@ -20,7 +20,6 @@ class Inventory {
   }
 
   static async createTransactionDetails(transactionId, item, type) {
-    console.log('Item antes de insertar en la BD:', item);
     const query = `
       INSERT INTO transaction_item (id_transaction, id_item, quantity_item, unit_price, rut_supplier)
       VALUES ($1, $2, $3, $4, $5);
@@ -37,16 +36,16 @@ class Inventory {
     }
   }
 
-  static async validateStock(itemId, quantity) {
+  static async validateStock(itemId) {
     const query = `
-      SELECT stock FROM item
+      SELECT name_item, stock FROM item
       WHERE id_item = $1 AND is_deleted = FALSE;
     `;
     const result = await db.query(query, [itemId]);
-    if (result.rowCount === 0 || result.rows[0].stock < quantity) {
-      throw new Error(`Stock insuficiente para el ítem con ID ${itemId}`);
+    if (result.rowCount === 0) {
+      throw new Error(`El producto con ID ${itemId} no existe`);
     }
-    return true;
+    return result.rows[0];
   }
 
   static async updateSupplier(idItem, rutSupplier, purchasePrice) {

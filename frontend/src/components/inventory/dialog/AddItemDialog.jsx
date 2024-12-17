@@ -40,7 +40,7 @@ export default function AddItemDialog({ fetchItems }) {
   const handleFormikSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
       await addItem(values);
-      showAlert('Item añadido', 'success');
+      showAlert('Producto añadido correctamente', 'success');
       setIsDialogOpen(false);
 
       setNewItem({
@@ -83,9 +83,9 @@ export default function AddItemDialog({ fetchItems }) {
           Añadir Producto
         </Button>
       </DialogTrigger>
-      <DialogContent className="border-none text-foreground">
+      <DialogContent className="border-none bg-card text-card-foreground max-w-3xl mx-auto p-8">
         <DialogHeader>
-          <DialogTitle>Formulario de Nuevo Producto</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Formulario de Nuevo Producto</DialogTitle>
         </DialogHeader>
         <Formik
           initialValues={newItem}

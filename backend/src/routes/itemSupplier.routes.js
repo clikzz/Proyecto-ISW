@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const itemSupplierController = require('../controllers/itemSupplier.controller');
+const authMiddleware = require('../middleware/auth.middleware');
+const authorizationMiddleware = require('../middleware/authorization.middleware');
+
+router.use(authMiddleware);
+router.use(authorizationMiddleware(['admin', 'employee']));
 
 // Agregar un proveedor a un ítem
 router.post('/supplier/item', itemSupplierController.addSupplierToItem);

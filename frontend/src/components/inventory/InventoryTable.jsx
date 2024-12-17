@@ -31,7 +31,8 @@ const InventoryTable = () => {
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('todas');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSupplier, setSelectedSupplier] = useState('');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { showAlert } = useAlert();
   const { role, loading } = useAuth();
@@ -81,7 +82,7 @@ const InventoryTable = () => {
         setFilteredItems((prevItems) =>
           prevItems.filter((item) => item.id_item !== itemToDelete)
         );
-        showAlert('Ítem eliminado correctamente', 'success');
+        showAlert('Producto eliminado correctamente', 'success');
       } catch (error) {
         console.error('Error al eliminar el item:', error);
         showAlert('Ocurrió un error al eliminar el ítem', 'error');
@@ -107,13 +108,26 @@ const InventoryTable = () => {
     setSortConfig({ key, direction });
   };
 
+  const uniqueSuppliers = useMemo(() => {
+    const allSuppliers = items.flatMap((item) => item.suppliers?.length > 0 ? item.suppliers : ['No Registrado']);
+    return ['todos', ...new Set(allSuppliers)];
+  }, [items]);
+  
+
   const filteredAndSortedItems = useMemo(() => {
     const lowercasedSearch = search.toLowerCase();
     let filtered = items.filter((item) => {
       const matchesSearch = item.name_item.toLowerCase().includes(lowercasedSearch);
       const matchesCategory =
-        selectedCategory === 'todas' || item.category.toLowerCase() === selectedCategory;
-      return matchesSearch && matchesCategory;
+        selectedCategory === '' || 
+        selectedCategory === 'todas' || 
+        item.category.toLowerCase() === selectedCategory;
+      const matchesSupplier =
+        selectedSupplier === '' ||
+        selectedSupplier === 'todos' ||
+        (item.suppliers?.length > 0 && item.suppliers.includes(selectedSupplier)) ||
+        (item.suppliers?.length === 0 && selectedSupplier === 'No Registrado');
+      return matchesSearch && matchesCategory && matchesSupplier;
     });
   
     if (sortConfig.key !== null) {
@@ -132,7 +146,7 @@ const InventoryTable = () => {
     }
   
     return filtered;
-  }, [items, search, selectedCategory, sortConfig]);
+  }, [items, search, selectedCategory, selectedSupplier, sortConfig]);
 
   return (
     <div className="container mx-auto py-4">
@@ -141,17 +155,17 @@ const InventoryTable = () => {
       </div>
 
       <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center max-w-sm">
+        <div className="flex items-center max-w-l">
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por nombre..."
             className="max-w-full"
           />
-          <Search className="ml-2 h-5 w-5 text-gray-500" />
+          <Search className="ml-2 h-10 w-10 text-gray-500" />
           <div className="ml-5">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-[160px]">
                 <Filter className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Categoría" />
               </SelectTrigger>
@@ -165,6 +179,21 @@ const InventoryTable = () => {
                 <SelectItem value="equipamiento">Equipamiento</SelectItem>
                 <SelectItem value="electrónica">Electrónica</SelectItem>
                 <SelectItem value="otros">Otros</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="ml-5">
+            <Select value={selectedSupplier} onValueChange={setSelectedSupplier}>
+              <SelectTrigger className="w-[160px]">
+                <Filter className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Proveedor" />
+              </SelectTrigger>
+              <SelectContent>
+                {uniqueSuppliers.map((supplier) => (
+                  <SelectItem key={supplier} value={supplier}>
+                    {capitalize(supplier)}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -255,7 +284,7 @@ const InventoryTable = () => {
                   <TableRow key={item.id_item}>
                     <TableCell>{item.name_item}</TableCell>
                     <TableCell>{capitalize(item.category)}</TableCell>
-                    <TableCell>{item.stock}</TableCell>
+                    <TableCell>{item.stock === 0 ? 'Sin stock' : item.stock}</TableCell>
                     <TableCell>$ {item.selling_price?.toLocaleString('es-CL')}</TableCell>
                     <TableCell>
                       {item.suppliers && item.suppliers.length > 0 ? (
@@ -284,12 +313,12 @@ const InventoryTable = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="p-2 hover:bg-gray-100 rounded-md"
+                            className="p-2 hover:bg-gray-100 rounded-md dark:hover:bg-gray-700"
                           >
-                            <EllipsisVertical className="h-5 w-5 text-gray-600" />
+                            <EllipsisVertical className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 w-48">
+                        <DropdownMenuContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-48 dark:border-gray-700 dark:bg-gray-900">
                           <DropdownMenuItem
                             className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 cursor-pointer text-gray-700 dark:text-gray-300"
                             onClick={() => fetchItemDetails(item.id_item)}
@@ -305,7 +334,6 @@ const InventoryTable = () => {
                           >
                             Editar
                           </DropdownMenuItem>
-                          {/* Botón de eliminar: visible solo si el rol es "admin" */}
                           {role === 'admin' && (
                             <DropdownMenuItem
                               className="hover:bg-red-100 dark:hover:bg-red-700 px-4 py-2 cursor-pointer text-red-600 dark:text-red-400"

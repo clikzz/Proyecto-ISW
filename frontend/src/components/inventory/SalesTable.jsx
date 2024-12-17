@@ -33,7 +33,7 @@ const SalesTable = () => {
   const [selectedSale, setSelectedSale] = useState(null);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('todas');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const { showAlert } = useAlert();
   const { role, loading } = useAuth();
 
@@ -45,7 +45,6 @@ const SalesTable = () => {
   const fetchSales = async () => {
     try {
       const data = await getSales();
-      console.log('Ventas:', data);
       setSales(data);
       setFilteredSales(data);
     } catch (error) {
@@ -62,7 +61,7 @@ const SalesTable = () => {
     const filtered = sales.filter((sale) => {
       const matchesSearch = sale.name_item.toLowerCase().includes(lowercasedSearch);
       const matchesCategory =
-        selectedCategory === 'todas' || sale.category.toLowerCase() === selectedCategory;
+        selectedCategory === 'todas' || selectedCategory === '' || sale.category.toLowerCase() === selectedCategory;
       return matchesSearch && matchesCategory;
     });
     setFilteredSales(filtered);
@@ -101,11 +100,10 @@ const SalesTable = () => {
     setIsConfirmationDialogOpen(false);
   };
 
-  // Función para abrir el diálogo de edición (desde cualquier parte)
   const openEditSaleDialog = (sale) => {
     setSelectedSale(sale);
     setIsEditSaleDialogOpen(true);
-    setIsDetailsDialogOpen(false); // Cierra el diálogo de detalles
+    setIsDetailsDialogOpen(false);
   };
   
   const closeEditSaleDialog = () => {
@@ -123,7 +121,6 @@ const SalesTable = () => {
     setIsDetailsDialogOpen(false);
   };
   
-  // Función para actualizar ventas después de edición
   const handleUpdateSale = async () => {
     await fetchSales();
     closeEditSaleDialog();
@@ -297,7 +294,6 @@ const SalesTable = () => {
                           >
                             Editar
                           </DropdownMenuItem>
-                          {/* Botón de eliminar: visible solo si el rol es "admin" */}
                           {role === 'admin' && (
                             <DropdownMenuItem
                               className="hover:bg-red-100 px-4 py-2 cursor-pointer text-red-600"

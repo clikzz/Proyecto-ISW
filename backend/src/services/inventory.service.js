@@ -43,14 +43,22 @@ const createPurchase = async (items, details) => {
 };
 
 const createSale = async (items, details) => {
+  // Validar stock de todos los productos antes de crear la transacción
+  for (const item of items) {
+    const product = await Inventory.validateStock(item.id_item);
+    if (product.stock < item.quantity) {
+      throw new Error(
+        `Stock insuficiente (${product.stock}) para el producto ${product.name_item}`
+      );
+    }
+  }
+  
   const transactionId = await Inventory.createTransaction({
     ...details,
     type: 'venta',
   });
 
   for (const item of items) {
-    // Validar el stock sufienciente antes de realizar la venta
-    await Inventory.validateStock(item.id_item, item.quantity);
     // Reducir el stock
     await Item.updateStock(item.id_item, item.quantity, 'subtract');
     // Crear el detalle de la transaccion

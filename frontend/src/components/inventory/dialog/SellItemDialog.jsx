@@ -64,8 +64,8 @@ export default function SellItemDialog({ fetchSales }) {
       resetForm();
       fetchSales();
     } catch (error) {
-      console.error('Error al registrar la venta:', error);
-      showAlert('Error al registrar la venta', 'error');
+      console.error('Error al registrar la venta:', error.message);
+      showAlert(error.message, 'error');
     } finally {
       setSubmitting(false);
     }
@@ -79,9 +79,9 @@ export default function SellItemDialog({ fetchSales }) {
           Registrar Venta
         </Button>
       </DialogTrigger>
-      <DialogContent className="border-none text-foreground">
+      <DialogContent className="border-none bg-card text-card-foreground">
         <DialogHeader>
-          <DialogTitle>Formulario de Venta</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Formulario de Venta</DialogTitle>
         </DialogHeader>
         <Formik
           initialValues={{
@@ -174,7 +174,7 @@ export default function SellItemDialog({ fetchSales }) {
                 </div>
 
                 {/* Botón de Confirmar */}
-                <div className="flex justify-end">
+                <div className="flex justify-center">
                   <Button type="submit" className="bg-blue-500 text-white" disabled={isSubmitting}>
                     {isSubmitting ? 'Guardando...' : 'Confirmar Venta'}
                   </Button>

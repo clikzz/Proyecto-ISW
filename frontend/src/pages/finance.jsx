@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { getAllTransactions, getTransactionsSummary } from '../api/transaction';
-import BalanceCards from '@/components/finance/BalanceCards';
-import TransactionSummary from '@/components/finance/TransactionSummary';
-import Charts from '@/components/finance/Charts';
-import NewTransactionForm from '@/components/finance/NewTransactionForm';
-import AllTransactions from '@/components/finance/AllTransactions';
+import React, { useState, useEffect } from "react";
+import { getAllTransactions, getTransactionsSummary } from "../api/transaction";
+import BalanceCards from "@/components/finance/BalanceCards";
+import TransactionSummary from "@/components/finance/TransactionSummary";
+import Charts from "@/components/finance/Charts";
+import { NewTransactionDialog } from "@/components/finance/dialog/NewTransactionDialog";
+import AllTransactions from "@/components/finance/AllTransactions";
 
 export default function Finanzas() {
   const [transactions, setTransactions] = useState([]);
@@ -15,15 +15,22 @@ export default function Finanzas() {
     egresos: 0,
     balance: 0,
   });
-  const [isNewTransactionFormOpen, setIsNewTransactionFormOpen] = useState(false);
+  const [isNewTransactionFormOpen, setIsNewTransactionFormOpen] =
+    useState(false);
   const [isAllTransactionsOpen, setIsAllTransactionsOpen] = useState(false);
+
+  const [error, setError] = useState(null);
 
   const fetchTransactions = async () => {
     try {
       const data = await getAllTransactions();
       setTransactions(data);
+      setError(null);
     } catch (error) {
-      console.error('Failed to fetch transactions:', error);
+      console.error("Failed to fetch transactions:", error);
+      setError(
+        "No se pudieron cargar las transacciones. Por favor, intente de nuevo más tarde."
+      );
     }
   };
 
@@ -31,8 +38,12 @@ export default function Finanzas() {
     try {
       const data = await getTransactionsSummary();
       setSummary(data);
+      setError(null);
     } catch (error) {
-      console.error('Error al obtener el resumen:', error);
+      console.error("Error al obtener el resumen:", error);
+      setError(
+        "No se pudo cargar el resumen. Por favor, intente de nuevo más tarde."
+      );
     }
   };
 
@@ -72,7 +83,17 @@ export default function Finanzas() {
         <Charts summary={summary} transactions={transactions} />
       </div>
 
-      <NewTransactionForm
+      {error && (
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+          role="alert"
+        >
+          <strong className="font-bold">Error: </strong>
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
+
+      <NewTransactionDialog
         isOpen={isNewTransactionFormOpen}
         onClose={() => setIsNewTransactionFormOpen(false)}
         onTransactionAdded={handleTransactionUpdated}

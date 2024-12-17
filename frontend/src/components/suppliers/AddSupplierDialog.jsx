@@ -73,9 +73,9 @@ export default function AddSupplierDialog({ fetchSuppliers }) {
           Añadir Proveedor
         </Button>
       </DialogTrigger>
-      <DialogContent className="border-none text-foreground">
+      <DialogContent className="bg-card text-card-foreground border-none">
         <DialogHeader>
-          <DialogTitle>Formulario de nuevo proveedor</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Formulario de nuevo proveedor</DialogTitle>
         </DialogHeader>
         <Formik
           initialValues={{

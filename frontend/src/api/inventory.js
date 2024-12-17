@@ -83,7 +83,6 @@ export const deleteItem = async (id) => {
 // Registrar una compra
 export const recordPurchase = async (purchase) => {
   try {
-    console.log('Datos enviados para compra:', purchase);
     const response = await api.post('/inventory/purchase', purchase, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -114,7 +113,6 @@ export const updatePurchase = async (id, updatedFields) => {
 // Registrar una venta
 export const recordSale = async (sale) => {
   try {
-    console.log('Datos enviados para venta:', sale);
     const response = await api.post('/inventory/sale', sale, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -122,8 +120,9 @@ export const recordSale = async (sale) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error al registrar la venta:', error.response?.data || error.message);
-    throw error;
+    const errorMessage = error.response?.data?.error || 'Error desconocido';
+    console.error('Error al registrar la venta:', errorMessage);
+    throw new Error(errorMessage);
   }
 };
 

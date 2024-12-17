@@ -5,7 +5,7 @@ const api = axios.create({
   baseURL: `${API_URL}/services`, 
 });
 
-// Obtener todos los servicios
+
 export const getServices = async (category = '') => {
   try {
     const url = category ? `/all/${category}` : '/all';
@@ -21,7 +21,7 @@ export const getServices = async (category = '') => {
   }
 };
 
-// Obtener un servicio por su ID
+
 export const getServiceById = async (id) => {
   try {
     const response = await api.get(`/get/${id}`, {
@@ -36,7 +36,7 @@ export const getServiceById = async (id) => {
   }
 };
 
-// Crear un nuevo servicio
+
 export const createService = async (newService) => {
   try {
     const response = await api.post('/create', newService, {
@@ -51,7 +51,7 @@ export const createService = async (newService) => {
   }
 };
 
-// Actualizar un servicio
+
 export const updateService = async (id, updatedService) => {
   try {
     const response = await api.put(`/update/${id}`, updatedService, {
@@ -66,7 +66,7 @@ export const updateService = async (id, updatedService) => {
   }
 };
 
-// Eliminar un servicio
+
 export const deleteService = async (id) => {
   try {
     const response = await api.delete(`/delete/${id}`, {

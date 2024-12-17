@@ -37,9 +37,9 @@ const EditServiceDialog = ({ isOpen, onClose, service, onUpdateService }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="border-none text-foreground">
+      <DialogContent className="bg-card text-card-foreground border-none">
         <DialogHeader>
-          <DialogTitle>Editar Servicio</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Editar Servicio</DialogTitle>
         </DialogHeader>
 
         {service && (

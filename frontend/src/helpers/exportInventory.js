@@ -82,6 +82,5 @@ export const exportToPDF = (items) => {
     headStyles: { fillColor: [22, 160, 133] }, // Verde claro para encabezado
   });
 
-  // Guardar PDF
   doc.save('Inventario.pdf');
 };

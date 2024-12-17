@@ -106,9 +106,9 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
           Registrar Compra
         </Button>
       </DialogTrigger>
-      <DialogContent className="border-none text-foreground max-w-2xl mx-auto p-8">
+      <DialogContent className="border-none bg-card text-card-foreground max-w-3xl mx-auto p-8">
         <DialogHeader>
-          <DialogTitle>Formulario de Compra</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Formulario de Compra</DialogTitle>
         </DialogHeader>
         {/* Tabs para cambiar entre Producto Existente y Nuevo Producto */}
         <div className="flex justify-start space-x-4 border-b">
@@ -133,7 +133,7 @@ export default function AddPurchaseDialog({ fetchPurchases }) {
         {/* Renderizado del formulario activo */}
         <div>{renderActiveTab()}</div>
         <Button 
-          className="mt-6"
+          className="mt-6 max-w-xs mx-auto"
           onClick={handleSubmit}>
             Registrar Compra
         </Button>
