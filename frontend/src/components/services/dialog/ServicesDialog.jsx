@@ -42,9 +42,9 @@ export default function AddServiceDialog({ onAddService }) {
           Añadir Servicio
         </Button>
       </DialogTrigger>
-      <DialogContent className="border-none text-foreground">
+      <DialogContent className="bg-card text-card-foreground border-none">
         <DialogHeader>
-          <DialogTitle>Agregar Nuevo Servicio</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Agregar Nuevo Servicio</DialogTitle>
         </DialogHeader>
         <Formik
           initialValues={{
