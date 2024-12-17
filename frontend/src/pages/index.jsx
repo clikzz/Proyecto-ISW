@@ -51,8 +51,8 @@ const features = [
     icon: Users,
     title: 'Gestión de Proveedores',
     description: 'Mantén un registro detallado de tus proveedores y sus productos.',
-    imageLight: '/cristina.png',
-    imageDark: '/cristina.png',
+    imageLight: '/images/supplier-light',
+    imageDark: '/images/supplier-dark',
   },
 ];
 

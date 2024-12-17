@@ -33,7 +33,6 @@ exports.updateProfile = async (req, res) => {
       user: updatedUser,
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: 'Error al actualizar el perfil' });
   }
 };
@@ -59,7 +58,6 @@ exports.changePassword = async (req, res) => {
     ) {
       return res.status(400).json({ message: error.message });
     }
-    console.error(error);
     res.status(500).json({ message: 'Error al cambiar la contraseña' });
   }
 };
@@ -74,34 +72,28 @@ exports.getProfile = async (req, res) => {
     }
 
     const { name_user, phone_user, created_at, updated_at, role_user, profile_picture } = user;
-    console.log('Updated_at:', updated_at);
     res.json({ name_user, phone_user, rut, created_at, updated_at, role_user, profile_picture });
   } catch (error) {
-    console.error('Error al obtener el perfil:', error);
     res.status(500).json({ message: 'Error al obtener el perfil' });
   }
 };
 
-// Subir imagen de perfil
+
 exports.uploadProfilePicture = async (req, res) => {
   try {
-    // Verifica que el archivo esté presente
     if (!req.file) {
       return res.status(400).json({ message: 'No se proporcionó ningún archivo' });
     }
-
-    // Subir el archivo a Cloudinary usando el buffer de memoria
     cloudinary.uploader.upload_stream(
         {
-          folder: 'profile_pictures', // Carpeta en Cloudinary
-          width: 200, // Ancho deseado
-          height: 200, // Alto deseado
-          crop: 'fill', // Recorta al tamaño especificado
-          gravity: 'face', // Focaliza en el rostro (si aplica)
+          folder: 'profile_pictures', 
+          width: 200, 
+          height: 200, 
+          crop: 'fill', 
+          gravity: 'face', 
         },
         async (error, result) => {
           if (error) {
-            console.error('Error al subir a Cloudinary:', error);
             return res.status(500).json({ message: 'Error al subir la imagen', error });
           }
           
@@ -119,7 +111,6 @@ exports.uploadProfilePicture = async (req, res) => {
         }
       ).end(req.file.buffer);
   } catch (error) {
-    console.error('Error al subir la imagen:', error);
     res.status(500).json({ message: 'Error al subir la imagen', error });
   }
 };
