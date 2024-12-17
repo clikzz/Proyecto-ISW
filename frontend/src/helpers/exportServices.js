@@ -45,15 +45,12 @@ export const exportToExcel = (services) => {
 export const exportToPDF = (services) => {
   const doc = new jsPDF();
 
-  // Título
   doc.setFontSize(20);
   doc.text('Lista de Servicios', 14, 20);
 
-  // Fecha
   doc.setFontSize(10);
   doc.text(`Generado el: ${new Date().toLocaleDateString()}`, 14, 30);
 
-  // Preparar datos para la tabla
   const tableData = services.map((service) => [
     capitalize(service.name_service),
     capitalize(service.description_service) || 'Sin descripción',
@@ -65,7 +62,6 @@ export const exportToPDF = (services) => {
     formatDateTime(service.updated_at),
   ]);
 
-  // Crear tabla
   autoTable(doc, {
     head: [['Nombre', 'Descripción', 'Precio', 'Categoría', 'Método de Pago', 'Empleado', 'Registrado', 'Modificado']],
     body: tableData,
