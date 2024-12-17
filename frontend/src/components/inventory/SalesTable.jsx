@@ -33,7 +33,7 @@ const SalesTable = () => {
   const [selectedSale, setSelectedSale] = useState(null);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('todas');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const { showAlert } = useAlert();
   const { role, loading } = useAuth();
 
@@ -62,7 +62,7 @@ const SalesTable = () => {
     const filtered = sales.filter((sale) => {
       const matchesSearch = sale.name_item.toLowerCase().includes(lowercasedSearch);
       const matchesCategory =
-        selectedCategory === 'todas' || sale.category.toLowerCase() === selectedCategory;
+        selectedCategory === 'todas' || selectedCategory === '' || sale.category.toLowerCase() === selectedCategory;
       return matchesSearch && matchesCategory;
     });
     setFilteredSales(filtered);
