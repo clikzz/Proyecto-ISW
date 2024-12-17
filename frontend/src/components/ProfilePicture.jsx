@@ -4,8 +4,6 @@ import { uploadProfilePicture, getProfile } from '@api/profile';
 import ImageCropper from './ui/ImageCropper';
 import { useAlert } from '@/context/alertContext';
 
-
-
 export default function ProfilePicture({ profilePicture, setProfilePicture }) {
   const [showCropper, setShowCropper] = useState(false);
   const [tempImage, setTempImage] = useState(null);
@@ -32,29 +30,30 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
         showAlert('Solo se permiten archivos en formato PNG o JPG.', 'error');
         return;
       }
-  
+
       const reader = new FileReader();
       reader.onload = () => {
-        setTempImage(reader.result); 
-        setShowCropper(true); 
-        document.body.style.overflow = 'hidden'; 
+        setTempImage(reader.result);
+        setShowCropper(true);
+        document.body.style.overflow = 'hidden';
       };
       reader.readAsDataURL(file);
     }
-  
-    event.target.value = ''; 
+
+    event.target.value = '';
   };
-  
 
   const handleSaveCroppedImage = async (blob) => {
     try {
-      const croppedFile = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
+      const croppedFile = new File([blob], 'cropped-image.jpg', {
+        type: 'image/jpeg',
+      });
       const data = await uploadProfilePicture(croppedFile);
       setProfilePicture(data.profilePicture);
       setShowCropper(false);
       setTempImage(null);
       showAlert('Imagen de perfil actualizada correctamente', 'success');
-      document.body.style.overflow = 'auto'; 
+      document.body.style.overflow = 'auto';
     } catch (error) {
       console.error('Error al guardar la imagen recortada:', error.message);
       showAlert('Error al guardar la imagen', 'error');
@@ -64,13 +63,13 @@ export default function ProfilePicture({ profilePicture, setProfilePicture }) {
   const handleCancelCrop = () => {
     setShowCropper(false);
     setTempImage(null);
-    document.body.style.overflow = 'auto'; 
+    document.body.style.overflow = 'auto';
   };
 
   const handleRemoveProfilePicture = async () => {
     try {
       const response = await removeProfilePicture();
-      setProfilePicture(response.profilePicture); 
+      setProfilePicture(response.profilePicture);
     } catch (error) {
       console.error('Error al eliminar la imagen de perfil:', error.message);
     }

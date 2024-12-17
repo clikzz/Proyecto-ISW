@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/router'; // Cambiar a 'next/router'
+import { useRouter } from 'next/router';
 import { validateToken } from '@/api/auth';
 
 const AuthContext = createContext({

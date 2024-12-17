@@ -50,7 +50,8 @@ const features = [
   {
     icon: Users,
     title: 'Gestión de Proveedores',
-    description: 'Mantén un registro detallado de tus proveedores y sus productos.',
+    description:
+      'Mantén un registro detallado de tus proveedores y sus productos.',
     imageLight: '/images/supplier-light.png',
     imageDark: '/images/supplier-dark.png',
   },
@@ -121,7 +122,7 @@ export default function LandingPage() {
         </section>
 
         <motion.div
-          className="mt-10"
+          className="mt-28"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
@@ -214,10 +215,11 @@ export default function LandingPage() {
               {features.map((feature, index) => (
                 <motion.div
                   key={index}
-                  className={`p-6 rounded-lg cursor-pointer transition-all ${activeFeature === index
-                    ? 'shadow-md bg-gray-200 dark:bg-gray-700 text-black dark:text-white'
-                    : 'hover:shadow-lg'
-                    }`}
+                  className={`p-6 rounded-lg cursor-pointer transition-all ${
+                    activeFeature === index
+                      ? 'shadow-md bg-gray-200 dark:bg-gray-700 text-black dark:text-white'
+                      : 'hover:shadow-lg'
+                  }`}
                   onClick={() => setActiveFeature(index)}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
@@ -226,11 +228,12 @@ export default function LandingPage() {
                     <feature.icon className="w-8 h-8 text-primary" />
                     <h3 className="text-xl font-semibold">{feature.title}</h3>
                   </div>
-                  <p className="mt-2 text-muted-foreground">{feature.description}</p>
+                  <p className="mt-2 text-muted-foreground">
+                    {feature.description}
+                  </p>
                 </motion.div>
               ))}
             </div>
-
 
             {/* Imagen dinámica */}
             <div className="relative w-full h-[500px] rounded-lg overflow-hidden">
@@ -268,7 +271,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-
       <footer className="w-full py-6 bg-background border-t border-border">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
@@ -277,12 +279,6 @@ export default function LandingPage() {
               <span className="text-xl font-semibold">bikefy</span>
             </div>
             <nav className="flex flex-wrap justify-center md:justify-end gap-4 text-sm text-muted-foreground">
-              <Link href="#" className="hover:text-primary transition-colors">
-                Términos
-              </Link>
-              <Link href="#" className="hover:text-primary transition-colors">
-                Privacidad
-              </Link>
               <p>Desarrollado por:</p>
               <Link
                 href="https://www.linkedin.com/in/alvaroloyola/"

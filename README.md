@@ -22,10 +22,10 @@
   * [Node.js](#nodejs)
   * [Next.js](#nextjs)
   * [Otros Recursos y Librerías](#otros-recursos-y-librerías)
- 
+
 ## Descripción General
 
-Este proyecto utiliza el stack **PERN** (PostgreSQL, Express.js, React y Node.js) y adicionalmente **Next.js** 
+Este proyecto utiliza el stack **PERN** (PostgreSQL, Express.js, React y Node.js) y adicionalmente **Next.js**
 
 ### Backend
 
@@ -80,99 +80,99 @@ Uso del servicio `email.service.js` para envío de correos electrónicos automat
 El Frontend proporciona una interfaz de usuario funcional y organizada para interactuar con el sistema. Incluye las siguientes páginas y funcionalidades principales:
 
 ### **Autenticación**
-- **Página de Inicio de Sesión**: Permite a los usuarios autenticarse en el sistema.  
+- **Página de Inicio de Sesión**: Permite a los usuarios autenticarse en el sistema.
   - Archivo: `pages/login.jsx`
-- **Página de Recuperación de Contraseña**: Permite a los usuarios solicitar una recuperación de contraseña.  
+- **Página de Recuperación de Contraseña**: Permite a los usuarios solicitar una recuperación de contraseña.
   - Archivo: `pages/forgot-password.jsx`
-- **Página de Restablecimiento de Contraseña**: Facilita el cambio de contraseña mediante un enlace seguro.  
+- **Página de Restablecimiento de Contraseña**: Facilita el cambio de contraseña mediante un enlace seguro.
   - Archivo: `pages/reset-password.jsx`
-- **Componentes auxiliares**:  
+- **Componentes auxiliares**:
   - `LoginForm.jsx`, `Notification.jsx`, `SecurityForm.jsx`
 
 ### **Página Principal (Dashboard)**
-- Página de inicio que presenta estadísticas generales y la actividad reciente del sistema.  
-  - Archivo: `pages/home.jsx`  
-- **Componentes destacados**:  
-  - `Statistics.jsx`: Muestra métricas importantes.  
-  - `RecentActivity.jsx`: Registro de las últimas acciones en el sistema.  
-  - `TopSellingProducts.jsx`: Visualización de los productos más vendidos.  
+- Página de inicio que presenta estadísticas generales y la actividad reciente del sistema.
+  - Archivo: `pages/home.jsx`
+- **Componentes destacados**:
+  - `Statistics.jsx`: Muestra métricas importantes.
+  - `RecentActivity.jsx`: Registro de las últimas acciones en el sistema.
+  - `TopSellingProducts.jsx`: Visualización de los productos más vendidos.
 
 ### **Gestión de Usuarios**
-- **Página de Usuarios**: Permite la administración completa de usuarios registrados.  
+- **Página de Usuarios**: Permite la administración completa de usuarios registrados.
   - Archivo: `pages/users.jsx`
-- **Funcionalidades**:  
-  - Tabla interactiva con búsqueda y filtros (`UsersTable.jsx`).  
+- **Funcionalidades**:
+  - Tabla interactiva con búsqueda y filtros (`UsersTable.jsx`).
   - Creación de nuevos usuarios mediante un formulario modal (`AddUserDialog.jsx`).
 
 
 ### **Inventario**
-- **Página de Inventario**: Permite la gestión de productos y stock.  
+- **Página de Inventario**: Permite la gestión de productos y stock.
   - Archivo: `pages/inventory.jsx`
-- **Funcionalidades**:  
-  - Tabla de inventario interactiva (`InventoryTable.jsx`).  
-  - Agregar, editar y eliminar productos mediante diálogos modales:  
-    - `AddItemDialog.jsx`, `EditItemDialog.jsx`.  
+- **Funcionalidades**:
+  - Tabla de inventario interactiva (`InventoryTable.jsx`).
+  - Agregar, editar y eliminar productos mediante diálogos modales:
+    - `AddItemDialog.jsx`, `EditItemDialog.jsx`.
   - Exportar datos con botones específicos (`ExportButtons.jsx`).
 
 ### **Gestión de Proveedores**
-- **Página de Proveedores**: Facilita la administración de proveedores.  
+- **Página de Proveedores**: Facilita la administración de proveedores.
   - Archivo: `pages/suppliers.jsx`
-- **Funcionalidades**:  
-  - Tabla de proveedores (`SupplierTable.jsx`).  
-  - Agregar y modificar proveedores:  
-    - `AddSupplierDialog.jsx`, `ModifySupplierDialog.jsx`.  
+- **Funcionalidades**:
+  - Tabla de proveedores (`SupplierTable.jsx`).
+  - Agregar y modificar proveedores:
+    - `AddSupplierDialog.jsx`, `ModifySupplierDialog.jsx`.
   - Exportar datos (`ExportButtons.jsx`).
 
 ### **Transacciones Financieras**
-- **Página de Finanzas**: Administra transacciones y resumen de balances.  
+- **Página de Finanzas**: Administra transacciones y resumen de balances.
   - Archivo: `pages/finance.jsx`
-- **Funcionalidades**:  
-  - Visualización de todas las transacciones (`AllTransactions.jsx`).  
-  - Balance general con tarjetas (`BalanceCards.jsx`).  
-  - Resumen y análisis mediante gráficos interactivos (`Charts.jsx`).  
-  - Creación y modificación de transacciones:  
+- **Funcionalidades**:
+  - Visualización de todas las transacciones (`AllTransactions.jsx`).
+  - Balance general con tarjetas (`BalanceCards.jsx`).
+  - Resumen y análisis mediante gráficos interactivos (`Charts.jsx`).
+  - Creación y modificación de transacciones:
     - `NewTransactionDialog.jsx`, `ModifyTransactionDialog.jsx`.
 
 ### **Gestión de Servicios**
-- **Página de Servicios**: Administra los servicios ofrecidos.  
+- **Página de Servicios**: Administra los servicios ofrecidos.
   - Archivo: `pages/services.jsx`
-- **Funcionalidades**:  
-  - Tabla de servicios (`ServicesTable.jsx`).  
-  - Editar y visualizar detalles de servicios:  
+- **Funcionalidades**:
+  - Tabla de servicios (`ServicesTable.jsx`).
+  - Editar y visualizar detalles de servicios:
     - `EditServiceDialog.jsx`, `ServiceDetailsDialog.jsx`.
 
 ### **Gestión de Tareas**
-- **Página de Tareas**: Administra las tareas del sistema mediante un tablero estilo Kanban.  
+- **Página de Tareas**: Administra las tareas del sistema mediante un tablero estilo Kanban.
   - Archivo: `pages/tasks.jsx`
-- **Funcionalidades**:  
-  - Tablero principal (`TaskBoard.jsx`).  
-  - Columnas y tarjetas interactivas para organizar tareas (`TaskColumn.jsx`, `TaskCard.jsx`).  
+- **Funcionalidades**:
+  - Tablero principal (`TaskBoard.jsx`).
+  - Columnas y tarjetas interactivas para organizar tareas (`TaskColumn.jsx`, `TaskCard.jsx`).
   - Visualización de detalles de una tarea (`TaskDetailsDialog.jsx`)
 
 ### **Perfil de Usuario**
-- **Página de Perfil**: Permite a los usuarios gestionar su información personal.  
+- **Página de Perfil**: Permite a los usuarios gestionar su información personal.
   - Archivo: `pages/profile.jsx`
-- **Funcionalidades**:  
-  - Formularios para editar datos personales (`PersonalDataForm.jsx`).  
+- **Funcionalidades**:
+  - Formularios para editar datos personales (`PersonalDataForm.jsx`).
   - Cambio de imagen de perfil (`ProfilePicture.jsx`).
 
 ### **Componentes de UI Reutilizables**
-- **Componentes Generales**:  
+- **Componentes Generales**:
   - Botones (`button.jsx`), tablas (`table.jsx`), diálogos (`dialog.jsx`), inputs (`input.jsx`) y otros elementos reutilizables.
 - **Temas y Personalización**: Cambio de tema interactivo con `ThemeToggle.jsx`.
 
 ### **Validación y Helpers**
-- **Validaciones**:  
+- **Validaciones**:
   - Archivos en `src/validations/` aseguran la integridad de datos para acciones como nuevos productos, transacciones o servicios.
-- **Helpers**:  
+- **Helpers**:
   - Funciones útiles para exportar datos (`exportInventory.js`, `exportTransactions.js`) y manipular fechas o textos.
 
 ### **Contexto Global**
-- Manejo del estado global de alertas y autenticación.  
+- Manejo del estado global de alertas y autenticación.
   - Archivos: `alertContext.js`, `authContext.js`.
 
 ### **Estilos**
-- **CSS Global**: Configuración base y estilos generales en `globals.css`.  
+- **CSS Global**: Configuración base y estilos generales en `globals.css`.
 - **Tailwind CSS**: Configuración adicional en `tailwind.config.js` para diseño moderno y responsivo.
 
 
@@ -185,14 +185,14 @@ Este proyecto está dividido en dos partes principales: el Backend y el Frontend
 ```bash
 backend/
 │
-├── node_modules/       
-├── src/                
+├── node_modules/
+├── src/
 │   │
-│   ├── config/         
+│   ├── config/
 │   │   ├── cloudinary.js
 │   │   └── db.js
 │   │
-│   ├── controllers/    
+│   ├── controllers/
 │   │   ├── auth.controller.js
 │   │   ├── employees.controller.js
 │   │   ├── inventory.controller.js
@@ -206,10 +206,10 @@ backend/
 │   │   ├── transactionService.controller.js
 │   │   └── user.controller.js
 │   │
-│   ├── helpers/        
+│   ├── helpers/
 │   │   └── validateRut.js
 │   │
-│   ├── middleware/     
+│   ├── middleware/
 │   │   ├── auth.middleware.js
 │   │   ├── authorization.middleware.js
 │   │   ├── authValidation.middleware.js
@@ -222,7 +222,7 @@ backend/
 │   │   ├── transaction.middleware.js
 │   │   └── user.middleware.js
 │   │
-│   ├── models/         
+│   ├── models/
 │   │   ├── Inventory.js
 │   │   ├── Item.js
 │   │   ├── ItemSupplier.js
@@ -232,7 +232,7 @@ backend/
 │   │   ├── TransactionService.js
 │   │   └── User.js
 │   │
-│   ├── routes/         
+│   ├── routes/
 │   │   ├── auth.routes.js
 │   │   ├── inventory.routes.js
 │   │   ├── item.routes.js
@@ -245,7 +245,7 @@ backend/
 │   │   ├── transactionService.routes.js
 │   │   └── user.routes.js
 │   │
-│   ├── services/       
+│   ├── services/
 │   │   ├── auth.service.js
 │   │   ├── email.service.js
 │   │   ├── employee.service.js
@@ -259,7 +259,7 @@ backend/
 │   │   ├── transaction.service.js
 │   │   └── user.service.js
 │   │
-│   ├── validations/    
+│   ├── validations/
 │   │   ├── employee.validation.js
 │   │   ├── inventory.validation.js
 │   │   ├── item.validation.js
@@ -271,11 +271,11 @@ backend/
 │   │   ├── transaction.validation.js
 │   │   └── user.validation.js
 │   │
-│   ├── app.js          
-├── .env            
-├── .gitignore          
-├── package-lock.json   
-├── package.json               
+│   ├── app.js
+├── .env
+├── .gitignore
+├── package-lock.json
+├── package.json
 ```
 
 ### Estructura del Frontend
@@ -283,14 +283,14 @@ backend/
 ```bash
 frontend/
 │
-├── .next/                
-├── dist/                 
-├── node_modules/        
-├── public/               
+├── .next/
+├── dist/
+├── node_modules/
+├── public/
 │
-├── src/                  
+├── src/
 │   │
-│   ├── api/              
+│   ├── api/
 │   │   ├── auth.js
 │   │   ├── inventory.js
 │   │   ├── profile.js
@@ -301,7 +301,7 @@ frontend/
 │   │   ├── transactionService.js
 │   │   └── user.js
 │   │
-│   ├── components/      
+│   ├── components/
 │   │   ├── finance/
 │   │   │   ├── dialog/
 │   │   │   │   ├── ModifyTransactionDialog.jsx
@@ -311,7 +311,7 @@ frontend/
 │   │   │   ├── Charts.jsx
 │   │   │   └── TransactionSummary.jsx
 │   │   │
-│   │   ├── home/          
+│   │   ├── home/
 │   │   │   ├── RecentActivity.jsx
 │   │   │   ├── Statistics.jsx
 │   │   │   └── TopSellingProducts.jsx
@@ -358,7 +358,7 @@ frontend/
 │   │   │   ├── TaskColumn.jsx
 │   │   │   └── TaskDetailsDialog.jsx
 │   │   │
-│   │   ├── ui/            
+│   │   ├── ui/
 │   │   │   ├── avatar.jsx
 │   │   │   ├── button.jsx
 │   │   │   ├── card.jsx
@@ -387,11 +387,11 @@ frontend/
 │   │   ├── TabNavigation.jsx
 │   │   ├── ThemeToggle.jsx
 │   │
-│   ├── context/          
+│   ├── context/
 │   │   ├── alertContext.js
 │   │   └── authContext.js
 │   │
-│   ├── helpers/           
+│   ├── helpers/
 │   │   ├── capitalize.js
 │   │   ├── dates.js
 │   │   ├── exportInventory.js
@@ -401,13 +401,13 @@ frontend/
 │   │   ├── exportTransactions.js
 │   │   └── exportServices.js
 │   │
-│   ├── hooks/            
+│   ├── hooks/
 │   │   └── useAuthRedirect.js
 │   │
-│   ├── lib/              
+│   ├── lib/
 │   │   └── utils.js
 │   │
-│   ├── pages/            
+│   ├── pages/
 │   │   ├── _app.jsx
 │   │   ├── finance.jsx
 │   │   ├── forgot-password.jsx
@@ -422,10 +422,10 @@ frontend/
 │   │   ├── tasks.jsx
 │   │   └── users.jsx
 │   │
-│   ├── styles/           
+│   ├── styles/
 │   │   └── globals.css
 │   │
-│   ├── validations/       
+│   ├── validations/
 │   │   ├── modifyItem.js
 │   │   ├── modifyPurchase.js
 │   │   ├── modifySale.js
@@ -441,16 +441,16 @@ frontend/
 │   │
 │   ├── favicon.ico
 ├── .env
-├── .eslintrc.json            
-├── .gitignore            
+├── .eslintrc.json
+├── .gitignore
 ├── components.json
 ├── ecosystem.json
-├── jsconfig.json      
+├── jsconfig.json
 ├── next.config.mjs
-├── package-lock.json       
+├── package-lock.json
 ├── package.json
-├── postcss.config.mjs                   
-└── tailwind.config.js    
+├── postcss.config.mjs
+└── tailwind.config.js
 ```
 
 ## Instalación y Configuración
@@ -462,85 +462,6 @@ Antes de comenzar, asegúrate de tener instalados los siguientes programas:
 - [Node.js](https://nodejs.org/) (versión 20.X.X LTS) como entorno de ejecución de JavaScript.
 - [Git](https://git-scm.com/) (versión 2.45.2 o superior) para clonar el repositorio.
 - [PostgreSQL](https://www.postgresql.org/) (versión 16.X.X) para la base de datos.
-- [Next.js](https://nextjs.org/)
-
-### Clonación del Repositorio
-
-Primero, clona el repositorio en tu máquina local usando el siguiente comando:
-
-```bash
-git clone https://github.com/tu-usuario/Plantilla-ISW-Proyecto-2024.git
-```
-
-### Configuración del Backend
-
-1. Accede al directorio del Backend:
-
-```bash
-cd backend
-```
-
-2. Instala las dependencias del proyecto:
-
-```bash
-npm install
-```
-
-3. Renombra el archivo `.env.example` a `.env` y configura las variables de entorno necesarias.
-
-```bash
-HOST= localhost (Proyecto en local) o IP servidor (Proyecto en producción)
-PORT= (3000-5000) (Proyecto en local) o Puerto 80 (Proyecto en producción)
-DB_USERNAME= Nombre de usuario en la instancia de PostgreSQL
-PASSWORD= Contraseña de usuario en la instancia de PostgreSQL
-DATABASE= Nombre de la base de datos
-ACCESS_TOKEN_SECRET= Secreto del JWT
-cookieKey= Llave de la cookie
-```
-
-4. Configura PostgreSQL:
-
-- Crea una base de datos en PostgreSQL con el nombre especificado en el archivo `.env`.
-
-5. Inicia el servidor:
-
-```bash
-npm run dev
-```
-
-### Configuración del Frontend
-
-1. Accede al directorio del Frontend:
-
-```bash
-cd frontend
-```
-
-2. Instala las dependencias del proyecto:
-
-```bash
-npm install
-```
-
-3. Renombra el archivo `.env.example` a `.env` y configura las variables de entorno necesarias.
-
-```bash
-VITE_BASE_URL=http://<IP:(Puerto 80 -> 4 digitos)>/api
-```
-
-4. Inicia la aplicación Frontend:
-
-```bash
-npm run dev
-```
-
-### Configuración de DBeaver y PostgreSQL
-
-1. Instalación de PostgreSQL:
-
-- Descarga e instala PostgreSQL desde el siguiente enlace: [PostgreSQL](https://www.postgresql.org/download/).
-- Durante la instalación, configura la contraseña para la base de datos.
-  
 
 ## Tecnologías
 

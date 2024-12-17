@@ -12,7 +12,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from '@/components/ui/select';
 import { formatDate } from '@/helpers/dates';
 import { capitalize } from '@/helpers/capitalize';
