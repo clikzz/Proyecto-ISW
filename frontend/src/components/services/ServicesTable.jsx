@@ -95,7 +95,6 @@ export default function ServicesTable() {
   };
 
 
-
   const handleView = (service) => {
     setSelectedService(service);
     setIsDetailsOpen(true);
