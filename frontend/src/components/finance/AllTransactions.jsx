@@ -28,6 +28,7 @@ export default function AllTransactions({
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [transactionToDelete, setTransactionToDelete] = useState(null);
   const [filterType, setFilterType] = useState("all");
+  const [refreshTrigger, setRefreshTrigger] = useState(0); // Added refreshTrigger state
   const modalRef = useRef(null);
 
   useEffect(() => {
@@ -73,7 +74,7 @@ export default function AllTransactions({
     if (isOpen) {
       fetchAllTransactions();
     }
-  }, [isOpen, transactions, showAlert]);
+  }, [isOpen, transactions, showAlert, refreshTrigger]); // Added refreshTrigger to dependencies
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -106,6 +107,9 @@ export default function AllTransactions({
           )
         );
         showAlert("Transacción eliminada con éxito", "success");
+        if (onTransactionUpdated) {
+          onTransactionUpdated(); // Notificar al componente padre
+        }
       } catch (error) {
         console.error("Error al eliminar la transacción:", error);
         showAlert("Error al eliminar la transacción", "error");
@@ -117,6 +121,13 @@ export default function AllTransactions({
 
   const handleEdit = (transaction) => {
     setEditingTransaction(transaction);
+  };
+
+  const handleTransactionUpdated = () => {
+    setRefreshTrigger(prev => prev + 1);
+    if (onTransactionUpdated) {
+      onTransactionUpdated();
+    }
   };
 
   const filteredTransactions =
@@ -260,7 +271,7 @@ export default function AllTransactions({
         <ModifyTransactionDialog
           isOpen={true}
           onClose={() => setEditingTransaction(null)}
-          onTransactionUpdated={onTransactionUpdated}
+          onTransactionUpdated={handleTransactionUpdated}
           transaction={editingTransaction}
         />
       )}
