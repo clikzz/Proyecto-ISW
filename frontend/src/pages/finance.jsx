@@ -18,7 +18,7 @@ export default function Finanzas() {
   const [isNewTransactionFormOpen, setIsNewTransactionFormOpen] =
     useState(false);
   const [isAllTransactionsOpen, setIsAllTransactionsOpen] = useState(false);
-  // Añade este estado
+
   const [error, setError] = useState(null);
 
   const fetchTransactions = async () => {
