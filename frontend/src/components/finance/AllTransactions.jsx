@@ -54,7 +54,7 @@ export default function AllTransactions({
           .filter((service) => !service.is_deleted)
           .map((service) => ({
             ...service,
-            id: service.id_service,
+            id_transaction: service.id_service,
             transaction_type: "servicio",
             description: service.name_service,
             type: "servicio",
@@ -76,8 +76,8 @@ export default function AllTransactions({
     }
   }, [isOpen, transactions, showAlert]);
 
-  const handleDelete = (id, transaction_type) => {
-    console.log("Attempting to delete transaction:", { id, transaction_type });
+  const handleDelete = (id_transaction, transaction_type) => {
+    console.log("Attempting to delete transaction:", { id_transaction, transaction_type });
 
     if (transaction_type === "ingreso" && transaction_type === "egreso") {
       setTransactionToDelete({ id, transaction_type });
@@ -92,8 +92,7 @@ export default function AllTransactions({
         setAllTransactions((prevTransactions) =>
           prevTransactions.filter(
             (t) =>
-              t.id_transaction !== transactionToDelete.id &&
-              t.id !== transactionToDelete.id
+              t.id_transaction !== transactionToDelete.id
           )
         );
         showAlert("Transacción eliminada con éxito", "success");
@@ -163,7 +162,7 @@ export default function AllTransactions({
             )
             .map((t) => (
               <div
-                key={t.id_transaction || t.id}
+                key={t.id_transaction}
                 className="flex items-center justify-between rounded-lg p-3 bg-background hover:bg-accent transition-colors"
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
@@ -178,7 +177,7 @@ export default function AllTransactions({
                   <div
                     className={`text-lg font-semibold ${t.transaction_type === "ingreso" ||t.transaction_type === "venta" || t.transaction_type === "servicio" ? "text-green-500" : "text-red-500"}`}
                   >
-                    {t.transaction_type === "ingreso" || t.transact === "venta" || t.transaction_type === "servicio"
+                    {t.transaction_type === "ingreso" || t.transaction_type === "venta" || t.transaction_type === "servicio"
                       ? "+"
                       : "-"}
                     {formatoPesoChileno(t.amount)}
@@ -192,7 +191,7 @@ export default function AllTransactions({
                     <Edit className="h-5 w-5" />
                   </button>
                   <button
-                    onClick={() => handleDelete(t.id_transaction || t.id, t.transaction_type)}
+                    onClick={() => handleDelete(t.id_transaction, t.transaction_type)}
                     className={`text-red-500 hover:text-red-700 ${t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra' ? 'opacity-50 cursor-not-allowed' : ''}`}
                     disabled={t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra'}
                     title={t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra' ? 'No se puede modificar porque la transacción está asociado a un servicio/venta/compra' : ''}
