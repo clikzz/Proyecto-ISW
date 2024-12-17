@@ -64,9 +64,9 @@ const EditSaleDialog = ({ isOpen, onClose, sale, onUpdateSale }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="border-none text-foreground max-w-2xl mx-auto p-8">
+      <DialogContent className="border-none bg-card text-card-foreground max-w-2xl mx-auto p-8">
         <DialogHeader className="flex justify-between items-center">
-          <DialogTitle>
+          <DialogTitle className="text-xl font-bold">
             Editar Venta
           </DialogTitle>
         </DialogHeader>
