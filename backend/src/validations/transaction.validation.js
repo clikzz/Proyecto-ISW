@@ -20,6 +20,7 @@ const createTransactionSchema = Joi.object({
     'string.max': 'La descripción no puede tener más de 100 caracteres',
     'any.required': 'La descripción es obligatoria'
   }),
+  rut: Joi.string()
 });
 
 module.exports = createTransactionSchema;
