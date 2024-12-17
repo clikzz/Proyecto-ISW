@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { X, Edit, Trash2 } from "lucide-react";
 import { deleteTransaction } from "@/api/transaction";
 import { getServices } from "@/api/service";
-import NewTransactionForm from "./NewTransactionForm";
 import { useAlert } from "@context/alertContext";
 import { formatDate } from "@/helpers/dates";
 import { exportTransactionsToPDF } from "@/helpers/exportTransactions";
-import { capitalize } from '@/helpers/capitalize';
+import { capitalize } from "@/helpers/capitalize";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
+import { ModifyTransactionDialog } from "./dialog/ModifyTransactionDialog";
 
 const formatoPesoChileno = (valor) => {
   return new Intl.NumberFormat("es-CL", {
@@ -29,6 +29,9 @@ export default function AllTransactions({
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [transactionToDelete, setTransactionToDelete] = useState(null);
   const [filterType, setFilterType] = useState("all");
+  const modalRef = useRef(null);
+  const confirmDialogRef = useRef(null);
+  const modifyTransactionDialogRef = useRef(null);
 
   useEffect(() => {
     const fetchAllTransactions = async () => {
@@ -48,20 +51,19 @@ export default function AllTransactions({
             ...transaction,
             type: transaction.transaction_type,
           }));
-        console.log(formattedTransactions);
 
         const formattedServices = services
           .filter((service) => !service.is_deleted)
           .map((service) => ({
             ...service,
-            id: service.id_service,
+            id_transaction: service.id_service,
             transaction_type: "servicio",
             description: service.name_service,
             type: "servicio",
             amount: service.price_service,
             payment_method: service.payment_method_service,
             transaction_date: service.created_at,
-            rut: service.rut_user
+            rut: service.rut_user,
           }));
 
         setAllTransactions([...formattedTransactions, ...formattedServices]);
@@ -76,24 +78,18 @@ export default function AllTransactions({
     }
   }, [isOpen, transactions, showAlert]);
 
-  const handleDelete = (id, transaction_type) => {
-    console.log("Attempting to delete transaction:", { id, transaction_type });
-
-    if (transaction_type === "ingreso" && transaction_type === "egreso") {
-      setTransactionToDelete({ id, transaction_type });
-      setIsConfirmDialogOpen(true);
-    }
+  const handleDelete = (id_transaction, transaction_type) => {
+    setTransactionToDelete({ id_transaction, transaction_type });
+    setIsConfirmDialogOpen(true);
   };
 
   const handleConfirmDelete = async () => {
     if (transactionToDelete) {
       try {
-        await deleteTransaction(transactionToDelete.id);
+        await deleteTransaction(transactionToDelete.id_transaction);
         setAllTransactions((prevTransactions) =>
           prevTransactions.filter(
-            (t) =>
-              t.id_transaction !== transactionToDelete.id &&
-              t.id !== transactionToDelete.id
+            (t) => t.id_transaction !== transactionToDelete.id_transaction
           )
         );
         showAlert("Transacción eliminada con éxito", "success");
@@ -107,13 +103,7 @@ export default function AllTransactions({
   };
 
   const handleEdit = (transaction) => {
-    console.log("Attempting to edit transaction:", transaction);
-    if (
-      transaction.transaction_type === "ingreso" ||
-      transaction.transaction_type === "egreso"
-    ) {
-      setEditingTransaction(transaction);
-    }
+    setEditingTransaction(transaction);
   };
 
   const filteredTransactions =
@@ -121,11 +111,46 @@ export default function AllTransactions({
       ? allTransactions
       : allTransactions.filter((t) => t.transaction_type === filterType);
 
+  const handleClickOutside = (event) => {
+    if (
+      modalRef.current &&
+      !modalRef.current.contains(event.target) &&
+      !editingTransaction &&
+      !isConfirmDialogOpen
+    ) {
+      onClose();
+    } else if (
+      confirmDialogRef.current &&
+      !confirmDialogRef.current.contains(event.target)
+    ) {
+      setIsConfirmDialogOpen(false);
+    } else if (
+      modifyTransactionDialogRef.current &&
+      !modifyTransactionDialogRef.current.contains(event.target)
+    ) {
+      setEditingTransaction(null);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, editingTransaction, isConfirmDialogOpen]);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-4xl">
+      <div
+        ref={modalRef}
+        className="bg-background p-6 rounded-lg shadow-lg w-full max-w-4xl"
+      >
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Todas las Transacciones</h3>
           <div className="flex gap-2">
@@ -163,59 +188,104 @@ export default function AllTransactions({
             )
             .map((t) => (
               <div
-                key={t.id_transaction || t.id}
+                key={t.id_transaction}
                 className="flex items-center justify-between rounded-lg p-3 bg-background hover:bg-accent transition-colors"
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
               >
                 <div>
                   <p className="font-medium">{capitalize(t.description)}</p>
                   <p className="text-sm text-muted-foreground">
-                    {formatDate(t.transaction_date)} - {capitalize(t.transaction_type)} - {capitalize(t.payment_method)}
+                    {formatDate(t.transaction_date)} -{" "}
+                    {capitalize(t.transaction_type)} -{" "}
+                    {capitalize(t.payment_method)}
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
                   <div
-                    className={`text-lg font-semibold ${t.transaction_type === "ingreso" ||t.transaction_type === "venta" || t.transaction_type === "servicio" ? "text-green-500" : "text-red-500"}`}
+                    className={`text-lg font-semibold ${
+                      t.transaction_type === "ingreso" ||
+                      t.transaction_type === "venta" ||
+                      t.transaction_type === "servicio"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
                   >
-                    {t.transaction_type === "ingreso" || t.transact === "venta" || t.transaction_type === "servicio"
+                    {t.transaction_type === "ingreso" ||
+                    t.transaction_type === "venta" ||
+                    t.transaction_type === "servicio"
                       ? "+"
                       : "-"}
                     {formatoPesoChileno(t.amount)}
                   </div>
                   <button
                     onClick={() => handleEdit(t)}
-                    className={`text-blue-500 hover:text-blue-700 ${t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra' ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    disabled={t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra'}
-                    title={t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra' ? 'No se puede modificar porque está asociado a un servicio/venta/compra' : ''}
+                    className={`text-blue-500 hover:text-blue-700 ${
+                      t.transaction_type === "servicio" ||
+                      t.transaction_type === "venta" ||
+                      t.transaction_type === "compra"
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
+                    disabled={
+                      t.transaction_type === "servicio" ||
+                      t.transaction_type === "venta" ||
+                      t.transaction_type === "compra"
+                    }
+                    title={
+                      t.transaction_type === "servicio" ||
+                      t.transaction_type === "venta" ||
+                      t.transaction_type === "compra"
+                        ? "No se puede modificar porque está asociado a un servicio/venta/compra"
+                        : ""
+                    }
                   >
                     <Edit className="h-5 w-5" />
                   </button>
                   <button
-                    onClick={() => handleDelete(t.id_transaction || t.id, t.transaction_type)}
-                    className={`text-red-500 hover:text-red-700 ${t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra' ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    disabled={t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra'}
-                    title={t.transaction_type === 'servicio' || t.transaction_type === 'venta' || t.transaction_type === 'compra' ? 'No se puede modificar porque la transacción está asociado a un servicio/venta/compra' : ''}
+                    onClick={() =>
+                      handleDelete(t.id_transaction, t.transaction_type)
+                    }
+                    className={`text-red-500 hover:text-red-700 ${
+                      t.transaction_type === "servicio" ||
+                      t.transaction_type === "venta" ||
+                      t.transaction_type === "compra"
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
+                    disabled={
+                      t.transaction_type === "servicio" ||
+                      t.transaction_type === "venta" ||
+                      t.transaction_type === "compra"
+                    }
+                    title={
+                      t.transaction_type === "servicio" ||
+                      t.transaction_type === "venta" ||
+                      t.transaction_type === "compra"
+                        ? "No se puede modificar porque la transacción está asociado a un servicio/venta/compra"
+                        : ""
+                    }
                   >
                     <Trash2 className="h-5 w-5" />
-                   </button>
+                  </button>
                 </div>
               </div>
             ))}
         </div>
       </div>
+
       {editingTransaction && (
-        <NewTransactionForm
+        <ModifyTransactionDialog
           isOpen={true}
           onClose={() => setEditingTransaction(null)}
-          onTransactionAdded={onTransactionUpdated}
-          editingTransaction={editingTransaction}
+          onTransactionUpdated={onTransactionUpdated}
+          transaction={editingTransaction}
+          ref={modifyTransactionDialogRef}
         />
       )}
       <ConfirmationDialog
         open={isConfirmDialogOpen}
         handleClose={() => setIsConfirmDialogOpen(false)}
         handleConfirm={handleConfirmDelete}
+        ref={confirmDialogRef}
       />
     </div>
   );
