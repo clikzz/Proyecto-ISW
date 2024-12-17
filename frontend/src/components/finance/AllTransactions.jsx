@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { X, Edit, Trash2 } from "lucide-react";
+import { X, Edit, Trash2, Filter, FileText } from 'lucide-react';
 import { deleteTransaction } from "@/api/transaction";
 import { getServices } from "@/api/service";
 import { useAlert } from "@context/alertContext";
@@ -8,14 +8,13 @@ import { exportTransactionsToPDF } from "@/helpers/exportTransactions";
 import { capitalize } from "@/helpers/capitalize";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
 import { ModifyTransactionDialog } from "./dialog/ModifyTransactionDialog";
-
-const formatoPesoChileno = (valor) => {
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-  }).format(valor);
-};
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function AllTransactions({
   isOpen,
@@ -30,8 +29,6 @@ export default function AllTransactions({
   const [transactionToDelete, setTransactionToDelete] = useState(null);
   const [filterType, setFilterType] = useState("all");
   const modalRef = useRef(null);
-  const confirmDialogRef = useRef(null);
-  const modifyTransactionDialogRef = useRef(null);
 
   useEffect(() => {
     const fetchAllTransactions = async () => {
@@ -78,6 +75,22 @@ export default function AllTransactions({
     }
   }, [isOpen, transactions, showAlert]);
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (modalRef.current && !modalRef.current.contains(event.target) && event.target.classList.contains('modal-overlay')) {
+        onClose();
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
   const handleDelete = (id_transaction, transaction_type) => {
     setTransactionToDelete({ id_transaction, transaction_type });
     setIsConfirmDialogOpen(true);
@@ -111,69 +124,42 @@ export default function AllTransactions({
       ? allTransactions
       : allTransactions.filter((t) => t.transaction_type === filterType);
 
-  const handleClickOutside = (event) => {
-    if (
-      modalRef.current &&
-      !modalRef.current.contains(event.target) &&
-      !editingTransaction &&
-      !isConfirmDialogOpen
-    ) {
-      onClose();
-    } else if (
-      confirmDialogRef.current &&
-      !confirmDialogRef.current.contains(event.target)
-    ) {
-      setIsConfirmDialogOpen(false);
-    } else if (
-      modifyTransactionDialogRef.current &&
-      !modifyTransactionDialogRef.current.contains(event.target)
-    ) {
-      setEditingTransaction(null);
-    }
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen, editingTransaction, isConfirmDialogOpen]);
-
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div
-        ref={modalRef}
-        className="bg-background p-6 rounded-lg shadow-lg w-full max-w-4xl"
-      >
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal-overlay">
+      <div ref={modalRef} className="bg-background p-6 rounded-lg shadow-lg w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Todas las Transacciones</h3>
           <div className="flex gap-2">
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="mr-4 px-4 py-2 border border-input bg-background rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-            >
-              <option value="all">Todos</option>
-              <option value="ingreso">Ingreso</option>
-              <option value="egreso">Egreso</option>
-              <option value="venta">Venta</option>
-              <option value="compra">Compra</option>
-              <option value="servicio">Servicio</option>
-            </select>
+            <div className="mr-4">
+              <Select
+                value={filterType}
+                onValueChange={(value) => setFilterType(value)}
+              >
+                <SelectTrigger>
+                  <Filter className="h-6 w-6 mr-2" />
+                  <SelectValue placeholder="Seleccionar categoría" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="ingreso">Ingreso</SelectItem>
+                  <SelectItem value="egreso">Egreso</SelectItem>
+                  <SelectItem value="venta">Venta</SelectItem>
+                  <SelectItem value="compra">Compra</SelectItem>
+                  <SelectItem value="servicio">Servicio</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <button
-              onClick={() => exportTransactionsToPDF(filteredTransactions)}
-              className="mr-4 px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
+              onClick={(e) => {e.stopPropagation(); exportTransactionsToPDF(filteredTransactions)}}
+              className="mr-4 px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 flex items-center"
             >
+              <FileText className="h-5 w-5 mr-2" />
               Descargar PDF
             </button>
             <button
-              onClick={onClose}
+              onClick={(e) => {e.stopPropagation(); onClose(e)}}
               className="text-gray-500 hover:text-gray-700"
             >
               <X className="h-6 w-6" />
@@ -214,10 +200,10 @@ export default function AllTransactions({
                     t.transaction_type === "servicio"
                       ? "+"
                       : "-"}
-                    {formatoPesoChileno(t.amount)}
+                    ${t.amount?.toLocaleString('es-CL')}
                   </div>
                   <button
-                    onClick={() => handleEdit(t)}
+                    onClick={(e) => {e.stopPropagation(); handleEdit(t)}}
                     className={`text-blue-500 hover:text-blue-700 ${
                       t.transaction_type === "servicio" ||
                       t.transaction_type === "venta" ||
@@ -241,9 +227,7 @@ export default function AllTransactions({
                     <Edit className="h-5 w-5" />
                   </button>
                   <button
-                    onClick={() =>
-                      handleDelete(t.id_transaction, t.transaction_type)
-                    }
+                    onClick={(e) => {e.stopPropagation(); handleDelete(t.id_transaction, t.transaction_type)}}
                     className={`text-red-500 hover:text-red-700 ${
                       t.transaction_type === "servicio" ||
                       t.transaction_type === "venta" ||
@@ -278,15 +262,14 @@ export default function AllTransactions({
           onClose={() => setEditingTransaction(null)}
           onTransactionUpdated={onTransactionUpdated}
           transaction={editingTransaction}
-          ref={modifyTransactionDialogRef}
         />
       )}
       <ConfirmationDialog
         open={isConfirmDialogOpen}
         handleClose={() => setIsConfirmDialogOpen(false)}
         handleConfirm={handleConfirmDelete}
-        ref={confirmDialogRef}
       />
     </div>
   );
 }
+

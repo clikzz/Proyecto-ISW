@@ -11,14 +11,6 @@ import { formatDate } from "@/helpers/dates";
 import { capitalize } from "@/helpers/capitalize";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
 
-const formatoPesoChileno = (valor) => {
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-  }).format(valor);
-};
-
 export default function TransactionSummary({
   transactions,
   onTransactionUpdated,
@@ -138,7 +130,7 @@ export default function TransactionSummary({
                     t.transaction_type === "servicio"
                       ? "+"
                       : "-"}
-                    {formatoPesoChileno(t.amount)}
+                    ${t.amount?.toLocaleString('es-CL')}
                   </div>
                   <button
                     onClick={() => handleEdit(t)}
