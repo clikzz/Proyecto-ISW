@@ -39,6 +39,8 @@ Este proyecto utiliza el stack **PERN** (PostgreSQL, Express.js, React y Node.js
 
 Este proyecto está dividido en dos partes principales: el Backend y el Frontend. A continuación, se muestra la estructura del Backend:
 
+### Estructura del Backend
+
 ```bash
 backend/
 │
