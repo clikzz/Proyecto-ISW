@@ -47,7 +47,6 @@ export default function AddSupplierDialog({ fetchSuppliers }) {
     values,
     { setSubmitting, resetForm, setErrors }
   ) => {
-    console.log(values);
 
     try {
       if (!newSupplierValidation) {
@@ -59,7 +58,7 @@ export default function AddSupplierDialog({ fetchSuppliers }) {
       resetForm();
       fetchSuppliers();
     } catch (error) {
-      showAlert(error.response?.data.errors, 'error');
+      showAlert(error.response?.data.message, 'error');
     } finally {
       setSubmitting(false);
     }
@@ -75,7 +74,9 @@ export default function AddSupplierDialog({ fetchSuppliers }) {
       </DialogTrigger>
       <DialogContent className="bg-card text-card-foreground border-none">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Formulario de nuevo proveedor</DialogTitle>
+          <DialogTitle className="text-xl font-bold">
+            Formulario de nuevo proveedor
+          </DialogTitle>
         </DialogHeader>
         <Formik
           initialValues={{

@@ -18,6 +18,27 @@ class Supplier {
     return result.rows[0];
   }
 
+  static async softCreate(data) {
+    console.log('softCreate', data);
+
+    const query = `
+      UPDATE supplier
+      SET name_supplier = $2, email_supplier = $3, phone_supplier = $4, address_supplier = $5, is_deleted = $6, updated_at = CURRENT_TIMESTAMP
+      WHERE rut_supplier = $1
+      RETURNING *;
+    `;
+    const values = [
+      data.rut_supplier,
+      data.name_supplier,
+      data.email_supplier,
+      data.phone_supplier,
+      data.address_supplier,
+      false,
+    ];
+    const result = await db.query(query, values);
+    return result.rows[0];
+  }
+
   static async findAll() {
     const result = await db.query(
       'SELECT * FROM supplier WHERE is_deleted = FALSE'
@@ -26,8 +47,9 @@ class Supplier {
   }
 
   static async findById(id) {
+    console.log(id);
     const result = await db.query(
-      'SELECT * FROM supplier WHERE id = $1 AND is_deleted = FALSE',
+      'SELECT * FROM supplier WHERE rut_supplier = $1',
       [id]
     );
     return result.rows[0];
