@@ -9,6 +9,20 @@ exports.createSupplier = async (req, res) => {
   if (error) return res.status(400).json({ message: error.details[0].message });
 
   try {
+    const supplier = await supplierService.getSupplierById(
+      req.body.rut_supplier
+    );
+    if (supplier && supplier.is_deleted === false) {
+      return res.status(400).json({ message: 'Proveedor ya existe' });
+    }
+
+    if (supplier && supplier.is_deleted === true) {
+      console.log('softCreate');
+
+      const newSupplier = await supplierService.softCreateSupplier(req.body);
+      return res.status(201).json(newSupplier);
+    }
+
     const newSupplier = await supplierService.createSupplier(req.body);
     res.status(201).json(newSupplier);
   } catch (err) {
