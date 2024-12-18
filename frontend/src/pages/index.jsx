@@ -101,7 +101,7 @@ export default function LandingPage() {
                 </h1>
                 <p className="max-w-[600px] text-muted-foreground md:text-xl">
                   Optimiza tu negocio, aumenta la satisfacción de tus clientes y
-                  pedalea hacia el strong con nuestra solución integral.
+                  pedalea hacia el <strong>éxito</strong> con nuestra solución integral.
                 </p>
               </motion.div>
               <motion.div
