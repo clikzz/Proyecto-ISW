@@ -6,7 +6,7 @@ exports.createPurchase = async (req, res) => {
   try {
     const transactionDetails = {
       ...details,
-      rut: req.user.rut, // Rut del usuario autenticado
+      rut: req.user.rut,
     };
 
     const transactionId = await inventoryService.createPurchase(items, transactionDetails);
@@ -23,7 +23,7 @@ exports.createSale = async (req, res) => {
   try {
     const transactionDetails = {
       ...details,
-      rut: req.user.rut, // Rut del usuario autenticado
+      rut: req.user.rut,
     };
 
     const transactionId = await inventoryService.createSale(items, transactionDetails);
@@ -74,7 +74,6 @@ exports.updatePurchase = async (req, res) => {
   const { details, items } = req.body;
 
   try {
-    // Llamar al servicio para procesar la actualización
     const updatedPurchase = await inventoryService.updatePurchase(id_transaction, details, items);
 
     res.status(200).json({

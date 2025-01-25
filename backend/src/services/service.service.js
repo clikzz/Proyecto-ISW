@@ -26,13 +26,11 @@ const updateService = async (id, data) => {
       throw new Error('Servicio no encontrado.');
     }
 
-    // combina los datos existentes con los datos nuevos
     const updatedData = {
-      ...service, // existentes
-      ...data,    // actualizados
+      ...service, 
+      ...data,    
     };
 
-    // actualiza el servicio con los datos combinados
     const updatedService = await Service.update(id, updatedData);
 
     return updatedService;
