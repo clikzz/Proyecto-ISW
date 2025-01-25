@@ -16,12 +16,11 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(
-  cors({
-    credentials: true,
-    origin: true,
-  })
-);
+app.use(cors({
+  origin: 'https://bikefy.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 
 app.use(express.json());
 
