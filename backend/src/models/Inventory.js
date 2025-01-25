@@ -13,7 +13,7 @@ class Inventory {
       details.type,
       details.amount,
       details.payment_method,
-      details.description
+      details.description,
     ];
     const result = await db.query(query, values);
     return result.rows[0].id_transaction;
@@ -24,8 +24,14 @@ class Inventory {
       INSERT INTO transaction_item (id_transaction, id_item, quantity_item, unit_price, rut_supplier)
       VALUES ($1, $2, $3, $4, $5);
     `;
-    await db.query(query, [transactionId, item.id_item, item.quantity, item.unit_price, item.rut_supplier || null]);
-  
+    await db.query(query, [
+      transactionId,
+      item.id_item,
+      item.quantity,
+      item.unit_price,
+      item.rut_supplier || null,
+    ]);
+
     if (type === 'compra' && item.rut_supplier) {
       await ItemSupplier.addItemSupplier({
         id_item: item.id_item,
@@ -53,7 +59,7 @@ class Inventory {
       `SELECT * FROM item_supplier WHERE id_item = $1 AND rut_supplier = $2`,
       [idItem, rutSupplier]
     );
-  
+
     if (existing.rowCount === 0) {
       await db.query(
         `INSERT INTO item_supplier (id_item, rut_supplier, purchase_price, purchase_date)
@@ -105,57 +111,61 @@ class Inventory {
 
   static async getTransactionItems(transactionId) {
     const query = `
-      SELECT 
-        ti.id_transaction_item, 
-        ti.id_item, 
-        ti.quantity_item, 
+      SELECT
+        ti.id_transaction_item,
+        ti.id_item,
+        ti.quantity_item,
         ti.unit_price,
         i.name_item
-      FROM 
+      FROM
         transaction_item ti
-      JOIN 
-        item i 
-      ON 
+      JOIN
+        item i
+      ON
         ti.id_item = i.id_item
       JOIN
         transaction t
       ON
         ti.id_transaction = t.id_transaction
-      WHERE 
+      WHERE
         ti.id_transaction = $1 AND t.is_deleted = FALSE;
     `;
     const result = await db.query(query, [transactionId]);
     if (result.rows.length === 0) {
-      throw new Error(`No se encontraron ítems para la transacción con ID ${transactionId}`);
+      throw new Error(
+        `No se encontraron ítems para la transacción con ID ${transactionId}`
+      );
     }
     return result.rows;
   }
 
   static async getTransactionItemById(id_transaction_item) {
     const query = `
-      SELECT 
-        ti.id_transaction_item, 
-        ti.id_item, 
-        ti.quantity_item, 
+      SELECT
+        ti.id_transaction_item,
+        ti.id_item,
+        ti.quantity_item,
         ti.unit_price,
         i.name_item,
         t.amount
-      FROM 
+      FROM
         transaction_item ti
-      JOIN 
-        item i 
-      ON 
+      JOIN
+        item i
+      ON
         ti.id_item = i.id_item
-      JOIN 
+      JOIN
         transaction t
-      ON 
+      ON
         ti.id_transaction = t.id_transaction
-      WHERE 
+      WHERE
         ti.id_transaction_item = $1 AND t.is_deleted = FALSE;
     `;
     const result = await db.query(query, [id_transaction_item]);
     if (result.rows.length === 0) {
-      throw new Error(`No se encontró el ítem con id_transaction_item ${id_transaction_item}`);
+      throw new Error(
+        `No se encontró el ítem con id_transaction_item ${id_transaction_item}`
+      );
     }
     return result.rows[0];
   }
@@ -167,13 +177,15 @@ class Inventory {
       WHERE id_transaction = $1 AND is_deleted = FALSE
       RETURNING *;
     `;
-    
+
     const result = await db.query(query, [transactionId]);
-    
+
     if (result.rowCount === 0) {
-      throw new Error(`La transacción con ID ${transactionId} no existe o ya ha sido eliminada`);
+      throw new Error(
+        `La transacción con ID ${transactionId} no existe o ya ha sido eliminada`
+      );
     }
-  
+
     return result.rows[0];
   }
 
@@ -186,27 +198,27 @@ class Inventory {
     `;
     const result = await db.query(query, [id_item, rut_supplier]);
     return result.rows;
-  }  
+  }
 
   static async getPurchases() {
     const query = `
       SELECT
-        t.id_transaction, 
-        t.rut, 
-        t.transaction_type, 
-        t.amount, 
-        t.transaction_date, 
-        t.payment_method, 
+        t.id_transaction,
+        t.rut,
+        t.transaction_type,
+        t.amount,
+        t.transaction_date,
+        t.payment_method,
         t.updated_at,
         COALESCE(t.description, '') AS description,
-        ti.id_item, 
-        ti.quantity_item, 
+        ti.id_item,
+        ti.quantity_item,
         ti.unit_price,
         ti.id_transaction_item,
         s.name_supplier,
         i.name_item,
         i.category
-      FROM 
+      FROM
         transaction t
       LEFT JOIN transaction_item ti ON t.id_transaction = ti.id_transaction
       LEFT JOIN supplier s ON ti.rut_supplier = s.rut_supplier
@@ -221,37 +233,37 @@ class Inventory {
 
   static async getSales() {
     const query = `
-      SELECT 
-        t.id_transaction, 
-        t.rut, 
-        t.transaction_type, 
-        t.amount, 
-        t.transaction_date, 
-        t.payment_method, 
+      SELECT
+        t.id_transaction,
+        t.rut,
+        t.transaction_type,
+        t.amount,
+        t.transaction_date,
+        t.payment_method,
         t.description,
-        ti.id_item, 
-        ti.quantity_item, 
-        ti.unit_price, 
+        ti.id_item,
+        ti.quantity_item,
+        ti.unit_price,
         ti.id_transaction_item,
         i.name_item,
         t.updated_at,
         i.category
-      FROM 
+      FROM
         transaction t
-      JOIN 
-        transaction_item ti 
-      ON 
+      JOIN
+        transaction_item ti
+      ON
         t.id_transaction = ti.id_transaction
-      LEFT JOIN 
-        item i 
-      ON 
+      LEFT JOIN
+        item i
+      ON
         ti.id_item = i.id_item
-      WHERE 
+      WHERE
         t.transaction_type = 'venta' AND t.is_deleted = FALSE
-      ORDER BY 
+      ORDER BY
         t.transaction_date DESC;
     `;
-  
+
     const result = await db.query(query);
     return result.rows;
   }

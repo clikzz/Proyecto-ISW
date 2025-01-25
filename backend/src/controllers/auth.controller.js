@@ -52,8 +52,11 @@ exports.login = async (req, res) => {
     }
 
     const { rut, password } = value;
+    console.log(rut, password);
 
     const user = await User.findByRut(rut);
+    console.log(user);
+
     if (!user) {
       return res.status(401).json({ message: 'Credenciales incorrectas' });
     }
