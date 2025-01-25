@@ -55,7 +55,8 @@ async function initializeDatabase() {
         is_deleted BOOLEAN DEFAULT FALSE,
         payment_method_service VARCHAR(255),
         rut_user VARCHAR(50) REFERENCES users(rut),
-        status_service BOOLEAN DEFAULT TRUE
+        status_service BOOLEAN DEFAULT TRUE,
+        category VARCHAR(50)
       );
     `);
 
@@ -68,9 +69,9 @@ async function initializeDatabase() {
         payment_method VARCHAR(50),
         description TEXT,
         created_at TIMESTAMP DEFAULT NOW(),
-        update_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW(),
         is_deleted BOOLEAN DEFAULT FALSE,
-        rut_supplier VARCHAR(50) REFERENCES supplier(rut_supplier)
+        rut VARCHAR(50) REFERENCES supplier(rut_supplier)
       );
     `);
 
