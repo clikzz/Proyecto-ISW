@@ -44,10 +44,13 @@ export default function LoginForm() {
     e.preventDefault();
     try {
       const response = await loginUser(rut.toUpperCase(), password);
+      console.log(response);
       login(response.token, response.role);
       showAlert(response.message, 'success');
       router.push('/home');
     } catch (error) {
+      console.log(error);
+
       showAlert(error.response?.data.message, 'error');
     }
   };
