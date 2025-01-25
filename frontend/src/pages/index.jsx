@@ -111,10 +111,10 @@ export default function LandingPage() {
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
                 <Image
-                  src="/bodoque.gif"
-                  width={400}
-                  height={400}
-                  className="rounded-full animate-float"
+                  src="/bike.gif"
+                  width={300}
+                  height={300}
+                  className="animate-float"
                 />
               </motion.div>
             </div>
