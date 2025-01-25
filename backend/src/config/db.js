@@ -39,7 +39,7 @@ async function initializeDatabase() {
         reset_token VARCHAR(255),
         reset_token_expiry TIMESTAMP,
         status VARCHAR(10) DEFAULT 'enabled',
-        profile_picture TEXT
+        profile_picture TEXT DEFAULT 'https://res.cloudinary.com/dfhtdd62s/image/upload/v1737841697/default_avatar_jhoeuk_wwx9cn.jpg'
       );
     `);
 
